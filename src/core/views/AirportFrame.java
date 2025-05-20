@@ -9,6 +9,7 @@ import core.models.Flight;
 import core.models.Plane;
 import core.models.Passenger;
 import com.formdev.flatlaf.FlatDarkLaf;
+import core.controllers.MainController;
 import core.models.persistency.*;
 import core.models.storage.StorageFlights;
 import core.models.storage.StorageLocations;
@@ -35,22 +36,12 @@ public class AirportFrame extends javax.swing.JFrame {
     private ArrayList<Plane> planes;
     private ArrayList<Location> locations;
     private ArrayList<Flight> flights;
-    private final ReadPlane readPlanes;
-    private final ReadPassengers readPas;
-    private final ReadLocation readLocs;
-    private final ReadFlight readFlights;
-
+    private final MainController controller;
     public AirportFrame() {
         initComponents();
         //read jsons:
-        this.readLocs = new ReadLocation(); 
-        readLocs.read("json/locations.json");
-        this.readPlanes = new ReadPlane(); 
-        readPlanes.read("json/planes.json");
-        this.readPas = new ReadPassengers();
-        readPas.read("json/passengers.json");
-        this.readFlights = new ReadFlight();
-        readFlights.read("json/flights.json");
+        controller = new MainController();
+        controller.initializeData();
         //initialize Arrays
         locations = StorageLocations.getInstance().getAll();
         planes = StoragePlanes.getInstance().getAll();

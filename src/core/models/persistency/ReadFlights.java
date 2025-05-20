@@ -20,7 +20,7 @@ import org.json.JSONObject;
  *
  * @author Alexander Sanguino
  */
-public class ReadFlight implements JsonReader<Flight> {
+public class ReadFlights implements JsonReader<Flight> {
      @Override
     public void read(String path) {
         try {

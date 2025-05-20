@@ -4,8 +4,8 @@
  */
 package core.models.persistency;
 
-import core.models.Location;
-import core.models.storage.StorageLocations;
+import core.models.Plane;
+import core.models.storage.StoragePlanes;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
@@ -15,8 +15,8 @@ import org.json.JSONObject;
  *
  * @author Alexander Sanguino
  */
-public class ReadLocation implements JsonReader<Location>{
-    @Override
+public class ReadPlanes implements JsonReader<Plane> {
+   @Override
     public void read(String path) {
         try {
             String content = new String(Files.readAllBytes(Paths.get(path)));
@@ -25,19 +25,19 @@ public class ReadLocation implements JsonReader<Location>{
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 
-                Location loc = new Location(
-                        obj.getString("airportId"),
-                        obj.getString("airportName"),
-                        obj.getString("airportCity"),
-                        obj.getString("airportCountry"),
-                        obj.getDouble("airportLatitude"),
-                        obj.getDouble("airportLongitude")
+                Plane pln = new Plane(
+                        obj.getString("id"),
+                        obj.getString("brand"),
+                        obj.getString("model"),
+                        obj.getInt("maxCapacity"),
+                        obj.getString("airline")
                 );
-                StorageLocations.getInstance().add(loc);
+                StoragePlanes.getInstance().add(pln);
             }
 
         } catch (Exception e) {
-            System.err.println("Error reading locations: " + e.getMessage());
+            System.err.println("Error reading planes: " + e.getMessage());
         }
-    }  
+    }
+    
 }

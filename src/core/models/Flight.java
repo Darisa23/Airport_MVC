@@ -36,8 +36,7 @@ public class Flight {
         this.arrivalLocation = arrivalLocation;
         this.departureDate = departureDate;
         this.hoursDurationArrival = hoursDurationArrival;
-        this.minutesDurationArrival = minutesDurationArrival;
-        
+        this.minutesDurationArrival = minutesDurationArrival;       
         this.plane.addFlight(this);
     }
 
