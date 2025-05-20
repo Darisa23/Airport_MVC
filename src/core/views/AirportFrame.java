@@ -9,7 +9,8 @@ import core.models.Flight;
 import core.models.Plane;
 import core.models.Passenger;
 import com.formdev.flatlaf.FlatDarkLaf;
-import core.models.persistency.ReadPlane;
+import core.models.persistency.*;
+import core.providers.*;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,15 +33,28 @@ public class AirportFrame extends javax.swing.JFrame {
     private ArrayList<Location> locations;
     private ArrayList<Flight> flights;
     private ReadPlane readPlanes;
+    private ReadPassengers readPas;
+    private ReadLocation readLocs;
+    private ReadFlight readFlights;
+    private AirPlaneProvider aiplProv;
+    private LocationProvider locProv;
 
     public AirportFrame() {
         initComponents();
+        //initialize Passengers Array:
+        this.readPas = new ReadPassengers();
+        this.passengers = (ArrayList<Passenger>) readPas.read("json/passengers.json");
+        //initialize LocationProvider & Locations Array 
+        this.readLocs = new ReadLocation();
+        this.locProv = new LocationProvider(readLocs,"json/locations.json"); 
+        this.locations = locProv.getLoadedLocations();
+        //initialize AirplaneProvider & Planes Array   
         this.readPlanes = new ReadPlane();
-        this.passengers = new ArrayList<>();
-        //this.planes = new ArrayList<>();
-        this.planes = (ArrayList<Plane>) readPlanes.read("json/planes.json");
-        this.locations = new ArrayList<>();
-        this.flights = new ArrayList<>();
+        this.aiplProv = new AirPlaneProvider(readPlanes,"json/planes.json"); 
+        this.planes = aiplProv.getLoadedAirplanes();
+        //initialize ReadFlights & Flights Array:
+        this.readFlights = new ReadFlight(aiplProv,locProv);
+        this.flights = (ArrayList<Flight>) readFlights.read("json/flights.json");
 
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
