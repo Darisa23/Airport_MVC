@@ -5,11 +5,10 @@
 package core.models.persistency;
 
 import core.models.Passenger;
+import core.models.storage.StoragePassengers;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,16 +19,13 @@ import org.json.JSONObject;
 public class ReadPassengers implements JsonReader<Passenger> {
 
     @Override
-    public List<Passenger> read(String path) {
-         List<Passenger> list = new ArrayList<>();
-
+    public void read(String path) {
         try {
             String content = new String(Files.readAllBytes(Paths.get(path)));
             JSONArray array = new JSONArray(content);
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
-
                 Passenger p = new Passenger(
                         obj.getLong("id"),
                         obj.getString("firstname"),
@@ -39,15 +35,12 @@ public class ReadPassengers implements JsonReader<Passenger> {
                         obj.getLong("phone"),
                         obj.getString("country")
                 );
-                list.add(p);
+                StoragePassengers.getInstance().add(p);
             }
 
         } catch (Exception e) {
             System.err.println("Error reading passengers: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        return list;
     }
-    
-    
 }

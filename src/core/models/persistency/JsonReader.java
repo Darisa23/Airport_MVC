@@ -12,5 +12,5 @@ import java.util.List;
  * @param <T>
  */
 public interface JsonReader<T> {
-    List<T> read(String path);
+    void read(String path);
 }

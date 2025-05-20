@@ -2,16 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package core.providers;
+package core.models.storage;
 
-import java.util.Optional;
+import java.util.ArrayList;
 
 /**
  *
  * @author Alexander Sanguino
  * @param <T>
- * @param <K>
+ * @param <k>
  */
-public interface Provider<T,K> {
-    T findById(K id);
+public interface Storage<T,k> {
+    boolean add(T type); 
+    boolean delete(); 
+    boolean update(); 
+    T get(k id); 
+    ArrayList<T> getAll();
 }

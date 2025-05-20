@@ -5,11 +5,9 @@
 package core.models.persistency;
 
 import core.models.Plane;
+import core.models.storage.StoragePlanes;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,11 +16,8 @@ import org.json.JSONObject;
  * @author Alexander Sanguino
  */
 public class ReadPlane implements JsonReader<Plane> {
-
-    @Override
-    public List read(String path) {
-       List<Plane> list = new ArrayList<>();
-
+   @Override
+    public void read(String path) {
         try {
             String content = new String(Files.readAllBytes(Paths.get(path)));
             JSONArray array = new JSONArray(content);
@@ -37,14 +32,12 @@ public class ReadPlane implements JsonReader<Plane> {
                         obj.getInt("maxCapacity"),
                         obj.getString("airline")
                 );
-                list.add(pln);
+                StoragePlanes.getInstance().add(pln);
             }
 
         } catch (Exception e) {
             System.err.println("Error reading planes: " + e.getMessage());
         }
-
-        return list;
     }
     
 }

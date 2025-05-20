@@ -10,7 +10,10 @@ import core.models.Plane;
 import core.models.Passenger;
 import com.formdev.flatlaf.FlatDarkLaf;
 import core.models.persistency.*;
-import core.providers.*;
+import core.models.storage.StorageFlights;
+import core.models.storage.StorageLocations;
+import core.models.storage.StoragePassengers;
+import core.models.storage.StoragePlanes;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,30 +35,28 @@ public class AirportFrame extends javax.swing.JFrame {
     private ArrayList<Plane> planes;
     private ArrayList<Location> locations;
     private ArrayList<Flight> flights;
-    private ReadPlane readPlanes;
-    private ReadPassengers readPas;
-    private ReadLocation readLocs;
-    private ReadFlight readFlights;
-    private AirPlaneProvider aiplProv;
-    private LocationProvider locProv;
+    private final ReadPlane readPlanes;
+    private final ReadPassengers readPas;
+    private final ReadLocation readLocs;
+    private final ReadFlight readFlights;
 
     public AirportFrame() {
         initComponents();
-        //initialize Passengers Array:
+        //read jsons:
+        this.readLocs = new ReadLocation(); 
+        readLocs.read("json/locations.json");
+        this.readPlanes = new ReadPlane(); 
+        readPlanes.read("json/planes.json");
         this.readPas = new ReadPassengers();
-        this.passengers = (ArrayList<Passenger>) readPas.read("json/passengers.json");
-        //initialize LocationProvider & Locations Array 
-        this.readLocs = new ReadLocation();
-        this.locProv = new LocationProvider(readLocs,"json/locations.json"); 
-        this.locations = locProv.getLoadedLocations();
-        //initialize AirplaneProvider & Planes Array   
-        this.readPlanes = new ReadPlane();
-        this.aiplProv = new AirPlaneProvider(readPlanes,"json/planes.json"); 
-        this.planes = aiplProv.getLoadedAirplanes();
-        //initialize ReadFlights & Flights Array:
-        this.readFlights = new ReadFlight(aiplProv,locProv);
-        this.flights = (ArrayList<Flight>) readFlights.read("json/flights.json");
-
+        readPas.read("json/passengers.json");
+        this.readFlights = new ReadFlight();
+        readFlights.read("json/flights.json");
+        //initialize Arrays
+        locations = StorageLocations.getInstance().getAll();
+        planes = StoragePlanes.getInstance().getAll();
+        passengers = StoragePassengers.getInstance().getAll();
+        flights = StorageFlights.getInstance().getAll();
+        
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
 
