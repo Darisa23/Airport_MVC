@@ -6,6 +6,7 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.controllers.utils.Validation;
 import core.models.Passenger;
 import core.models.storage.StoragePassengers;
 import java.time.LocalDate;
@@ -15,42 +16,61 @@ import java.util.ArrayList;
  *
  * @author maria
  */
-
-
 public class PassengerController {
 
-    public static Response createPassenger(long id, String firstName, String lastName, LocalDate birthDate, 
-            int countryPhoneCode, long phone, String country) {
+    public static Response registerPassenger(String id, String firstName, String lastName, String year,String month,String day,
+            String countryPhoneCode, String phone, String country) {
+
         
-        try {
-            if (StoragePassengers.getInstance().get(id) != null) {
-                return new Response("Passenger ID already exists", Status.BAD_REQUEST);
+            //Validaciones:
+            //1. No empty fields
+            if (Validation.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
+                return new Response("El nombre completo del pasajero no puede estar vacío.", Status.BAD_REQUEST);
             }
+            // 2. ID Validation
+            if (Validation.isNumericWithDigitRange(id, 1, 15)) {
+                return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
+            }
+            //QUIZAS PROBLEMAS PROQUE ES MEJOR PARSEAR:******************************
+            if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
+                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
+            }
+            // 3. CountryPhoneCode Validation
+            if (Validation.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
+                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
+            }
+            // 4. Phone Validation
+            if (Validation.isNumericWithDigitRange(phone, 1, 11)) {
+                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
+            }
+            // 5. BirthDate Validation
+            
+            /*if (Validation.isValidDate(birthDate,LocalDate.now())) {
+                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
+            }*/
+            /*Passenger passenger = new Passenger(
+                    Long.parseLong(id),
+                    firstName,
+                    lastName,
+                    birthDate,
+                    countryPhoneCode,
+                    phone,
+                    country
+            );*/
 
-            Passenger passenger = new Passenger(
-                id,
-                firstName,
-                lastName,
-                birthDate,
-                countryPhoneCode,
-                phone,
-                country
-            );
+           // StoragePassengers.getInstance().add(passenger);
+           // return new Response("Passenger created successfully", Status.CREATED, passenger);
 
-            StoragePassengers.getInstance().add(passenger);
-            return new Response("Passenger created successfully", Status.CREATED, passenger);
-
-        } catch (Exception e) {
-            return new Response("Error creating passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+            return new Response("Error creating passenger: ", Status.INTERNAL_SERVER_ERROR);
+        
     }
 
-    public static Response updatePassenger(long id, String newFirstName, String newLastName, 
+    public static Response updatePassenger(long id, String newFirstName, String newLastName,
             LocalDate newBirthDate, int newCountryCode, long newPhone, String newCountry) {
-        
+
         try {
             Passenger passenger = StoragePassengers.getInstance().get(id);
-            
+
             if (passenger == null) {
                 return new Response("Passenger not found", Status.NOT_FOUND);
             }

@@ -97,7 +97,6 @@ public class LocationController {
     }
 
     public boolean registerLocation(Location airport) {
-        System.out.println("Se supone que se creó");
         return locationStorage.add(airport);
     }
 }

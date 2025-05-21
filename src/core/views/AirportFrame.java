@@ -61,8 +61,8 @@ public class AirportFrame extends javax.swing.JFrame {
         this.generateHours();
         this.generateMinutes();
         this.blockPanels();
+        
     }
-
     private void blockPanels() {
         //9, 11
         for (int i = 1; i < pestañas.getTabCount(); i++) {
@@ -1432,19 +1432,21 @@ public class AirportFrame extends javax.swing.JFrame {
             pestañas.setEnabledAt(i, tabStates.get(i));
         }
     }
+    JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_adminRadioButtonActionPerformed
 
     private void userRadioButtonRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userRadioButtonRadioButtonActionPerformed
         if (adminRadioButton.isSelected()) {
             adminRadioButton.setSelected(false);
         }
-        Response response = controller.getUserController().setUserRole(UserController.UserRole.USER,pestañas.getTabCount());
+      Response response = controller.getUserController().setUserRole(UserController.UserRole.USER,pestañas.getTabCount());
     if (response.getStatus() == Status.OK) { 
         List<Boolean> tabStates = (List<Boolean>) response.getObject();
         for (int i = 0; i < tabStates.size(); i++) {
             pestañas.setEnabledAt(i, tabStates.get(i));
         }
-    }      
+    } 
+    JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_userRadioButtonRadioButtonActionPerformed
 
     private void RegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterButtonActionPerformed
