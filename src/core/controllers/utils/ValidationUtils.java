@@ -12,9 +12,7 @@ import java.time.format.DateTimeParseException;
  *
  * @author Alexander Sanguino
  */
-//*************************************************************
-//DEBERÍAMOS PASAR CADA VALIDACIÓN A SU PROBIA CLASE == SIII UN UTIL PARA LAS COSAS***************************
-//***************************************************
+
 public class ValidationUtils {
 
     public static boolean anyEmpty(String... fields) {
@@ -40,10 +38,6 @@ public class ValidationUtils {
 
         return clean.matches(regex);
     }
-    
-    //***************************************************
-    // POR EJEMPLO UN DATEUTILS Y SE PONE ESTO: *****************
-    //******************************************************
-    
+
    
 }

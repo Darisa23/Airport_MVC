@@ -55,5 +55,15 @@ public class DateUtils {
             return null;
         }
     }
-   
+    /**
+     * Checks if the given time (hours and minutes) is greater than zero.
+     * @param hours The number of hours.
+     * @param minutes The number of minutes.
+     * @return true if the total time is greater than zero, false otherwise.
+     */
+    public static boolean isTimeGreaterThanZero(int hours, int minutes) {
+        return hours > 0 || minutes > 0;
+    
+}
+
 }
