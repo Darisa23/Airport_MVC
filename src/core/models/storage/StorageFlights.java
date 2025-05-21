@@ -10,6 +10,8 @@ import java.util.ArrayList;
  *
  * @author Alexander Sanguino
  */
+
+//owo
 public class StorageFlights implements Storage<Flight,String>{
     
     private static StorageFlights instance;

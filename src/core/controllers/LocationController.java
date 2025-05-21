@@ -14,11 +14,19 @@ import core.models.storage.StorageLocations;
  * @author Alexander Sanguino
  */
 public class LocationController {
+    
+    private final StorageLocations locationStorage;
 
-    public static Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
+    public LocationController() {
+        this.locationStorage  = StorageLocations.getInstance();
+    }
+    
+    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
+        System.out.println("hola");
         try {
             //Check empty fields
             if (id.trim().isEmpty()) {
+                System.out.println("jij");
                 return new Response("Airport Id can't be empty", Status.BAD_REQUEST);
             }
             if (name.trim().isEmpty()) {
@@ -50,6 +58,7 @@ public class LocationController {
             try {
                 dLatitude = Double.parseDouble(latitude);
             } catch (NumberFormatException ex) {
+                System.out.println("No");
                 return new Response("Airport latitude must be a number.", Status.BAD_REQUEST);
             }
             try {
@@ -67,17 +76,17 @@ public class LocationController {
             }
 
             //Check latitude and longitude decimals
-            String[] decimals = latitude.split(",", 2);
+            /*String[] decimals = latitude.split(",", 2);
             if (decimals[1].length() > 4) {
                 return new Response("Airport latitude must have 4 or less decimals", Status.BAD_REQUEST);
             }
             decimals = longitude.split(",", 2);
             if (decimals[1].length() > 4) {
                 return new Response("Airport longitude must have 4 or less decimals", Status.BAD_REQUEST);
-            }
+            }*/
             //Add to storage
-            if(!addLocation(new Location(id, name, city, country, dLatitude, dLongitude))){
-                 return new Response("There's already an airport with that Id", Status.BAD_REQUEST);
+            if(!registerLocation(new Location(id, name, city, country, dLatitude, dLongitude))){
+                return new Response("There's already an airport with that Id", Status.BAD_REQUEST);
             }
             // All Good :D
             return new Response("Airport created", Status.CREATED);
@@ -87,8 +96,8 @@ public class LocationController {
 
     }
 
-    public static boolean addLocation(Location airport) {
-        StorageLocations locationStorage = StorageLocations.getInstance();
+    public boolean registerLocation(Location airport) {
+        System.out.println("Se supone que se creó");
         return locationStorage.add(airport);
     }
 }

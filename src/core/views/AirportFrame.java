@@ -10,6 +10,9 @@ import core.models.Plane;
 import core.models.Passenger;
 import com.formdev.flatlaf.FlatDarkLaf;
 import core.controllers.MainController;
+import core.controllers.UserController;
+import core.controllers.utils.Response;
+import core.controllers.utils.Status;
 import core.models.persistency.*;
 import core.models.storage.StorageFlights;
 import core.models.storage.StorageLocations;
@@ -19,6 +22,8 @@ import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
@@ -111,12 +116,12 @@ public class AirportFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         panelRound1 = new core.views.PanelRound();
-        panelRound2 = new core.views.PanelRound();
+        panelSuperior = new core.views.PanelRound();
         jButton13 = new javax.swing.JButton();
         pestañas = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        user = new javax.swing.JRadioButton();
-        administrator = new javax.swing.JRadioButton();
+        userRadioButton = new javax.swing.JRadioButton();
+        adminRadioButton = new javax.swing.JRadioButton();
         userSelect = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -256,14 +261,14 @@ public class AirportFrame extends javax.swing.JFrame {
         panelRound1.setRadius(40);
         panelRound1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        panelRound2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        panelSuperior.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
-                panelRound2MouseDragged(evt);
+                panelSuperiorMouseDragged(evt);
             }
         });
-        panelRound2.addMouseListener(new java.awt.event.MouseAdapter() {
+        panelSuperior.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                panelRound2MousePressed(evt);
+                panelSuperiorMousePressed(evt);
             }
         });
 
@@ -278,45 +283,45 @@ public class AirportFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout panelRound2Layout = new javax.swing.GroupLayout(panelRound2);
-        panelRound2.setLayout(panelRound2Layout);
-        panelRound2Layout.setHorizontalGroup(
-            panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRound2Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelSuperiorLayout = new javax.swing.GroupLayout(panelSuperior);
+        panelSuperior.setLayout(panelSuperiorLayout);
+        panelSuperiorLayout.setHorizontalGroup(
+            panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSuperiorLayout.createSequentialGroup()
                 .addContainerGap(1083, Short.MAX_VALUE)
                 .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17))
         );
-        panelRound2Layout.setVerticalGroup(
-            panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRound2Layout.createSequentialGroup()
+        panelSuperiorLayout.setVerticalGroup(
+            panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSuperiorLayout.createSequentialGroup()
                 .addComponent(jButton13)
                 .addGap(0, 12, Short.MAX_VALUE))
         );
 
-        panelRound1.add(panelRound2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1150, -1));
+        panelRound1.add(panelSuperior, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1150, -1));
 
         pestañas.setFont(new java.awt.Font("Yu Gothic UI", 0, 14)); // NOI18N
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        user.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        user.setText("User");
-        user.addActionListener(new java.awt.event.ActionListener() {
+        userRadioButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        userRadioButton.setText("User");
+        userRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                userActionPerformed(evt);
+                userRadioButtonRadioButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(user, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 230, -1, -1));
+        jPanel1.add(userRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 230, -1, -1));
 
-        administrator.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        administrator.setText("Administrator");
-        administrator.addActionListener(new java.awt.event.ActionListener() {
+        adminRadioButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        adminRadioButton.setText("Administrator");
+        adminRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                administratorActionPerformed(evt);
+                adminRadioButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(administrator, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 164, -1, -1));
+        jPanel1.add(adminRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 164, -1, -1));
 
         userSelect.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         userSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select User" }));
@@ -565,7 +570,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
                     .addComponent(AirportLongitude, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(CreateLocationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47))
         );
@@ -795,7 +800,7 @@ public class AirportFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel26)
                                 .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel27)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
                 .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50))
         );
@@ -902,7 +907,7 @@ public class AirportFrame extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(507, 507, 507)
                         .addComponent(jButton1)))
-                .addContainerGap(555, Short.MAX_VALUE))
+                .addContainerGap(547, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -995,7 +1000,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel45)
                     .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
                 .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(85, 85, 85))
         );
@@ -1035,7 +1040,7 @@ public class AirportFrame extends javax.swing.JFrame {
         RefreshMyFlightsButton.setText("Refresh");
         RefreshMyFlightsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RefreshMyFlightsButtonActionPerformed(evt);
+                RefreshMyFlightsButtonButtonActionPerformed(evt);
             }
         });
 
@@ -1057,7 +1062,7 @@ public class AirportFrame extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGap(61, 61, 61)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(RefreshMyFlightsButton)
                 .addContainerGap())
         );
@@ -1115,7 +1120,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(72, Short.MAX_VALUE)
+                .addContainerGap(53, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(RefreshPasengers)
@@ -1234,7 +1239,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(RefreshPlanes)
@@ -1293,7 +1298,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                .addContainerGap(48, Short.MAX_VALUE)
+                .addContainerGap(29, Short.MAX_VALUE)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(jButton6)
@@ -1368,7 +1373,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel48)
                     .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
                 .addComponent(jButton7)
                 .addGap(33, 33, 33))
         );
@@ -1405,46 +1410,45 @@ public class AirportFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void panelRound2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelRound2MousePressed
+    private void panelSuperiorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelSuperiorMousePressed
         x = evt.getX();
         y = evt.getY();
-    }//GEN-LAST:event_panelRound2MousePressed
+    }//GEN-LAST:event_panelSuperiorMousePressed
 
-    private void panelRound2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelRound2MouseDragged
+    private void panelSuperiorMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelSuperiorMouseDragged
         this.setLocation(this.getLocation().x + evt.getX() - x, this.getLocation().y + evt.getY() - y);
-    }//GEN-LAST:event_panelRound2MouseDragged
+    }//GEN-LAST:event_panelSuperiorMouseDragged
 
-    private void administratorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_administratorActionPerformed
-        if (user.isSelected()) {
-            user.setSelected(false);
-            userSelect.setSelectedIndex(0);
-
+    private void adminRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminRadioButtonActionPerformed
+      if (userRadioButton.isSelected()) {
+        userRadioButton.setSelected(false);
+        userSelect.setSelectedIndex(0); 
+    }
+    // Llamar al controlador para obtener los estados de las pestañas
+    Response response = controller.getUserController().setUserRole(UserController.UserRole.ADMINISTRATOR,pestañas.getTabCount());
+    if (response.getStatus() == Status.OK) { // Si la respuesta es exitosa
+        List<Boolean> tabStates = (List<Boolean>) response.getObject();
+        for (int i = 0; i < tabStates.size(); i++) {
+            pestañas.setEnabledAt(i, tabStates.get(i));
         }
-        for (int i = 1; i < pestañas.getTabCount(); i++) {
-                pestañas.setEnabledAt(i, true);
-        }
-        pestañas.setEnabledAt(5, false);
-        pestañas.setEnabledAt(6, false);
-    }//GEN-LAST:event_administratorActionPerformed
+    }
+    }//GEN-LAST:event_adminRadioButtonActionPerformed
 
-    private void userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userActionPerformed
-        if (administrator.isSelected()) {
-            administrator.setSelected(false);
+    private void userRadioButtonRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userRadioButtonRadioButtonActionPerformed
+        if (adminRadioButton.isSelected()) {
+            adminRadioButton.setSelected(false);
         }
-        for (int i = 1; i < pestañas.getTabCount(); i++) {
-
-            pestañas.setEnabledAt(i, false);
-
+        Response response = controller.getUserController().setUserRole(UserController.UserRole.USER,pestañas.getTabCount());
+    if (response.getStatus() == Status.OK) { 
+        List<Boolean> tabStates = (List<Boolean>) response.getObject();
+        for (int i = 0; i < tabStates.size(); i++) {
+            pestañas.setEnabledAt(i, tabStates.get(i));
         }
-        pestañas.setEnabledAt(9, true);
-        pestañas.setEnabledAt(5, true);
-        pestañas.setEnabledAt(6, true);
-        pestañas.setEnabledAt(7, true);
-        pestañas.setEnabledAt(11, true);
-    }//GEN-LAST:event_userActionPerformed
+    }      
+    }//GEN-LAST:event_userRadioButtonRadioButtonActionPerformed
 
     private void RegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterButtonActionPerformed
-        // TODO add your handling code here:
+        // Este es para crear pasajero:
         long id = Long.parseLong(IDpassenger.getText());
         String firstname = firstName.getText();
         String lastname = LastName.getText();
@@ -1452,17 +1456,17 @@ public class AirportFrame extends javax.swing.JFrame {
         int month = Integer.parseInt(MONTH.getItemAt(MONTH.getSelectedIndex()));
         int day = Integer.parseInt(DAY.getItemAt(DAY.getSelectedIndex()));
         int phoneCode = Integer.parseInt(phoneCodeCountry.getText());
-        long phone = Long.parseLong(phoneNumber.getText());
+        //long phone = Long.parseLong(phone.getText());
         String country = Country.getText();
 
         LocalDate birthDate = LocalDate.of(year, month, day);
 
-        this.passengers.add(new Passenger(id, firstname, lastname, birthDate, phoneCode, phone, country));
+        //this.passengers.add(new Passenger(id, firstname, lastname, birthDate, phoneCode, phone, country));
         this.userSelect.addItem("" + id);
     }//GEN-LAST:event_RegisterButtonActionPerformed
 
     private void CreateAirplaneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAirplaneButtonActionPerformed
-        // TODO add your handling code here:
+        // Este es para crear Avión:
         String id = IdAirplane.getText();
         String brand = Brand.getText();
         String model = Model.getText();
@@ -1475,15 +1479,15 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
     private void CreateLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateLocationButtonActionPerformed
-        // TODO add your handling code here:
+        // Para crear Aeropuerto:
         String id = AirPortID_LocationRegistration.getText();
         String name = AirportName.getText();
         String city = AirportCity.getText();
         String country = AirportCountry.getText();
-        double latitude = Double.parseDouble(AirportLatitude.getText());
-        double longitude = Double.parseDouble(AirportLongitude.getText());
+        String latitude = AirportLatitude.getText();
+        String longitude = AirportLongitude.getText();
 
-        this.locations.add(new Location(id, name, city, country, latitude, longitude));
+        this.controller.createNewLocation(id, name, city, country, latitude, longitude);
 
         this.jComboBox2.addItem(id);
         this.jComboBox3.addItem(id);
@@ -1609,7 +1613,7 @@ public class AirportFrame extends javax.swing.JFrame {
         flight.delay(hours, minutes);
     }//GEN-LAST:event_jButton7ActionPerformed
 
-    private void RefreshMyFlightsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonActionPerformed
+    private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
         // TODO add your handling code here:
         long passengerId = Long.parseLong(userSelect.getItemAt(userSelect.getSelectedIndex()));
 
@@ -1626,7 +1630,7 @@ public class AirportFrame extends javax.swing.JFrame {
         for (Flight flight : flights) {
             model.addRow(new Object[]{flight.getId(), flight.getDepartureDate(), flight.calculateArrivalDate()});
         }
-    }//GEN-LAST:event_RefreshMyFlightsButtonActionPerformed
+    }//GEN-LAST:event_RefreshMyFlightsButtonButtonActionPerformed
 
     private void RefreshPasengersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshPasengersActionPerformed
         // TODO add your handling code here:
@@ -1659,7 +1663,7 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
         model.setRowCount(0);
-        for (Location location : this.locations) {
+        for (Location location : StorageLocations.getInstance().getAll()) {
             model.addRow(new Object[]{location.getAirportId(), location.getAirportName(), location.getAirportCity(), location.getAirportCountry()});
         }
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -1720,7 +1724,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JButton RefreshPasengers;
     private javax.swing.JButton RefreshPlanes;
     private javax.swing.JButton RegisterButton;
-    private javax.swing.JRadioButton administrator;
+    private javax.swing.JRadioButton adminRadioButton;
     private javax.swing.JTextField firstName;
     private javax.swing.JTextField flightID;
     private javax.swing.JButton jButton1;
@@ -1816,12 +1820,12 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField27;
     private javax.swing.JTable ownflightsTable;
     private core.views.PanelRound panelRound1;
-    private core.views.PanelRound panelRound2;
     private core.views.PanelRound panelRound3;
+    private core.views.PanelRound panelSuperior;
     private javax.swing.JTabbedPane pestañas;
     private javax.swing.JTextField phoneCodeCountry;
     private javax.swing.JTextField phoneNumber;
-    private javax.swing.JRadioButton user;
+    private javax.swing.JRadioButton userRadioButton;
     private javax.swing.JComboBox<String> userSelect;
     private javax.swing.JTextField yearBirthdate;
     // End of variables declaration//GEN-END:variables

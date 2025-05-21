@@ -36,6 +36,7 @@ public class StorageLocations implements Storage<Location,String> {
             }
          //Lo agregamos si no está
         this.airports.add(location);
+        System.out.println("En efecto lo hizo");
         return true;
     }
 
