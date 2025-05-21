@@ -13,6 +13,7 @@ import core.controllers.MainController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.controllers.utils.Validation;
 import core.models.persistency.*;
 import core.models.storage.StorageFlights;
 import core.models.storage.StorageLocations;
@@ -1451,19 +1452,18 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void RegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterButtonActionPerformed
         // Este es para crear pasajero:
-        long id = Long.parseLong(IDpassenger.getText());
+        String id = IDpassenger.getText();
         String firstname = firstName.getText();
         String lastname = LastName.getText();
-        int year = Integer.parseInt(yearBirthdate.getText());
-        int month = Integer.parseInt(MONTH.getItemAt(MONTH.getSelectedIndex()));
-        int day = Integer.parseInt(DAY.getItemAt(DAY.getSelectedIndex()));
-        int phoneCode = Integer.parseInt(phoneCodeCountry.getText());
-        //long phone = Long.parseLong(phone.getText());
+        String year = yearBirthdate.getText();
+        String month = (String) MONTH.getSelectedItem();
+        String day = (String) DAY.getSelectedItem();
+        String phoneCode = phoneCodeCountry.getText();
+        String phone = phoneNumber.getText();
         String country = Country.getText();
-
-        LocalDate birthDate = LocalDate.of(year, month, day);
-
-        //this.passengers.add(new Passenger(id, firstname, lastname, birthDate, phoneCode, phone, country));
+        // Llama al controlador para registrar el pasajero
+        Response response = controller.getPassengerController().registerPassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);        
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
         this.userSelect.addItem("" + id);
     }//GEN-LAST:event_RegisterButtonActionPerformed
 

@@ -12,10 +12,12 @@ public class MainController {
     private final JsonReaderController readerController;
     private final LocationController locContr;
     private UserController usContr;
+    private PassengerController passContr;
     public MainController() {
         this.readerController = new JsonReaderController();
         this.locContr = new LocationController();
         this.usContr = new UserController();
+        this.passContr = new PassengerController();
     }
 
     public void initializeData() {
@@ -30,6 +32,10 @@ public class MainController {
 
     public UserController getUserController() {
         return usContr;
+    }
+
+    public PassengerController getPassengerController() {
+        return passContr;
     }
     
 }

@@ -18,17 +18,17 @@ import java.util.ArrayList;
  */
 public class PassengerController {
 
-    public static Response registerPassenger(String id, String firstName, String lastName, String year,String month,String day,
+    public Response registerPassenger(String id, String firstName, String lastName, String year,String month,String day,
             String countryPhoneCode, String phone, String country) {
 
         
             //Validaciones:
             //1. No empty fields
             if (Validation.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
-                return new Response("El nombre completo del pasajero no puede estar vacío.", Status.BAD_REQUEST);
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             // 2. ID Validation
-            if (Validation.isNumericWithDigitRange(id, 1, 15)) {
+            if (!Validation.isNumericWithDigitRange(id, 1, 15)) {
                 return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
             }
             //QUIZAS PROBLEMAS PROQUE ES MEJOR PARSEAR:******************************
@@ -36,32 +36,31 @@ public class PassengerController {
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
             // 3. CountryPhoneCode Validation
-            if (Validation.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
+            if (!Validation.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
                 return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
             }
             // 4. Phone Validation
-            if (Validation.isNumericWithDigitRange(phone, 1, 11)) {
-                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
+            if (!Validation.isNumericWithDigitRange(phone, 1, 11)) {
+                return new Response("Invalid passenger Phone. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
             }
             // 5. BirthDate Validation
-            
-            /*if (Validation.isValidDate(birthDate,LocalDate.now())) {
-                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
-            }*/
-            /*Passenger passenger = new Passenger(
+            if (!Validation.isValidDate(year, month, day)){
+                return new Response("Invalid BirthDate.", Status.BAD_REQUEST);
+            }
+            Passenger passenger = new Passenger(
                     Long.parseLong(id),
                     firstName,
                     lastName,
-                    birthDate,
-                    countryPhoneCode,
-                    phone,
+                    Validation.buildDate(year, month, day),
+                    Integer.parseInt(countryPhoneCode),
+                    Long.parseLong(phone),
                     country
-            );*/
+            );
 
-           // StoragePassengers.getInstance().add(passenger);
-           // return new Response("Passenger created successfully", Status.CREATED, passenger);
+           StoragePassengers.getInstance().add(passenger);
+           return new Response("Passenger created successfully", Status.CREATED, passenger);
 
-            return new Response("Error creating passenger: ", Status.INTERNAL_SERVER_ERROR);
+            //return new Response("Error creating passenger: ", Status.INTERNAL_SERVER_ERROR);
         
     }
 
