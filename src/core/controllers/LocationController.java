@@ -22,7 +22,6 @@ public class LocationController {
     }
     
     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
-        System.out.println("hola");
         try {
             //Check empty fields
             if (id.trim().isEmpty()) {
@@ -97,7 +96,6 @@ public class LocationController {
     }
 
     public boolean registerLocation(Location airport) {
-        System.out.println("Se supone que se creó");
         return locationStorage.add(airport);
     }
 }

@@ -60,4 +60,20 @@ public class Plane {
         return flights.size();
     }
     
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setAirline(String airline) {
+        this.airline = airline;
+    }
+
+    public void setFlights(ArrayList<Flight> flights) {
+        this.flights = flights;
+    }
+    
 }

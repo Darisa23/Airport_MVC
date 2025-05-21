@@ -40,7 +40,7 @@ public class ReadFlights implements JsonReader<Flight> {
                 arrivalLocation = StorageLocations.getInstance().get(arrLoc);
                 scaleLocation = StorageLocations.getInstance().get(scaleLoc);
                 if (airplane == null){
-                    System.err.println("Error: Airplane con ID " + airplane + " no encontrado para el vuelo " + obj.getString("id"));
+                    System.err.println("Error: Airplane with ID " + airplane + " not found for flight " + obj.getString("id"));
                 }else{
                     Flight fl;
                     if(scaleLocation != null){        

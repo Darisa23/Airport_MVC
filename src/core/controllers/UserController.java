@@ -47,6 +47,6 @@ public class UserController {
             if (11 < totalTabs) tabStates.set(7, true); // Show my Flights
         }
 
-        return new Response("Estados de pestaña actualizados.", Status.OK, tabStates); 
+        return new Response("Current tab states updated.", Status.OK, tabStates); 
     }
 }
