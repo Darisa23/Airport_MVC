@@ -6,7 +6,7 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.Validation;
+import core.controllers.utils.ValidationUtils;
 import core.models.Plane;
 import core.models.storage.StoragePlanes;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class PlaneController {
         try {
             // Validaciones
             //1. No empty fields
-            if (Validation.anyEmpty(id, brand,model,maxCapacity, airline)) {
+            if (ValidationUtils.anyEmpty(id, brand,model,maxCapacity, airline)) {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             //2.  ID Validation
