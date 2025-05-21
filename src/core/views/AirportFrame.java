@@ -43,6 +43,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private ArrayList<Location> locations;
     private ArrayList<Flight> flights;
     private final MainController controller;
+
     public AirportFrame() {
         initComponents();
         //read jsons:
@@ -53,7 +54,7 @@ public class AirportFrame extends javax.swing.JFrame {
         planes = StoragePlanes.getInstance().getAll();
         passengers = StoragePassengers.getInstance().getAll();
         flights = StorageFlights.getInstance().getAll();
-        
+
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
 
@@ -62,8 +63,9 @@ public class AirportFrame extends javax.swing.JFrame {
         this.generateHours();
         this.generateMinutes();
         this.blockPanels();
-        
+
     }
+
     private void blockPanels() {
         //9, 11
         for (int i = 1; i < pestañas.getTabCount(); i++) {
@@ -144,7 +146,7 @@ public class AirportFrame extends javax.swing.JFrame {
         firstName = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         DAY = new javax.swing.JComboBox<>();
-        RegisterButton = new javax.swing.JButton();
+        RegisterPassengerButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         IdAirplane = new javax.swing.JTextField();
@@ -406,14 +408,14 @@ public class AirportFrame extends javax.swing.JFrame {
         DAY.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Day" }));
         jPanel2.add(DAY, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 280, -1, -1));
 
-        RegisterButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        RegisterButton.setText("Register");
-        RegisterButton.addActionListener(new java.awt.event.ActionListener() {
+        RegisterPassengerButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        RegisterPassengerButton.setText("Register");
+        RegisterPassengerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RegisterButtonActionPerformed(evt);
+                RegisterPassengerButtonActionPerformed(evt);
             }
         });
-        jPanel2.add(RegisterButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 480, -1, -1));
+        jPanel2.add(RegisterPassengerButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 480, -1, -1));
 
         pestañas.addTab("Passenger registration", jPanel2);
 
@@ -1421,36 +1423,36 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_panelSuperiorMouseDragged
 
     private void adminRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminRadioButtonActionPerformed
-      if (userRadioButton.isSelected()) {
-        userRadioButton.setSelected(false);
-        userSelect.setSelectedIndex(0); 
-    }
-    // Llamar al controlador para obtener los estados de las pestañas
-    Response response = controller.getUserController().setUserRole(UserController.UserRole.ADMINISTRATOR,pestañas.getTabCount());
-    if (response.getStatus() == Status.OK) { // Si la respuesta es exitosa
-        List<Boolean> tabStates = (List<Boolean>) response.getObject();
-        for (int i = 0; i < tabStates.size(); i++) {
-            pestañas.setEnabledAt(i, tabStates.get(i));
+        if (userRadioButton.isSelected()) {
+            userRadioButton.setSelected(false);
+            userSelect.setSelectedIndex(0);
         }
-    }
-    JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
+        // Llamar al controlador para obtener los estados de las pestañas
+        Response response = controller.getUserController().setUserRole(UserController.UserRole.ADMINISTRATOR, pestañas.getTabCount());
+        if (response.getStatus() == Status.OK) { // Si la respuesta es exitosa
+            List<Boolean> tabStates = (List<Boolean>) response.getObject();
+            for (int i = 0; i < tabStates.size(); i++) {
+                pestañas.setEnabledAt(i, tabStates.get(i));
+            }
+        }
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_adminRadioButtonActionPerformed
 
     private void userRadioButtonRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userRadioButtonRadioButtonActionPerformed
         if (adminRadioButton.isSelected()) {
             adminRadioButton.setSelected(false);
         }
-      Response response = controller.getUserController().setUserRole(UserController.UserRole.USER,pestañas.getTabCount());
-    if (response.getStatus() == Status.OK) { 
-        List<Boolean> tabStates = (List<Boolean>) response.getObject();
-        for (int i = 0; i < tabStates.size(); i++) {
-            pestañas.setEnabledAt(i, tabStates.get(i));
+        Response response = controller.getUserController().setUserRole(UserController.UserRole.USER, pestañas.getTabCount());
+        if (response.getStatus() == Status.OK) {
+            List<Boolean> tabStates = (List<Boolean>) response.getObject();
+            for (int i = 0; i < tabStates.size(); i++) {
+                pestañas.setEnabledAt(i, tabStates.get(i));
+            }
         }
-    } 
-    JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Rol Cambiado", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_userRadioButtonRadioButtonActionPerformed
 
-    private void RegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterButtonActionPerformed
+    private void RegisterPassengerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterPassengerButtonActionPerformed
         // Este es para crear pasajero:
         String id = IDpassenger.getText();
         String firstname = firstName.getText();
@@ -1462,22 +1464,24 @@ public class AirportFrame extends javax.swing.JFrame {
         String phone = phoneNumber.getText();
         String country = Country.getText();
         // Llama al controlador para registrar el pasajero
-        Response response = controller.getPassengerController().registerPassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);        
+        Response response = controller.getPassengerController().registerPassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
-        this.userSelect.addItem("" + id);
-    }//GEN-LAST:event_RegisterButtonActionPerformed
+        if (response.getStatus() == Status.CREATED)
+            this.userSelect.addItem("" + id);
+    }//GEN-LAST:event_RegisterPassengerButtonActionPerformed
 
     private void CreateAirplaneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAirplaneButtonActionPerformed
         // Este es para crear Avión:
         String id = IdAirplane.getText();
         String brand = Brand.getText();
         String model = Model.getText();
-        int maxCapacity = Integer.parseInt(MaxCapacity.getText());
+        String maxCapacity = MaxCapacity.getText();
         String airline = Airline.getText();
-
-        this.planes.add(new Plane(id, brand, model, maxCapacity, airline));
-
-        this.PlaneSelector.addItem(id);
+        // Llama al controlador para registrar el avión
+        Response response = controller.getPlaneController().createPlane(id, brand, model, maxCapacity, airline);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
+        if (response.getStatus() == Status.CREATED)
+            this.PlaneSelector.addItem(id);
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
     private void CreateLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateLocationButtonActionPerformed
@@ -1677,11 +1681,10 @@ public class AirportFrame extends javax.swing.JFrame {
     private void userSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userSelectActionPerformed
         try {
             String id = userSelect.getSelectedItem().toString();
-            if (! id.equals(userSelect.getItemAt(0))) {
+            if (!id.equals(userSelect.getItemAt(0))) {
                 IDPassengerUpdate.setText(id);
                 flightID.setText(id);
-            }
-            else{
+            } else {
                 IDPassengerUpdate.setText("");
                 flightID.setText("");
             }
@@ -1743,7 +1746,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JButton RefreshMyFlightsButton;
     private javax.swing.JButton RefreshPasengersTable;
     private javax.swing.JButton RefreshPlanesTable;
-    private javax.swing.JButton RegisterButton;
+    private javax.swing.JButton RegisterPassengerButton;
     private javax.swing.JComboBox<String> ScaleLocationSelector;
     private javax.swing.JComboBox<String> SelectHour;
     private javax.swing.JComboBox<String> SelectID;

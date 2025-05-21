@@ -13,17 +13,21 @@ public class MainController {
     private final LocationController locContr;
     private UserController usContr;
     private PassengerController passContr;
+    private PlaneController plnContr;
     public MainController() {
         this.readerController = new JsonReaderController();
         this.locContr = new LocationController();
         this.usContr = new UserController();
         this.passContr = new PassengerController();
+        this.plnContr = new PlaneController();
     }
 
     public void initializeData() {
         readerController.loadAll();
     }
+    //********************************************
     //CAMBIAR ESTO PORQUE DEBE RETORNAR ES EL CONTROLLER QUE PIDA Y SE EJECUTA EL MÉTODO DESDE ÉL:
+    //***********************************************
     public void createNewLocation(String id, String name, String city, String country, String latitude, String longitude){
         locContr.createAirport(id, name, city, country, latitude, longitude);
     }
@@ -35,6 +39,10 @@ public class MainController {
 
     public PassengerController getPassengerController() {
         return passContr;
+    }
+
+    public PlaneController getPlaneController() {
+        return plnContr;
     }
     
 }

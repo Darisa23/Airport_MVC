@@ -19,9 +19,8 @@ import java.util.ArrayList;
 public class PassengerController {
 
     public Response registerPassenger(String id, String firstName, String lastName, String year,String month,String day,
-            String countryPhoneCode, String phone, String country) {
-
-        
+            String countryPhoneCode, String phone, String country) {   
+        try {
             //Validaciones:
             //1. No empty fields
             if (Validation.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
@@ -59,11 +58,11 @@ public class PassengerController {
 
            StoragePassengers.getInstance().add(passenger);
            return new Response("Passenger created successfully", Status.CREATED, passenger);
-
-            //return new Response("Error creating passenger: ", Status.INTERNAL_SERVER_ERROR);
-        
+           } catch (Exception e) {
+            return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
     }
-
+//ESTOS REVISAR Y ADECUAR: *******************************************************************
     public static Response updatePassenger(long id, String newFirstName, String newLastName,
             LocalDate newBirthDate, int newCountryCode, long newPhone, String newCountry) {
 

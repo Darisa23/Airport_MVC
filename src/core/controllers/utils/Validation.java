@@ -40,8 +40,11 @@ public class Validation {
 
         return clean.matches(regex);
     }
-
+    
+    //***************************************************
     // POR EJEMPLO UN DATEUTILS Y SE PONE ESTO: *****************
+    //******************************************************
+    
     public static boolean isValidDate(String yearStr, String monthStr, String dayStr) {
         try {
             int year = Integer.parseInt(yearStr);
