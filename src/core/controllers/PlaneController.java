@@ -38,7 +38,7 @@ public class PlaneController {
                 return new Response("Invalid plane ID format. Must match XXYYYYY (e.g., AB12345)", Status.BAD_REQUEST);
             }  
             if (StoragePlanes.getInstance().get(id) != null) {
-                return new Response("Plane ID already exists", Status.BAD_REQUEST);
+                return new Response("There is already an airplane with that ID", Status.BAD_REQUEST);
             }
             int mxCap = Integer.parseInt(maxCapacity);
             if (mxCap<= 0) {

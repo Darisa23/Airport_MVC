@@ -40,7 +40,24 @@ public class Validation {
 
         return clean.matches(regex);
     }
-    
+    public static boolean validNum(double minVal, double maxVal, String val, int cntD) {
+    try {
+        double numero = Double.parseDouble(val);
+
+        if (minVal > maxVal) return false;
+        if (numero < minVal || numero > maxVal) return false;
+
+        // Verificar decimales
+        if (val.contains(".")) {
+            String[] partes = val.split("\\.");
+            if (partes[1].length() > cntD) return false;
+        }
+
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
+    }
     //***************************************************
     // POR EJEMPLO UN DATEUTILS Y SE PONE ESTO: *****************
     //******************************************************

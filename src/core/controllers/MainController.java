@@ -28,11 +28,9 @@ public class MainController {
     //********************************************
     //CAMBIAR ESTO PORQUE DEBE RETORNAR ES EL CONTROLLER QUE PIDA Y SE EJECUTA EL MÉTODO DESDE ÉL:
     //***********************************************
-    public void createNewLocation(String id, String name, String city, String country, String latitude, String longitude){
-        locContr.createAirport(id, name, city, country, latitude, longitude);
-    }
+    
     //GETERS DE LOS CONTROLADORES:
-
+    
     public UserController getUserController() {
         return usContr;
     }
@@ -43,6 +41,10 @@ public class MainController {
 
     public PlaneController getPlaneController() {
         return plnContr;
+    }
+
+    public LocationController getLocationController() {
+        return locContr;
     }
     
 }

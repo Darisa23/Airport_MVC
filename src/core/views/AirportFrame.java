@@ -202,7 +202,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jLabel35 = new javax.swing.JLabel();
         MONTH4 = new javax.swing.JComboBox<>();
         DAY4 = new javax.swing.JComboBox<>();
-        jButton11 = new javax.swing.JButton();
+        createFlightButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel36 = new javax.swing.JLabel();
         IDPassengerUpdate = new javax.swing.JTextField();
@@ -662,11 +662,11 @@ public class AirportFrame extends javax.swing.JFrame {
         DAY4.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         DAY4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Minute" }));
 
-        jButton11.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton11.setText("Create");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        createFlightButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        createFlightButton.setText("Create");
+        createFlightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                createFlightButtonActionPerformed(evt);
             }
         });
 
@@ -752,7 +752,7 @@ public class AirportFrame extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(createFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(530, 530, 530))
         );
         jPanel4Layout.setVerticalGroup(
@@ -804,7 +804,7 @@ public class AirportFrame extends javax.swing.JFrame {
                                 .addComponent(ScaleLocationSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel27)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(createFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50))
         );
 
@@ -1492,15 +1492,17 @@ public class AirportFrame extends javax.swing.JFrame {
         String country = AirportCountry.getText();
         String latitude = AirportLatitude.getText();
         String longitude = AirportLongitude.getText();
-
-        this.controller.createNewLocation(id, name, city, country, latitude, longitude);
-
-        this.DepartureLocationSelector.addItem(id);
-        this.ArrivalLocationSelector.addItem(id);
-        this.ScaleLocationSelector.addItem(id);
+        // Llama al controlador para registrar el aeropuerto
+        Response response = controller.getLocationController().createAirport(id, name, city, country, latitude, longitude);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Airport Register", JOptionPane.INFORMATION_MESSAGE);
+        if (response.getStatus() == Status.CREATED) {
+            this.DepartureLocationSelector.addItem(id);
+            this.ArrivalLocationSelector.addItem(id);
+            this.ScaleLocationSelector.addItem(id);
+        }
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
         // TODO add your handling code here:
         String id = IDFlight.getText();
         String planeId = PlaneSelector.getItemAt(PlaneSelector.getSelectedIndex());
@@ -1548,7 +1550,7 @@ public class AirportFrame extends javax.swing.JFrame {
         }
 
         this.FlightSelector.addItem(id);
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_createFlightButtonActionPerformed
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
         // TODO add your handling code here:
@@ -1753,9 +1755,9 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> SelectMinute;
     private javax.swing.JButton UpdateButton;
     private javax.swing.JRadioButton adminRadioButton;
+    private javax.swing.JButton createFlightButton;
     private javax.swing.JTextField firstName;
     private javax.swing.JTextField flightID;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton13;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
