@@ -4,9 +4,10 @@
  */
 package core.controllers;
 
+import core.controllers.utils.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.Validation;
+import core.controllers.utils.ValidationUtils;
 import core.models.Passenger;
 import core.models.storage.StoragePassengers;
 import java.time.LocalDate;
@@ -23,11 +24,11 @@ public class PassengerController {
         try {
             //Validaciones:
             //1. No empty fields
-            if (Validation.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
+            if (ValidationUtils.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             // 2. ID Validation
-            if (!Validation.isNumericWithDigitRange(id, 1, 15)) {
+            if (!ValidationUtils.isNumericWithDigitRange(id, 1, 15)) {
                 return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
             }
             //QUIZAS PROBLEMAS PROQUE ES MEJOR PARSEAR:******************************
@@ -35,22 +36,22 @@ public class PassengerController {
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
             // 3. CountryPhoneCode Validation
-            if (!Validation.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
+            if (!ValidationUtils.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
                 return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
             }
             // 4. Phone Validation
-            if (!Validation.isNumericWithDigitRange(phone, 1, 11)) {
+            if (!ValidationUtils.isNumericWithDigitRange(phone, 1, 11)) {
                 return new Response("Invalid passenger Phone. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
             }
             // 5. BirthDate Validation
-            if (!Validation.isValidDate(year, month, day)){
+            if (!DateUtils.isValidDate(year, month, day)){
                 return new Response("Invalid BirthDate.", Status.BAD_REQUEST);
             }
             Passenger passenger = new Passenger(
                     Long.parseLong(id),
                     firstName,
                     lastName,
-                    Validation.buildDate(year, month, day),
+                    DateUtils.buildDate(year, month, day),
                     Integer.parseInt(countryPhoneCode),
                     Long.parseLong(phone),
                     country
