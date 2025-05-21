@@ -26,7 +26,6 @@ public class MainController {
     //CAMBIAR ESTO PORQUE DEBE RETORNAR ES EL CONTROLLER QUE PIDA Y SE EJECUTA EL MÉTODO DESDE ÉL:
     public void createNewLocation(String id, String name, String city, String country, String latitude, String longitude){
         locContr.createAirport(id, name, city, country, latitude, longitude);
-        System.out.println("vino paca");
     }
     //GETERS DE LOS CONTROLADORES:
 
