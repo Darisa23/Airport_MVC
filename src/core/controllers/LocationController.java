@@ -6,6 +6,7 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.controllers.utils.validators.LocationValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
 import core.models.Passenger;
@@ -29,35 +30,21 @@ public class LocationController {
     
     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
         try {
-            //1. No empty fields
-            if (ValidationUtils.anyEmpty(id, name, city, country,latitude,longitude)) {
-                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-            }
-            //2. ID Validation
-            if (!id.matches("[A-Z]{3}")) {
-                return new Response("Airport Id must be 3 Uppercase letters", Status.BAD_REQUEST);
-            }
-            if (StorageLocations.getInstance().get(id) != null) {
-                return new Response("There is already an airport with that ID.", Status.BAD_REQUEST);
-            }
-            //3. Check latitude and longitude
-            if (!ValidationUtils.validNum(-90, 90, latitude, 4)){
-                return new Response("Airport latitude must be a number between -90 and 90.", Status.BAD_REQUEST);
-            }
-            if (!ValidationUtils.validNum(-180, 180, longitude, 4)) {
-                return new Response("Airport longitude must be a number between -180 and 180.", Status.BAD_REQUEST);
+            //Validaciones:
+            Response Invalid = LocationValidator.INSTANCE.isValid(id,name,city,country,latitude,longitude);
+            if (Invalid.getStatus()!=Status.OK){
+                return Invalid;
             }
             //Add to storage
             Location location = new Location(id, name, city, country, Double.parseDouble(latitude), Double.parseDouble(longitude));
-            StorageLocations.getInstance().add(location);
+            addLocation(location);
             // All Good :D
             return new Response("Airport created", Status.CREATED);
         } catch (Exception e) {
             return new Response("Internal Server Error", Status.INTERNAL_SERVER_ERROR);
         }
 
-    }
-    
+    }   
     public static Response getAirport(String id) {
         try {
             Location passenger = StorageLocations.getInstance().get(id);

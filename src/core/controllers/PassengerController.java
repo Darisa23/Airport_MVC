@@ -26,12 +26,12 @@ import java.util.Comparator;
  */
 public class PassengerController {
 
-    public Response registerPassenger(String id, String firstName, String lastName, String year,String month,String day,
-            String countryPhoneCode, String phone, String country) {   
+    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
+            String countryPhoneCode, String phone, String country) {
         try {
             //Validaciones:
-            Response Invalid = PassengerValidator.INSTANCE.isValid(id,firstName,lastName,year,month,day,countryPhoneCode,phone,country);
-            if (Invalid.getStatus()!=Status.OK){
+            Response Invalid = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
+            if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
             Passenger passenger = new Passenger(
@@ -44,20 +44,19 @@ public class PassengerController {
                     country
             );
 
-           StoragePassengers.getInstance().add(passenger);
-           return new Response("Passenger created successfully", Status.CREATED, passenger);
-           } catch (Exception e) {
+            addPassenger(passenger);
+            return new Response("Passenger created successfully", Status.CREATED, passenger);
+        } catch (Exception e) {
             return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
     //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
-        public Response getPassenger(String id) {
+    public Response getPassenger(String id) {
         try {
             long nid = Long.parseLong(id);
             Passenger passenger = StoragePassengers.getInstance().get(nid);
-            if (passenger== null) {
+            if (passenger == null) {
                 return new Response("Passenger not found", Status.NOT_FOUND);
             }
             return new Response("Passenger retrieved successfully", Status.OK, passenger);
@@ -77,21 +76,34 @@ public class PassengerController {
             return new Response("Error retrieving passengers list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public static Response addPassenger(Passenger passenger) {
+        try {
+            boolean added = StoragePassengers.getInstance().add(passenger);
+            if (!added) {
+                return new Response("This passenger already exists", Status.BAD_REQUEST);
+            }
+            return new Response("passenger added successfully", Status.OK);
+        } catch (Exception e) {
+            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 //ESTOS REVISAR Y ADECUAR: *******************************************************************
     public Response updatePassenger(String id, String newFirstName, String newLastName,
-            String newYear, String newMonth,String newDay, String newCountryCode, String newPhone, String newCountry) {
+            String newYear, String newMonth, String newDay, String newCountryCode, String newPhone, String newCountry) {
 
         try {
-            
+
             Response passengerRes = getPassenger(id);
 
-            if (passengerRes.getStatus()==Status.NOT_FOUND) {
+            if (passengerRes.getStatus() == Status.NOT_FOUND) {
                 return passengerRes;
             }
             Passenger passenger = (Passenger) passengerRes.getObject();
-            Response Invalid = PassengerValidator.INSTANCE.isValid(id,newFirstName,newLastName,newYear,newMonth,
-                    newDay,newCountryCode,newPhone,newCountry);
-            if (Invalid.getStatus()!=Status.OK){
+            Response Invalid = PassengerValidator.INSTANCE.isValid(id, newFirstName, newLastName, newYear, newMonth,
+                    newDay, newCountryCode, newPhone, newCountry);
+            if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
             passenger.setFirstname(newFirstName);
@@ -123,19 +135,5 @@ public class PassengerController {
             return new Response("Error adding to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-    
-            public static Response addPassenger(Passenger passenger) {
-        try {
-            boolean added = StoragePassengers.getInstance().add(passenger);
-            if (!added) {
-                return new Response("This passenger already exists", Status.BAD_REQUEST);
-            }
-            return new Response("passenger added successfully", Status.OK);
-        } catch (Exception e) {
-            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
 
-    
-    
 }
