@@ -8,8 +8,10 @@ import core.controllers.utils.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.ValidationUtils;
+import core.models.Flight;
 import core.models.Passenger;
 import core.models.Plane;
+import core.models.storage.StorageFlights;
 import core.models.storage.StoragePassengers;
 import core.models.storage.StoragePlanes;
 import java.time.LocalDate;
@@ -131,6 +133,18 @@ public class PassengerController {
 
         } catch (Exception e) {
             return new Response("Error adding to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+            public static Response addPassenger(Passenger passenger) {
+        try {
+            boolean added = StoragePassengers.getInstance().add(passenger);
+            if (!added) {
+                return new Response("This passenger already exists", Status.BAD_REQUEST);
+            }
+            return new Response("passenger added successfully", Status.OK);
+        } catch (Exception e) {
+            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 

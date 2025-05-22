@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
-public class Plane {
+public class Plane implements Cloneable {
     
     private final String id;
     private String brand;
@@ -76,4 +76,6 @@ public class Plane {
         this.flights = flights;
     }
     
-}
+   
+    }
+

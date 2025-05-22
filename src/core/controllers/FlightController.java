@@ -117,7 +117,7 @@ public class FlightController {
                         minutesDurArr);
             }
             // 12. Add flight to storage
-            StorageFlights.getInstance().add(flight);
+            addFlight(flight);
             return new Response("Flight created successfully", Status.CREATED, flight);
 
         } catch (Exception e) {
@@ -144,6 +144,17 @@ public class FlightController {
             return new Response("Flights retrieved successfully", Status.OK, flights);
         } catch (Exception e) {
             return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+        public static Response addFlight(Flight flight) {
+        try {
+            boolean added = StorageFlights.getInstance().add(flight);
+            if (!added) {
+                return new Response("This flight already exists", Status.BAD_REQUEST);
+            }
+            return new Response("Flight added successfully", Status.OK);
+        } catch (Exception e) {
+            return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 }
