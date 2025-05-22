@@ -81,4 +81,16 @@ public class LocationController {
             return new Response("Error retrieving airports list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
 }
+    public static Response addLocation(Location location) {
+        try {
+            boolean added = StorageLocations.getInstance().add(location);
+            if (!added) {
+                return new Response("This location already exists", Status.BAD_REQUEST);
+            }
+            return new Response("Location added successfully", Status.OK);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving location: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

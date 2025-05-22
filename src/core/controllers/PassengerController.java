@@ -71,10 +71,11 @@ public class PassengerController {
     }
     
     
-    
-        public Response getPassenger(Long id) {
+    //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
+        public Response getPassenger(String id) {
         try {
-            Passenger passenger = StoragePassengers.getInstance().get(id);
+            long nid = Long.parseLong(id);
+            Passenger passenger = StoragePassengers.getInstance().get(nid);
             if (passenger== null) {
                 return new Response("Passenger not found", Status.NOT_FOUND);
             }
@@ -96,16 +97,18 @@ public class PassengerController {
         }
     }
 //ESTOS REVISAR Y ADECUAR: *******************************************************************
-    public static Response updatePassenger(long id, String newFirstName, String newLastName,
-            LocalDate newBirthDate, int newCountryCode, long newPhone, String newCountry) {
+    public Response updatePassenger(String id, String newFirstName, String newLastName,
+            String newBirthDate, String newCountryCode, String newPhone, String newCountry) {
 
         try {
-            Passenger passenger = StoragePassengers.getInstance().get(id);
+            
+            Response passengerRes = getPassenger(id);
 
-            if (passenger == null) {
-                return new Response("Passenger not found", Status.NOT_FOUND);
+            if (passengerRes.getStatus()==Status.NOT_FOUND) {
+                return passengerRes;
             }
-
+            Passenger passenger = (Passenger) passengerRes.getObject();
+            
             passenger.setFirstname(newFirstName);
             passenger.setLastname(newLastName);
             passenger.setBirthDate(newBirthDate);
