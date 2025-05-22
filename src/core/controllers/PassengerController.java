@@ -44,7 +44,7 @@ public class PassengerController {
                 return new Response("Invalid passenger Phone. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
             }
             // 5. BirthDate Validation
-            if (!DateUtils.isValidDate(year, month, day)){
+            if (!DateUtils.isValidDate(year, month, day,true)){
                 return new Response("Invalid BirthDate.", Status.BAD_REQUEST);
             }
             Passenger passenger = new Passenger(

@@ -56,4 +56,9 @@ public class ValidationUtils {
         return false;
     }
     }
+    public static boolean validId(String input, int letras, int digitos) {
+    if (input == null) return false;
+    String regex = "^" + "[A-Z]{" + letras + "}" + "\\d{" + digitos + "}$";
+    return input.matches(regex);
+}
 }

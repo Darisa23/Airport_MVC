@@ -25,10 +25,6 @@ public class MainController {
     public void initializeData() {
         readerController.loadAll();
     }
-    //********************************************
-    //CAMBIAR ESTO PORQUE DEBE RETORNAR ES EL CONTROLLER QUE PIDA Y SE EJECUTA EL MÉTODO DESDE ÉL:
-    //***********************************************
-    
     //GETERS DE LOS CONTROLADORES:
     
     public UserController getUserController() {
