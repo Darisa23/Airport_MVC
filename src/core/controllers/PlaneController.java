@@ -6,7 +6,7 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.ValidationUtils;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Plane;
 import core.models.storage.StoragePlanes;
 import java.util.ArrayList;

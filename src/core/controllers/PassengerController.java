@@ -4,10 +4,11 @@
  */
 package core.controllers;
 
-import core.controllers.utils.DateUtils;
+import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.ValidationUtils;
+import core.controllers.utils.validators.PassengerValidator;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Passenger;
 import core.models.Plane;
@@ -29,29 +30,9 @@ public class PassengerController {
             String countryPhoneCode, String phone, String country) {   
         try {
             //Validaciones:
-            //1. No empty fields
-            if (ValidationUtils.anyEmpty(id, firstName, lastName, year,month,day, countryPhoneCode, phone, country)) {
-                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-            }
-            // 2. ID Validation
-            if (!ValidationUtils.isNumericWithDigitRange(id, 1, 15)) {
-                return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
-            }
-            //QUIZAS PROBLEMAS PROQUE ES MEJOR PARSEAR:******************************
-            if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
-                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
-            }
-            // 3. CountryPhoneCode Validation
-            if (!ValidationUtils.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
-                return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
-            }
-            // 4. Phone Validation
-            if (!ValidationUtils.isNumericWithDigitRange(phone, 1, 11)) {
-                return new Response("Invalid passenger Phone. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);
-            }
-            // 5. BirthDate Validation
-            if (!DateUtils.isValidDate(year, month, day,true)){
-                return new Response("Invalid BirthDate.", Status.BAD_REQUEST);
+            Response Invalid = PassengerValidator.INSTANCE.isValid(id,firstName,lastName,year,month,day,countryPhoneCode,phone,country);
+            if (Invalid.getStatus()!=Status.OK){
+                return Invalid;
             }
             Passenger passenger = new Passenger(
                     Long.parseLong(id),
@@ -98,7 +79,7 @@ public class PassengerController {
     }
 //ESTOS REVISAR Y ADECUAR: *******************************************************************
     public Response updatePassenger(String id, String newFirstName, String newLastName,
-            String newBirthDate, String newCountryCode, String newPhone, String newCountry) {
+            String newYear, String newMonth,String newDay, String newCountryCode, String newPhone, String newCountry) {
 
         try {
             
@@ -108,15 +89,19 @@ public class PassengerController {
                 return passengerRes;
             }
             Passenger passenger = (Passenger) passengerRes.getObject();
-            
+            Response Invalid = PassengerValidator.INSTANCE.isValid(id,newFirstName,newLastName,newYear,newMonth,
+                    newDay,newCountryCode,newPhone,newCountry);
+            if (Invalid.getStatus()!=Status.OK){
+                return Invalid;
+            }
             passenger.setFirstname(newFirstName);
             passenger.setLastname(newLastName);
-            passenger.setBirthDate(newBirthDate);
-            passenger.setCountryPhoneCode(newCountryCode);
-            passenger.setPhone(newPhone);
+            passenger.setBirthDate(DateUtils.buildDate(newYear, newMonth, newDay));
+            passenger.setCountryPhoneCode(Integer.parseInt(newCountryCode));
+            passenger.setPhone(Long.parseLong(newPhone));
             passenger.setCountry(newCountry);
 
-            return new Response("Passenger updated successfully", Status.OK, passenger);
+            return new Response("Passenger updated successfully", Status.OK);
 
         } catch (Exception e) {
             return new Response("Error updating passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);

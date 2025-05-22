@@ -13,7 +13,7 @@ import core.controllers.MainController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.ValidationUtils;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.persistency.*;
 import core.models.storage.StorageFlights;
 import core.models.storage.StorageLocations;
@@ -214,11 +214,11 @@ public class AirportFrame extends javax.swing.JFrame {
         CountryUserUpdate = new javax.swing.JTextField();
         UpdateButton = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
-        flightID = new javax.swing.JTextField();
+        PassengerID = new javax.swing.JTextField();
         jLabel44 = new javax.swing.JLabel();
         jLabel45 = new javax.swing.JLabel();
         FlightSelector = new javax.swing.JComboBox<>();
-        AddFlightButton = new javax.swing.JButton();
+        AddPassengerToFlightButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ownflightsTable = new javax.swing.JTable();
@@ -419,38 +419,38 @@ public class AirportFrame extends javax.swing.JFrame {
 
         IdAirplane.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(IdAirplane);
-        IdAirplane.setBounds(180, 93, 130, 35);
+        IdAirplane.setBounds(180, 93, 130, 31);
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel12.setText("Brand:");
         jPanel3.add(jLabel12);
-        jLabel12.setBounds(53, 157, 50, 25);
+        jLabel12.setBounds(53, 157, 52, 25);
 
         Brand.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Brand);
-        Brand.setBounds(180, 154, 130, 35);
+        Brand.setBounds(180, 154, 130, 31);
 
         Model.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Model);
-        Model.setBounds(180, 213, 130, 35);
+        Model.setBounds(180, 213, 130, 31);
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel13.setText("Model:");
         jPanel3.add(jLabel13);
-        jLabel13.setBounds(53, 216, 55, 25);
+        jLabel13.setBounds(53, 216, 57, 25);
 
         MaxCapacity.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(MaxCapacity);
-        MaxCapacity.setBounds(180, 273, 130, 35);
+        MaxCapacity.setBounds(180, 273, 130, 31);
 
         jLabel14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel14.setText("Max Capacity:");
         jPanel3.add(jLabel14);
-        jLabel14.setBounds(53, 276, 109, 25);
+        jLabel14.setBounds(53, 276, 114, 25);
 
         Airline.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Airline);
-        Airline.setBounds(180, 333, 130, 35);
+        Airline.setBounds(180, 333, 130, 31);
 
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel15.setText("Airline:");
@@ -942,8 +942,8 @@ public class AirportFrame extends javax.swing.JFrame {
 
         pestañas.addTab("Update info", jPanel5);
 
-        flightID.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        flightID.setEnabled(false);
+        PassengerID.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        PassengerID.setEnabled(false);
 
         jLabel44.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel44.setText("ID:");
@@ -954,11 +954,11 @@ public class AirportFrame extends javax.swing.JFrame {
         FlightSelector.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         FlightSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Flight" }));
 
-        AddFlightButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        AddFlightButton.setText("Add");
-        AddFlightButton.addActionListener(new java.awt.event.ActionListener() {
+        AddPassengerToFlightButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        AddPassengerToFlightButton.setText("Add");
+        AddPassengerToFlightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddFlightButtonActionPerformed(evt);
+                AddPassengerToFlightButtonActionPerformed(evt);
             }
         });
 
@@ -974,11 +974,11 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addGap(79, 79, 79)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(FlightSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(flightID, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PassengerID, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(829, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(AddFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AddPassengerToFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(509, 509, 509))
         );
         jPanel6Layout.setVerticalGroup(
@@ -989,13 +989,13 @@ public class AirportFrame extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(jLabel44))
-                    .addComponent(flightID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PassengerID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(35, 35, 35)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel45)
                     .addComponent(FlightSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
-                .addComponent(AddFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AddPassengerToFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(85, 85, 85))
         );
 
@@ -1551,25 +1551,12 @@ public class AirportFrame extends javax.swing.JFrame {
         String phoneCode = CountryCodeUpdate.getText();
         String phone = PhoneNumberUpdate.getText();
         String country = CountryUserUpdate.getText();
-        controller.getPassengerController().
-        /*Passenger passenger = null;
-        for (Passenger p : this.passengers) {
-            if (p.getId() == id) {
-                passenger = p;
-            }
-        }
-
-        passenger.setFirstname(firstname);
-        passenger.setLastname(lastname);
-        passenger.setBirthDate(birthDate);
-        passenger.setCountryPhoneCode(phoneCode);
-        passenger.setPhone(phone);
-        passenger.setCountry(country);*/
+        controller.getPassengerController().updatePassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
-    private void AddFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddFlightButtonActionPerformed
+    private void AddPassengerToFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPassengerToFlightButtonActionPerformed
         // TODO add your handling code here:
-        long passengerId = Long.parseLong(flightID.getText());
+        long passengerId = Long.parseLong(PassengerID.getText());
         String flightId = FlightSelector.getItemAt(FlightSelector.getSelectedIndex());
 
         Passenger passenger = null;
@@ -1589,7 +1576,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
         passenger.addFlight(flight);
         flight.addPassenger(passenger);
-    }//GEN-LAST:event_AddFlightButtonActionPerformed
+    }//GEN-LAST:event_AddPassengerToFlightButtonActionPerformed
 
     private void DelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayButtonActionPerformed
         // TODO add your handling code here:
@@ -1671,10 +1658,10 @@ public class AirportFrame extends javax.swing.JFrame {
             String id = userSelect.getSelectedItem().toString();
             if (!id.equals(userSelect.getItemAt(0))) {
                 IDPassengerUpdate.setText(id);
-                flightID.setText(id);
+                PassengerID.setText(id);
             } else {
                 IDPassengerUpdate.setText("");
-                flightID.setText("");
+                PassengerID.setText("");
             }
         } catch (Exception e) {
         }
@@ -1682,7 +1669,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddFlightButton;
+    private javax.swing.JButton AddPassengerToFlightButton;
     private javax.swing.JTextField AirPortID_LocationRegistration;
     private javax.swing.JTextField Airline;
     private javax.swing.JTextField AirportCity;
@@ -1727,6 +1714,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> MONTH5;
     private javax.swing.JTextField MaxCapacity;
     private javax.swing.JTextField Model;
+    private javax.swing.JTextField PassengerID;
     private javax.swing.JTextField PhoneNumberUpdate;
     private javax.swing.JComboBox<String> PlaneSelector;
     private javax.swing.JButton RefreshAllFlightsTable;
@@ -1743,7 +1731,6 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton adminRadioButton;
     private javax.swing.JButton createFlightButton;
     private javax.swing.JTextField firstName;
-    private javax.swing.JTextField flightID;
     private javax.swing.JButton jButton13;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

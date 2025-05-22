@@ -4,10 +4,10 @@
  */
 package core.controllers;
 
-import core.controllers.utils.DateUtils;
+import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.ValidationUtils;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
 import core.models.Plane;

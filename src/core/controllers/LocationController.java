@@ -6,7 +6,7 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.ValidationUtils;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
 import core.models.Passenger;
 import core.models.storage.StorageLocations;
@@ -34,17 +34,17 @@ public class LocationController {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             //2. ID Validation
-            if (id.matches("[A-Z]{3}")) {
+            if (!id.matches("[A-Z]{3}")) {
                 return new Response("Airport Id must be 3 Uppercase letters", Status.BAD_REQUEST);
             }
             if (StorageLocations.getInstance().get(id) != null) {
                 return new Response("There is already an airport with that ID.", Status.BAD_REQUEST);
             }
             //3. Check latitude and longitude
-            if (ValidationUtils.validNum(-90, 90, latitude, 4)){
+            if (!ValidationUtils.validNum(-90, 90, latitude, 4)){
                 return new Response("Airport latitude must be a number between -90 and 90.", Status.BAD_REQUEST);
             }
-            if (ValidationUtils.validNum(-180, 180, longitude, 4)) {
+            if (!ValidationUtils.validNum(-180, 180, longitude, 4)) {
                 return new Response("Airport longitude must be a number between -180 and 180.", Status.BAD_REQUEST);
             }
             //Add to storage
