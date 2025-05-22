@@ -71,7 +71,7 @@ public class LocationController {
         }
     }
 
-    public static Response getAllAirports() {
+    public Response getAllAirports() {
         try {
             ArrayList<Location> locations = StorageLocations.getInstance().getAll();
             Collections.sort(locations, Comparator.comparing(Location::getAirportId));

@@ -63,17 +63,19 @@ public class FlightController {
             Response scaleLocRes = null;
             int scaleHours = 0;
             int scaleMinutes = 0;
+            //cuando si hay escala:
             if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
                 scaleLocRes = LocationController.getAirport(scaleLocation);
                 if (scaleLocRes.getStatus() == Status.NOT_FOUND) {
                     return new Response("The Selected Scale_Location does not exist", Status.BAD_REQUEST);
                 }
+                //ASI????*******************************
                 scaleHours = Integer.parseInt(hoursDurationScale);
                 scaleMinutes = Integer.parseInt(minutesDurationScale);
                 if (scaleHours == 0 && scaleMinutes == 0) {
                     return new Response("Scale duration must be greater than 00:00 if Scale_Location is present", Status.BAD_REQUEST);
                 }
-            } else {
+            } else {//cuando no hay escala
                 scaleHours = Integer.parseInt(hoursDurationScale);
                 scaleMinutes = Integer.parseInt(minutesDurationScale);
                 if (scaleHours != 0 || scaleMinutes != 0) {
@@ -87,10 +89,11 @@ public class FlightController {
                 return new Response("Flight duration must be greater than 00:00", Status.BAD_REQUEST);
             }
             // 10. Build departure date object
-            LocalDateTime departureDate = DateUtils.buildDate(year, month, day, hour, minutes);
-            if (departureDate == null) {
+            
+            if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)) {
                 return new Response("Invalid departure date", Status.BAD_REQUEST);
             }
+            LocalDateTime departureDate = DateUtils.buildDate(year, month, day, hour, minutes);
             // 11. Create flight object
             Flight flight;
             if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
@@ -134,7 +137,7 @@ public class FlightController {
         }
     }
 
-    public static Response getAllFlights() {
+    public Response getAllFlights() {
         try {
             ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
             Collections.sort(flights, Comparator.comparing(Flight::getDepartureDate));

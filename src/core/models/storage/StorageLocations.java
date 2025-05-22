@@ -57,7 +57,7 @@ public class StorageLocations implements Storage<Location,String> {
             }
         }
         return null;}
-
+//ESTO ACÁ DEBE DEVOLVER UNA COPIAAAAAAAAAA*****************************
     @Override
     public ArrayList<Location> getAll() {
         return new ArrayList<>(airports);

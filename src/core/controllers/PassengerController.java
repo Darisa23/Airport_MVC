@@ -70,7 +70,7 @@ public class PassengerController {
     
     
     
-        public static Response getPassenger(Long id) {
+        public Response getPassenger(Long id) {
         try {
             Passenger passenger = StoragePassengers.getInstance().get(id);
             if (passenger== null) {
@@ -83,14 +83,14 @@ public class PassengerController {
         }
     }
 
-    public static Response getAllPassengers() {
+    public Response getAllPassengers() {
         try {
             ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
             Collections.sort(passengers, Comparator.comparing(Passenger::getId));
             return new Response("Planes retrieved successfully", Status.OK, passengers);
 
         } catch (Exception e) {
-            return new Response("Error retrieving planes list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+            return new Response("Error retrieving passengers list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 //ESTOS REVISAR Y ADECUAR: *******************************************************************

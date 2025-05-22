@@ -38,10 +38,6 @@ public class AirportFrame extends javax.swing.JFrame {
      * Creates new form AirportFrame
      */
     private int x, y;
-    private ArrayList<Passenger> passengers;
-    private ArrayList<Plane> planes;
-    private ArrayList<Location> locations;
-    private ArrayList<Flight> flights;
     private final MainController controller;
 
     public AirportFrame() {
@@ -49,11 +45,6 @@ public class AirportFrame extends javax.swing.JFrame {
         //read jsons:
         controller = new MainController();
         controller.initializeData();
-        //initialize Arrays
-        locations = StorageLocations.getInstance().getAll();
-        planes = StoragePlanes.getInstance().getAll();
-        passengers = StoragePassengers.getInstance().getAll();
-        flights = StorageFlights.getInstance().getAll();
 
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
@@ -279,10 +270,10 @@ public class AirportFrame extends javax.swing.JFrame {
         jButton13.setText("X");
         jButton13.setBorderPainted(false);
         jButton13.setContentAreaFilled(false);
-        jButton13.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton13.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton13ActionPerformed(evt);
+                ExitButton(evt);
             }
         });
 
@@ -428,7 +419,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
         IdAirplane.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(IdAirplane);
-        IdAirplane.setBounds(180, 93, 130, 33);
+        IdAirplane.setBounds(180, 93, 130, 35);
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel12.setText("Brand:");
@@ -437,11 +428,11 @@ public class AirportFrame extends javax.swing.JFrame {
 
         Brand.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Brand);
-        Brand.setBounds(180, 154, 130, 33);
+        Brand.setBounds(180, 154, 130, 35);
 
         Model.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Model);
-        Model.setBounds(180, 213, 130, 33);
+        Model.setBounds(180, 213, 130, 35);
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel13.setText("Model:");
@@ -450,7 +441,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
         MaxCapacity.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(MaxCapacity);
-        MaxCapacity.setBounds(180, 273, 130, 33);
+        MaxCapacity.setBounds(180, 273, 130, 35);
 
         jLabel14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel14.setText("Max Capacity:");
@@ -459,7 +450,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
         Airline.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Airline);
-        Airline.setBounds(180, 333, 130, 33);
+        Airline.setBounds(180, 333, 130, 35);
 
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel15.setText("Airline:");
@@ -1641,7 +1632,7 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) AllPassengersTable.getModel();
         model.setRowCount(0);
-        for (Passenger passenger : this.passengers) {
+        for (Passenger passenger : (ArrayList<Passenger>) controller.getPassengerController().getAllPassengers().getObject()) {
             model.addRow(new Object[]{passenger.getId(), passenger.getFullname(), passenger.getBirthDate(), passenger.calculateAge(), passenger.generateFullPhone(), passenger.getCountry(), passenger.getNumFlights()});
         }
     }//GEN-LAST:event_RefreshPasengersTableActionPerformed
@@ -1650,7 +1641,7 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) AllFlightsTable.getModel();
         model.setRowCount(0);
-        for (Flight flight : this.flights) {
+        for (Flight flight : (ArrayList<Flight>) controller.getFlightController().getAllFlights().getObject()) {
             model.addRow(new Object[]{flight.getId(), flight.getDepartureLocation().getAirportId(), flight.getArrivalLocation().getAirportId(), (flight.getScaleLocation() == null ? "-" : flight.getScaleLocation().getAirportId()), flight.getDepartureDate(), flight.calculateArrivalDate(), flight.getPlane().getId(), flight.getNumPassengers()});
         }
     }//GEN-LAST:event_RefreshAllFlightsTableActionPerformed
@@ -1659,7 +1650,7 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) AllPlanesTable.getModel();
         model.setRowCount(0);
-        for (Plane plane : this.planes) {
+        for (Plane plane : (ArrayList<Plane>) controller.getPlaneController().getAllPlanes().getObject()) {
             model.addRow(new Object[]{plane.getId(), plane.getBrand(), plane.getModel(), plane.getMaxCapacity(), plane.getAirline(), plane.getNumFlights()});
         }
     }//GEN-LAST:event_RefreshPlanesTableActionPerformed
@@ -1668,14 +1659,14 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) AllLocationTable.getModel();
         model.setRowCount(0);
-        for (Location location : StorageLocations.getInstance().getAll()) {
+        for (Location location : (ArrayList<Location>) controller.getLocationController().getAllAirports().getObject()) {
             model.addRow(new Object[]{location.getAirportId(), location.getAirportName(), location.getAirportCity(), location.getAirportCountry()});
         }
     }//GEN-LAST:event_RefreshLocationsButtonActionPerformed
 
-    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+    private void ExitButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButton
         System.exit(0);
-    }//GEN-LAST:event_jButton13ActionPerformed
+    }//GEN-LAST:event_ExitButton
 
     private void userSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userSelectActionPerformed
         try {

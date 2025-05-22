@@ -18,13 +18,6 @@ import java.util.Comparator;
  * @author maria
  */
 public class PlaneController {
-    //********************************************************************
-    // PASAR ESTO A VALIDATION
-    //LO HACES GENÉRICO PARA REUTILIZARLO EN LOS VUELOS
-    //*******************************************************************
-    private static boolean isValidPlaneId(String id) {
-        return id != null && id.matches("^[A-Z]{2}\\d{5}$");
-    }
     
     public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
         try {
@@ -34,7 +27,7 @@ public class PlaneController {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             //2.  ID Validation
-            if (!isValidPlaneId(id)) {
+            if (!ValidationUtils.validId(id, 2, 5)) {
                 return new Response("Invalid plane ID format. Must match XXYYYYY (e.g., AB12345)", Status.BAD_REQUEST);
             }  
             if (StoragePlanes.getInstance().get(id) != null) {
@@ -57,7 +50,7 @@ public class PlaneController {
 //LOS DEJAMOS Y LOS USAMOS O LOS QUITAMOS???*******************************************************************
     //CREO QUE HAY QUE DEJARLOS, ENTONCES CAMBIA DONDE LLAMO ARRIBA DIRECTAMENTE AL STORAGE, LO MISMO CON LOS OTROS
     //*************************************************************************************
-    public static Response getPlane(String id) {
+    public Response getPlane(String id) {
         try {
             Plane plane = StoragePlanes.getInstance().get(id);
             if (plane == null) {
@@ -69,8 +62,8 @@ public class PlaneController {
             return new Response("Error retrieving plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-
-    public static Response getAllPlanes() {
+    
+    public Response getAllPlanes() {
         try {
             ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
             Collections.sort(planes, Comparator.comparing(Plane::getId));
