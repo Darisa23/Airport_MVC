@@ -9,9 +9,13 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.ValidationUtils;
 import core.models.Passenger;
+import core.models.Plane;
 import core.models.storage.StoragePassengers;
+import core.models.storage.StoragePlanes;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -63,6 +67,32 @@ public class PassengerController {
             return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    
+    
+        public static Response getPassenger(Long id) {
+        try {
+            Passenger passenger = StoragePassengers.getInstance().get(id);
+            if (passenger== null) {
+                return new Response("Passenger not found", Status.NOT_FOUND);
+            }
+            return new Response("Passenger retrieved successfully", Status.OK, passenger);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static Response getAllPassengers() {
+        try {
+            ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
+            Collections.sort(passengers, Comparator.comparing(Passenger::getId));
+            return new Response("Planes retrieved successfully", Status.OK, passengers);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving planes list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
 //ESTOS REVISAR Y ADECUAR: *******************************************************************
     public static Response updatePassenger(long id, String newFirstName, String newLastName,
             LocalDate newBirthDate, int newCountryCode, long newPhone, String newCountry) {
@@ -104,24 +134,6 @@ public class PassengerController {
         }
     }
 
-    public static Response getAllPassengers() {
-        try {
-            ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
-            return new Response("Passenger list retrieved", Status.OK, passengers);
-        } catch (Exception e) {
-            return new Response("Error retrieving passengers: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public static Response getPassenger(long id) {
-        try {
-            Passenger passenger = StoragePassengers.getInstance().get(id);
-            if (passenger == null) {
-                return new Response("Passenger not found", Status.NOT_FOUND);
-            }
-            return new Response("Passenger found", Status.OK, passenger);
-        } catch (Exception e) {
-            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
+    
+    
 }

@@ -19,7 +19,7 @@ class PassengerValidationUtils {
     }
 
     public static boolean isValidPassengerId(long passengerId) {
-        return GeneralValidationUtils.isValidPositiveLongWithMaxDigits(passengerId, 15);
+        return ValidationUtils.isValidPositiveLongWithMaxDigits(passengerId, 15);
     }
 
     public static boolean isValidPhoneCode(int phoneCode) {
@@ -30,7 +30,7 @@ class PassengerValidationUtils {
     }
     
     public static boolean isValidPhoneNumber(long phoneNumber) {
-         return GeneralValidationUtils.isValidPositiveLongWithMaxDigits(phoneNumber, 11);
+         return ValidationUtils.isValidPositiveLongWithMaxDigits(phoneNumber, 11);
     }
 
     // Método de validación completo para un pasajero (ejemplo conceptual)

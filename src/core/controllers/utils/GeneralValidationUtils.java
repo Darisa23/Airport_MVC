@@ -54,10 +54,5 @@ public static boolean isNumericWithDigitRange(String input, int minDigits, int m
  * @param maxDigits Maximum allowed number of digits.
  * @return true if the number meets the conditions, false otherwise.
  */
-public static boolean isValidPositiveLongWithMaxDigits(long number, int maxDigits) {
-    if (number < 0) {
-        return false;
-    }
-    return String.valueOf(number).length() <= maxDigits;
-}
+
 }
