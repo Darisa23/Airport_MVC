@@ -1503,53 +1503,50 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
 
     private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
-        // TODO add your handling code here:
-        String id = IDFlight.getText();
-        String planeId = PlaneSelector.getItemAt(PlaneSelector.getSelectedIndex());
-        String departureLocationId = DepartureLocationSelector.getItemAt(DepartureLocationSelector.getSelectedIndex());
-        String arrivalLocationId = ArrivalLocationSelector.getItemAt(ArrivalLocationSelector.getSelectedIndex());
-        String scaleLocationId = ScaleLocationSelector.getItemAt(ScaleLocationSelector.getSelectedIndex());
-        int year = Integer.parseInt(DepartureDateDay.getText());
-        int month = Integer.parseInt(MONTH1.getItemAt(MONTH1.getSelectedIndex()));
-        int day = Integer.parseInt(DAY1.getItemAt(DAY1.getSelectedIndex()));
-        int hour = Integer.parseInt(MONTH2.getItemAt(MONTH2.getSelectedIndex()));
-        int minutes = Integer.parseInt(DAY2.getItemAt(DAY2.getSelectedIndex()));
-        int hoursDurationsArrival = Integer.parseInt(MONTH3.getItemAt(MONTH3.getSelectedIndex()));
-        int minutesDurationsArrival = Integer.parseInt(DAY3.getItemAt(DAY3.getSelectedIndex()));
-        int hoursDurationsScale = Integer.parseInt(MONTH4.getItemAt(MONTH4.getSelectedIndex()));
-        int minutesDurationsScale = Integer.parseInt(DAY4.getItemAt(DAY4.getSelectedIndex()));
 
-        LocalDateTime departureDate = LocalDateTime.of(year, month, day, hour, minutes);
+    // Obtener datos del formulario
+    String id = IDFlight.getText();
+    String planeId = (String) PlaneSelector.getSelectedItem();
+    String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
+    String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
+    String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
 
-        Plane plane = null;
-        for (Plane p : this.planes) {
-            if (planeId.equals(p.getId())) {
-                plane = p;
-            }
-        }
+    String year = BDayUpdate.getText();
+    String month = (String) MONTH1.getSelectedItem();
+    String day = (String) DAY1.getSelectedItem();
+    String hour = (String) MONTH2.getSelectedItem();
+    String minutes = (String) DAY2.getSelectedItem();
 
-        Location departure = null;
-        Location arrival = null;
-        Location scale = null;
-        for (Location location : this.locations) {
-            if (departureLocationId.equals(location.getAirportId())) {
-                departure = location;
-            }
-            if (arrivalLocationId.equals(location.getAirportId())) {
-                arrival = location;
-            }
-            if (scaleLocationId.equals(location.getAirportId())) {
-                scale = location;
-            }
-        }
+    String hoursDurationArrival = (String) MONTH3.getSelectedItem();
+    String minutesDurationArrival = (String) DAY3.getSelectedItem();
+    String hoursDurationScale = (String) MONTH4.getSelectedItem();
+    String minutesDurationScale = (String) DAY4.getSelectedItem();
 
-        if (scale == null) {
-            this.flights.add(new Flight(id, plane, departure, arrival, departureDate, hoursDurationsArrival, minutesDurationsArrival));
-        } else {
-            this.flights.add(new Flight(id, plane, departure, scale, arrival, departureDate, hoursDurationsArrival, minutesDurationsArrival, hoursDurationsScale, minutesDurationsScale));
-        }
+    // Llama al controlador para registrar el vuelo
+    Response response = controller.getFlightController().createFlight(
+        id,
+        planeId,
+        departureLocationId,
+        arrivalLocationId,
+        scaleLocationId,
+        year,
+        month,
+        day,
+        hour,
+        minutes,
+        hoursDurationArrival,
+        minutesDurationArrival,
+        hoursDurationScale,
+        minutesDurationScale
+    );
 
+    JOptionPane.showMessageDialog(this, response.getMessage(), "Flight Register", JOptionPane.INFORMATION_MESSAGE);
+
+    if (response.getStatus() == Status.CREATED) {
         this.FlightSelector.addItem(id);
+    }
+
+
     }//GEN-LAST:event_createFlightButtonActionPerformed
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed

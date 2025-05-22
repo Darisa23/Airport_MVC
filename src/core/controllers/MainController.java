@@ -14,12 +14,14 @@ public class MainController {
     private UserController usContr;
     private PassengerController passContr;
     private PlaneController plnContr;
+    private FlightController fltContr;
     public MainController() {
         this.readerController = new JsonReaderController();
         this.locContr = new LocationController();
         this.usContr = new UserController();
         this.passContr = new PassengerController();
         this.plnContr = new PlaneController();
+        this.fltContr = new FlightController();
     }
 
     public void initializeData() {
@@ -42,5 +44,7 @@ public class MainController {
     public LocationController getLocationController() {
         return locContr;
     }
-    
+    public FlightController getFlightController(){
+        return fltContr;
+    }
 }
