@@ -57,8 +57,9 @@ public class FlightController {
             }
             //7. Valid Date:
             if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)){
-                return new Response("The Selected Departure_Date does not exist", Status.BAD_REQUEST);
+                return new Response("Invalid Departure_Date", Status.BAD_REQUEST);
             }
+            
             // 6. Scale or not:
             if (scaleLocation!=null){
                 Location locc =StorageLocations.getInstance().get(arrivalLocation);

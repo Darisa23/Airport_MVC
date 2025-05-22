@@ -8,7 +8,12 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.ValidationUtils;
 import core.models.Location;
+import core.models.Passenger;
 import core.models.storage.StorageLocations;
+import core.models.storage.StoragePassengers;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -52,4 +57,28 @@ public class LocationController {
         }
 
     }
+    
+    public static Response getAirport(String id) {
+        try {
+            Location passenger = StorageLocations.getInstance().get(id);
+            if (passenger== null) {
+                return new Response("Airport not found", Status.NOT_FOUND);
+            }
+            return new Response("Airport retrieved successfully", Status.OK, passenger);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving airports: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static Response getAllAirports() {
+        try {
+            ArrayList<Location> locations = StorageLocations.getInstance().getAll();
+            Collections.sort(locations, Comparator.comparing(Location::getAirportId));
+            return new Response("Airports retrieved successfully", Status.OK, locations);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving airports list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+}
 }

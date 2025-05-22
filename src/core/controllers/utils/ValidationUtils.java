@@ -14,7 +14,8 @@ import java.time.format.DateTimeParseException;
  */
 
 public class ValidationUtils {
-
+    
+ 
     public static boolean anyEmpty(String... fields) {
          for (String field : fields) {
             // Un campo está vacío si es null O si después de recortar espacios en blanco, está vacío
@@ -60,5 +61,11 @@ public class ValidationUtils {
     if (input == null) return false;
     String regex = "^" + "[A-Z]{" + letras + "}" + "\\d{" + digitos + "}$";
     return input.matches(regex);
+    }
+    public static boolean isValidPositiveLongWithMaxDigits(long number, int maxDigits) {
+    if (number < 0) {
+        return false;
+    }
+    return String.valueOf(number).length() <= maxDigits;
 }
 }
