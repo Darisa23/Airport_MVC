@@ -1542,19 +1542,17 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
         // TODO add your handling code here:
-        long id = Long.parseLong(IDPassengerUpdate.getText());
+        String id = IDPassengerUpdate.getText();
         String firstname = FirstNameUpdate.getText();
         String lastname = LastNameUpdate.getText();
-        int year = Integer.parseInt(BDayUpdate.getText());
-        int month = Integer.parseInt(MONTH.getItemAt(MONTH5.getSelectedIndex()));
-        int day = Integer.parseInt(DAY.getItemAt(DAY5.getSelectedIndex()));
-        int phoneCode = Integer.parseInt(CountryCodeUpdate.getText());
-        long phone = Long.parseLong(PhoneNumberUpdate.getText());
+        String year = BDayUpdate.getText();
+        String month = MONTH.getItemAt(MONTH5.getSelectedIndex());
+        String day = DAY.getItemAt(DAY5.getSelectedIndex());
+        String phoneCode = CountryCodeUpdate.getText();
+        String phone = PhoneNumberUpdate.getText();
         String country = CountryUserUpdate.getText();
-
-        LocalDate birthDate = LocalDate.of(year, month, day);
-
-        Passenger passenger = null;
+        controller.getPassengerController().
+        /*Passenger passenger = null;
         for (Passenger p : this.passengers) {
             if (p.getId() == id) {
                 passenger = p;
@@ -1566,7 +1564,7 @@ public class AirportFrame extends javax.swing.JFrame {
         passenger.setBirthDate(birthDate);
         passenger.setCountryPhoneCode(phoneCode);
         passenger.setPhone(phone);
-        passenger.setCountry(country);
+        passenger.setCountry(country);*/
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
     private void AddFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddFlightButtonActionPerformed

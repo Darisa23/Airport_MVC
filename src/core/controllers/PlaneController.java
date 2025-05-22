@@ -39,7 +39,7 @@ public class PlaneController {
             }
 
             Plane plane = new Plane(id, brand, model, mxCap, airline);
-            StoragePlanes.getInstance().add(plane);
+            addPlane(plane);
 
             return new Response("Plane created successfully", Status.CREATED);
 
@@ -50,7 +50,7 @@ public class PlaneController {
 //LOS DEJAMOS Y LOS USAMOS O LOS QUITAMOS???*******************************************************************
     //CREO QUE HAY QUE DEJARLOS, ENTONCES CAMBIA DONDE LLAMO ARRIBA DIRECTAMENTE AL STORAGE, LO MISMO CON LOS OTROS
     //*************************************************************************************
-    public Response getPlane(String id) {
+    public static Response getPlane(String id) {
         try {
             Plane plane = StoragePlanes.getInstance().get(id);
             if (plane == null) {
@@ -73,7 +73,19 @@ public class PlaneController {
             return new Response("Error retrieving planes list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-//REVISAR Y ARREGLAR LUEGO:******************************************************************
+    public static Response addPlane(Plane plane) {
+        try {
+            boolean added = StoragePlanes.getInstance().add(plane);
+            if (!added) {
+                return new Response("This plane already exists", Status.BAD_REQUEST);
+            }
+            return new Response("Plane added successfully", Status.OK);
+
+        } catch (Exception e) {
+            return new Response("Error retrieving plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     public static Response updatePlane(String id, String newBrand, String newModel, String newAirline) {
         try {
             Plane plane = StoragePlanes.getInstance().get(id);

@@ -118,8 +118,8 @@ public class FlightController {
             }
             // 12. Add flight to storage
             StorageFlights.getInstance().add(flight);
-            return new Response("Flight created successfully", Status.CREATED, flight);
-
+            return new Response("Flight created successfully", Status.CREATED);
+            
         } catch (Exception e) {
             return new Response("Error creating flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
@@ -127,11 +127,13 @@ public class FlightController {
 
     public static Response getFlight(String id) {
         try {
-            Flight flight = StorageFlights.getInstance().get(id);
+            Flight flight = StorageFlights.getInstance().get(id);   
+            
             if (flight == null) {
                 return new Response("Flight not found", Status.NOT_FOUND);
             }
-            return new Response("Flight retrieved successfully", Status.OK, flight);
+            Flight copyFlight = flight.copy();
+            return new Response("Flight retrieved successfully", Status.OK, copyFlight);
         } catch (Exception e) {
             return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
