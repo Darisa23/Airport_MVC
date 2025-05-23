@@ -1595,6 +1595,7 @@ public class AirportFrame extends javax.swing.JFrame {
         
         Response response = controller.getFlightController().updateFlight(flightId,hours,minutes);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Delay flight", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println();
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed

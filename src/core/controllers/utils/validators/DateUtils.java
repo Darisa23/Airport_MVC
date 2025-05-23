@@ -81,29 +81,17 @@ public class DateUtils {
         }
     }
 
-    public static boolean isTimeGreaterThanZero(int hours, int minutes) {
-        return hours > 0 || minutes > 0;
+    public static boolean isTimeGreaterThanZero( String hours, String minutes) {
+        int hoint = Integer.parseInt(hours);
+        int mint = Integer.parseInt(minutes);
+        return hoint > 0 || mint > 0;
         
     }
     
-    // Adds a specified number of hours to a LocalDateTime
-    public static LocalDateTime addHours(LocalDateTime dateTime, int hoursToAdd) {
-        if (dateTime == null) {
-            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
-        }
-        return dateTime.plusHours(hoursToAdd);
-    }
 
-    // Adds a specified number of minutes to a LocalDateTime
-    public static LocalDateTime addMinutes(LocalDateTime dateTime, int minutesToAdd) {
-        if (dateTime == null) {
-            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
-        }
-        return dateTime.plusMinutes(minutesToAdd);
-    }
-    
     // Valida una cadena como hora (0-23)
     public static boolean isValidHour(String s) {
+        
         if (s == null || s.trim().isEmpty()) {
             return false;
         }
