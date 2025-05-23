@@ -18,13 +18,13 @@ public class ValidationUtils {
  
     public static boolean anyEmpty(String... fields) {
          for (String field : fields) {
-            // Un campo está vacío si es null O si después de recortar espacios en blanco, está vacío
+            // A field is empty if it is null OR if, after trimming whitespace, it is empty
             if (field == null || field.trim().isEmpty()) {
                 System.out.println("uno vacío");
-                return true; // Se encontró al menos un campo vacío
+                return true; // At least one empty field was found
             }
         }
-        return false; // Ningún campo estaba vacío
+        return false; // No fields were empty
     }
 
     public static boolean isNumericWithDigitRange(String input, int minDigits, int maxDigits) {
@@ -34,7 +34,7 @@ public class ValidationUtils {
 
         String clean = input.trim();
 
-        // Construye la expresión regular dinámicamente: ^\d{min,max}$
+        // builds the regular expression dynamicaally: ^\d{min,max}$
         String regex = "^\\d{" + minDigits + "," + maxDigits + "}$";
 
         return clean.matches(regex);
@@ -46,7 +46,7 @@ public class ValidationUtils {
         if (minVal > maxVal) return false;
         if (numero < minVal || numero > maxVal) return false;
 
-        // Verificar decimales
+        // verify decimals
         if (val.contains(".")) {
             String[] partes = val.split("\\.");
             if (partes[1].length() > cntD) return false;

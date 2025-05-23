@@ -38,7 +38,7 @@ public class PassengerValidator implements Validator {
         if (!ValidationUtils.isNumericWithDigitRange(id, 1, 15)) {
             return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
         }
-        //QUIZAS PROBLEMAS PROQUE ES MEJOR PARSEAR:******************************
+        
         if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
             return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
         }

@@ -39,14 +39,29 @@ public class StoragePlanes implements Storage<Plane,String> {
     }
 
     @Override
-    public boolean delete() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(Plane plane) { // Implement delete(T type)
+        if (plane == null) {
+            return false;
+        }
+        // Remove the plane based on its ID
+        return airplanes.removeIf(p -> p.getId().equals(plane.getId()));
     }
 
     @Override
-    public boolean update() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Plane updatedPlane) { // Implement update(T type)
+        if (updatedPlane == null) {
+            return false;
+        }
+        // Find the index of the plane by its ID
+        for (int i = 0; i < airplanes.size(); i++) {
+            if (airplanes.get(i).getId().equals(updatedPlane.getId())) {
+                airplanes.set(i, updatedPlane); // Replace the old instance with the new one
+                return true;
+            }
+        }
+        return false; // The plane to update was not found
     }
+
 
     @Override
     public Plane get(String id) { 

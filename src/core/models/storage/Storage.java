@@ -14,8 +14,8 @@ import java.util.ArrayList;
  */
 public interface Storage<T,k> {
     boolean add(T type); 
-    boolean delete(); 
-    boolean update(); 
+    boolean delete(T type); 
+    boolean update(T type); 
     T get(k id); 
     ArrayList<T> getAll();
 }

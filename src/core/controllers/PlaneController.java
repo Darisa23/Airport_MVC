@@ -103,7 +103,7 @@ public class PlaneController {
                 return new Response("Plane not found", Status.NOT_FOUND);
             }
 
-            StoragePlanes.getInstance().delete();
+            //StoragePlanes.getInstance().delete();
             return new Response("Plane deleted successfully", Status.OK);
 
         } catch (Exception e) {

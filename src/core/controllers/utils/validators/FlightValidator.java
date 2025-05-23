@@ -76,19 +76,19 @@ public class FlightValidator implements Validator {
             Response scaleLocRes = null;
             int scaleHours = 0;
             int scaleMinutes = 0;
-            //cuando si hay escala:
+            //when there's a scale:
             if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
                 scaleLocRes = LocationController.getAirport(scaleLocation);
                 if (scaleLocRes.getStatus() == Status.NOT_FOUND) {
                     return new Response("The Selected Scale_Location does not exist", Status.BAD_REQUEST);
                 }
-                //ASI????*******************************
+                
                 scaleHours = Integer.parseInt(hoursDurationScale);
                 scaleMinutes = Integer.parseInt(minutesDurationScale);
                 if (scaleHours == 0 && scaleMinutes == 0) {
                     return new Response("Scale duration must be greater than 00:00 if Scale_Location is present", Status.BAD_REQUEST);
                 }
-            } else {//cuando no hay escala
+            } else {//when there´s not a scale
                 scaleHours = Integer.parseInt(hoursDurationScale);
                 scaleMinutes = Integer.parseInt(minutesDurationScale);
                 if (scaleHours != 0 || scaleMinutes != 0) {

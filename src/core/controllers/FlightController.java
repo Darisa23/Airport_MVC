@@ -166,4 +166,45 @@ public class FlightController {
             return new Response("Error updating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+             public Response delayFlight(String flightId, String hoursToAdd, String minutesToAdd) {
+        try {
+            // 1. Retrieve the flight using the existing getFlight method
+            Response flightRes = getFlight(flightId); 
+
+            if (flightRes.getStatus() == Status.NOT_FOUND) {
+                return flightRes; // Flight not found
+            }
+            if (flightRes.getStatus() != Status.OK) {
+                return new Response("Error retrieving flight to delay: " + flightRes.getMessage(), flightRes.getStatus());
+            }
+
+            Flight flight = (Flight) flightRes.getObject();
+
+            // 2. Validate delay duration 
+            if (hoursToAdd < 0 || minutesToAdd < 0 || (hoursToAdd == 0 && minutesToAdd == 0)) {
+                return new Response("Delay duration must be positive.", Status.BAD_REQUEST);
+            }
+
+            // 3. Modify the Flight object 
+            LocalDateTime originalDepartureDate = flight.getDepartureDate();
+            LocalDateTime newDepartureDate = DateUtils.addHours(originalDepartureDate, hoursToAdd);
+            newDepartureDate = DateUtils.addMinutes(newDepartureDate, minutesToAdd);
+
+            flight.setDepartureDate(newDepartureDate); // Update the flight's departure date
+
+            // 4. Persist the updated Flight object using Storage 
+            boolean updated = StorageFlights.getInstance().update(flight); // Call the update method 
+            if (!updated) {
+                // This case might occur if update() method has specific logic (e.g., flight not found, though getFlight already checked)
+                return new Response("Failed to persist delayed flight. Flight might have been removed concurrently.", Status.INTERNAL_SERVER_ERROR);
+            }
+
+            return new Response("Flight " + flightId + " delayed successfully.", Status.OK, flight);
+
+        } catch (NumberFormatException e) {
+            return new Response("Invalid number format for delay hours/minutes.", Status.BAD_REQUEST);
+        } catch (Exception e) {
+            return new Response("Error delaying flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

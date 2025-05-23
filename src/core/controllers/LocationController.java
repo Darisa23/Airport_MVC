@@ -21,7 +21,7 @@ public class LocationController {
  
     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
         try {
-            //Validaciones:
+            //Validations:
             Response Invalid = LocationValidator.INSTANCE.isValid(id,name,city,country,latitude,longitude);
             if (Invalid.getStatus()!=Status.OK){
                 return Invalid;

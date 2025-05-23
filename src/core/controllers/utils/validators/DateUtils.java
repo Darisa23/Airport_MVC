@@ -29,7 +29,7 @@ public class DateUtils {
                 return date.isAfter(today) && date.isBefore(today.plusYears(2));
             }
         } catch (NumberFormatException | DateTimeParseException | NullPointerException e) {
-            return false; // Alguno de los valores no es numérico o la fecha es inválida (como 31/02)
+            return false; // One of the values is not numeric or the date is invalid (like 31/02)
         }
     }
 
@@ -50,7 +50,7 @@ public class DateUtils {
                 return date.isAfter(today) && date.isBefore(today.plusYears(2));
             }
         } catch (NumberFormatException | DateTimeParseException | NullPointerException e) {
-            return false; // Alguno de los valores no es numérico o la fecha es inválida (como 31/02)
+            return false; // One of the values is not numeric or the date is invalid (like 31/02)
         }
     }
 
@@ -84,6 +84,22 @@ public class DateUtils {
     public static boolean isTimeGreaterThanZero(int hours, int minutes) {
         return hours > 0 || minutes > 0;
         
+    }
+    
+    // Adds a specified number of hours to a LocalDateTime
+    public static LocalDateTime addHours(LocalDateTime dateTime, int hoursToAdd) {
+        if (dateTime == null) {
+            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
+        }
+        return dateTime.plusHours(hoursToAdd);
+    }
+
+    // Adds a specified number of minutes to a LocalDateTime
+    public static LocalDateTime addMinutes(LocalDateTime dateTime, int minutesToAdd) {
+        if (dateTime == null) {
+            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
+        }
+        return dateTime.plusMinutes(minutesToAdd);
     }
     
 }
