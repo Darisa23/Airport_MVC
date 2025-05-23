@@ -1573,7 +1573,8 @@ public class AirportFrame extends javax.swing.JFrame {
         String passengerId = PassengerID.getText();
         String flightId = FlightSelector.getItemAt(FlightSelector.getSelectedIndex());
         
-        controller.getFlightController().addPassengertoFlight(flightId, passengerId);
+        Response response = controller.getFlightController().addPassengertoFlight(flightId, passengerId);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Agregar vuelo", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_AddPassengerToFlightButtonActionPerformed
 
     private void DelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayButtonActionPerformed

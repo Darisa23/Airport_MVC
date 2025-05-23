@@ -120,13 +120,19 @@ public class PassengerController {
         }
     }
 
-    public static Response addToFlight(Passenger passenger, Flight flight) {
+    public static Response addToFlight(String passengerId, Flight flight) {
         try {
+            Response opassenger = PassengerController.getPassenger(passengerId);
+            if (opassenger.getStatus() == Status.NOT_FOUND) {
+                return opassenger;
+            }
+            Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
+            System.out.println("luego este");
             boolean added = passenger.addFlight(flight);
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            return new Response("Flight added to passenger successfully", Status.OK);
+            return new Response("Flight added to passenger successfully", Status.OK,passenger);
         } catch (Exception e) {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }

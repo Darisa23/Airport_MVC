@@ -70,6 +70,7 @@ public class FlightController {
         }
     }
 
+//Obtener un vuelo:
     public static Response getFlight(String id) {
         try {
             Flight flight = StorageFlights.getInstance().get(id);
@@ -78,22 +79,25 @@ public class FlightController {
                 return new Response("Flight not found", Status.NOT_FOUND);
             }
             Flight copyFlight = flight.copy();
-            return new Response("Flight retrieved successfully", Status.OK, copyFlight);
+            return new Response("Flight retrieved successfully", Status.OK, flight);
         } catch (Exception e) {
             return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 
+    //obtener todos los vuelos:
     public Response getAllFlights() {
         try {
             ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
             Collections.sort(flights, Comparator.comparing(Flight::getDepartureDate));
+            //acá que devuelva copia:
             return new Response("Flights retrieved successfully", Status.OK, flights);
         } catch (Exception e) {
             return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 
+    //Agregar un vuelo:
     public static Response addFlight(Flight flight) {
         try {
             boolean added = StorageFlights.getInstance().add(flight);
@@ -105,61 +109,83 @@ public class FlightController {
             return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //Añadirle un pasajero a un vuelo:
     public Response addPassengertoFlight(String flightId, String passengerId) {
         try {
             //revisar si el vuelo existe:
+            System.out.println("el flight id: "+flightId);
+                       System.out.println("el passenger id: "+passengerId);
+
+            System.out.println("reviso si el vuelo existe");
             Response oflight = getFlight(flightId);
             if (oflight.getStatus() == Status.NOT_FOUND) {
                 return oflight;
             }
-            Flight flight = (Flight) oflight.getObject();
-            Response opassenger = PassengerController.getPassenger(passengerId);
-            if (opassenger.getStatus() == Status.NOT_FOUND) {
+            System.out.println("como si existe lo tomo del storage");
+            Flight flight = StorageFlights.getInstance().get(flightId);
+            Response opassenger = PassengerController.addToFlight(passengerId,flight);
+            System.out.println("la respuesta de ir al otro coso: "+opassenger.getMessage());
+            if (opassenger.getStatus() == Status.NOT_FOUND |opassenger.getStatus() == Status.BAD_REQUEST) {
                 return opassenger;
             }
             Passenger passenger = (Passenger) opassenger.getObject();
 
             boolean added = flight.addPassenger(passenger);
+            System.out.println("el added tiró: "+added);
             if (!added) {
+                System.out.println("no mamita");
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            Response done = PassengerController.addToFlight(passenger, flight);
-            return done;
+            System.out.println("no estaba agregado el pasajero: "+passenger.getFirstname()+ " se agregó");
+            return new Response("Passenger was successfully added to flight", Status.BAD_REQUEST);
 
         } catch (Exception e) {
             return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-            public static Response updateFlight(String id, String newplane, String newdepartureLocation, String newarrivalLocation, String newscaleLocation,
-                                 String newyear, String newmonth, String newday, String newhour, String newminutes,
-                                 String newhoursDurationArrival, String newminutesDurationArrival,
-                                 String newhoursDurationScale, String newminutesDurationScale) {
+
+    //Actualiza un avión
+    public static Response updateFlight(String id, String newplane, String newdepartureLocation, String newarrivalLocation, String newscaleLocation,
+            String newyear, String newmonth, String newday, String newhour, String newminutes,
+            String newhoursDurationArrival, String newminutesDurationArrival,
+            String newhoursDurationScale, String newminutesDurationScale) {
         try {
-           
+            // 1. ver si el vuelo existe:
             Response flightRes = getFlight(id);
-            
-            if(flightRes.getStatus()== Status.NOT_FOUND){
+
+            if (flightRes.getStatus() == Status.NOT_FOUND) {
                 return flightRes;
             }
-            
+            // como existe obtienes ese vuelo:
             Flight flight = (Flight) flightRes.getObject();
-            Response Invalid = PlaneValidator.INSTANCE.isValid(id, newplane, newdepartureLocation, newarrivalLocation, newscaleLocation, newyear, newmonth, newday, 
+            // ver si los nuevos datos son válidos:
+            Response Invalid = FlightValidator.INSTANCE.isValid(id, newplane, newdepartureLocation, newarrivalLocation, newscaleLocation, newyear, newmonth, newday,
                     newhour, newminutes, newhoursDurationArrival, newminutesDurationArrival, newhoursDurationScale, newminutesDurationScale
             );
-            if(Invalid.getStatus() != Status.OK){
-                
+            if (Invalid.getStatus() != Status.OK) {
+                return Invalid;
             }
-            
-            flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
-            flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
-            flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
-            flight.setScaleLocation((Location) LocationController.getAirport(newscaleLocation).getObject());
-            flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
-            flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationScale));
-            flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
-            flight.setHoursDurationScale(Integer.parseInt(newhoursDurationScale));
-            flight.setMinutesDurationScale(Integer.parseInt(newminutesDurationScale));
+            //como los datos son válidos creamos el vuelo
 
+            if (newscaleLocation != null && !newscaleLocation.trim().isEmpty()) {
+                flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
+                flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
+                flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
+                flight.setScaleLocation((Location) LocationController.getAirport(newscaleLocation).getObject());
+                flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
+                flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationArrival));
+                flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
+                flight.setHoursDurationScale(Integer.parseInt(newhoursDurationScale));
+                flight.setMinutesDurationScale(Integer.parseInt(newminutesDurationScale));
+            } else {
+                flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
+                flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
+                flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
+                flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
+                flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationArrival));
+                flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
+            }
             return new Response("Plane updated successfully", Status.OK);
 
         } catch (Exception e) {

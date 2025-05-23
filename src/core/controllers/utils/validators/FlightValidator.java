@@ -42,7 +42,7 @@ public class FlightValidator implements Validator {
         String minutesDurationScale= fields[13];
   
      // 1. No empty fields
-            if (ValidationUtils.anyEmpty(id, plane, departureLocation, arrivalLocation, year, hoursDurationArrival, minutesDurationArrival)) {
+            if (ValidationUtils.anyEmpty(id, plane, departureLocation, arrivalLocation, year,hour,day, hoursDurationArrival, minutesDurationArrival)) {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
             // 2. ID format validation
