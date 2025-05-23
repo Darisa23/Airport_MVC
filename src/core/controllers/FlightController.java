@@ -27,6 +27,12 @@ import java.util.Comparator;
  * @author Alexander Sanguino
  */
 public class FlightController {
+    private final PassengerController passContr;
+
+    public FlightController() {
+        this.passContr = new PassengerController();
+    }
+    
 
     public Response registerFlight(String id, String plane, String departureLocation, String arrivalLocation, String scaleLocation,
             String year, String month, String day, String hour, String minutes,
@@ -124,7 +130,7 @@ public class FlightController {
             }
             System.out.println("como si existe lo tomo del storage");
             Flight flight = StorageFlights.getInstance().get(flightId);
-            Response opassenger = PassengerController.addToFlight(passengerId,flight);
+            Response opassenger = passContr.addToFlight(passengerId,flight);
             System.out.println("la respuesta de ir al otro coso: "+opassenger.getMessage());
             if (opassenger.getStatus() == Status.NOT_FOUND |opassenger.getStatus() == Status.BAD_REQUEST) {
                 return opassenger;
