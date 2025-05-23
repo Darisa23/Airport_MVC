@@ -7,11 +7,8 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.validators.LocationValidator;
-import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
-import core.models.Passenger;
 import core.models.storage.StorageLocations;
-import core.models.storage.StoragePassengers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,13 +18,7 @@ import java.util.Comparator;
  * @author Alexander Sanguino
  */
 public class LocationController {
-    
-    private final StorageLocations locationStorage;
-
-    public LocationController() {
-        this.locationStorage  = StorageLocations.getInstance();
-    }
-    
+ 
     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
         try {
             //Validaciones:
