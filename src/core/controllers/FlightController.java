@@ -12,6 +12,7 @@ import core.controllers.utils.validators.PassengerValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
+import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
 import java.time.LocalDateTime;
@@ -26,13 +27,13 @@ import java.util.Comparator;
 public class FlightController {
 
     public Response registerFlight(String id, String plane, String departureLocation, String arrivalLocation, String scaleLocation,
-                                 String year, String month, String day, String hour, String minutes,
-                                 String hoursDurationArrival, String minutesDurationArrival,
-                                 String hoursDurationScale, String minutesDurationScale) {
+            String year, String month, String day, String hour, String minutes,
+            String hoursDurationArrival, String minutesDurationArrival,
+            String hoursDurationScale, String minutesDurationScale) {
         try {
             //Validaciones:
-            Response Invalid = FlightValidator.INSTANCE.isValid(id,plane,departureLocation,arrivalLocation, scaleLocation,year,month, day, hour, minutes,hoursDurationArrival,  minutesDurationArrival,hoursDurationScale, minutesDurationScale);
-            if (Invalid.getStatus()!=Status.OK){
+            Response Invalid = FlightValidator.INSTANCE.isValid(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes, hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
+            if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
             // 11. Create flight object
@@ -69,8 +70,8 @@ public class FlightController {
 
     public static Response getFlight(String id) {
         try {
-            Flight flight = StorageFlights.getInstance().get(id);   
-            
+            Flight flight = StorageFlights.getInstance().get(id);
+
             if (flight == null) {
                 return new Response("Flight not found", Status.NOT_FOUND);
             }
@@ -90,7 +91,8 @@ public class FlightController {
             return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-        public static Response addFlight(Flight flight) {
+
+    public static Response addFlight(Flight flight) {
         try {
             boolean added = StorageFlights.getInstance().add(flight);
             if (!added) {
@@ -99,6 +101,32 @@ public class FlightController {
             return new Response("Flight added successfully", Status.OK);
         } catch (Exception e) {
             return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public Response addPassengertoFlight(String flightId, String passengerId) {
+        try {
+            //revisar si el vuelo existe:
+            Response oflight = getFlight(flightId);
+            if (oflight.getStatus() == Status.NOT_FOUND) {
+                return oflight;
+            }
+            Flight flight = (Flight) oflight.getObject();
+            Response opassenger = PassengerController.getPassenger(passengerId);
+            if (opassenger.getStatus() == Status.NOT_FOUND) {
+                return opassenger;
+            }
+            Passenger passenger = (Passenger) opassenger.getObject();
+
+            boolean added = flight.addPassenger(passenger);
+            if (!added) {
+                return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
+            }
+            Response done = PassengerController.addToFlight(passenger, flight);
+            return done;
+
+        } catch (Exception e) {
+            return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

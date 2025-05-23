@@ -40,6 +40,7 @@ public class UserController {
             // User debe tener acceso a las pestañas de Show all Flights (índice 9),
             // Show all Locations (índice 11), Update Info (índice 5),
             // Add to Flight (índice 6) y Show my Flights (índice 7)
+            tabStates.set(0, true);
             tabStates.set(9, true); // Show all Flights
             tabStates.set(11, true); // Show all Locations
             tabStates.set(5, true); // Update Info

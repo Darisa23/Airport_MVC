@@ -34,8 +34,13 @@ public class Passenger {
         this.flights = new ArrayList<>();
     }
 
-    public void addFlight(Flight flight) {
-        this.flights.add(flight);
+    public boolean addFlight(Flight flight) {
+        if (!flights.contains(flight)) {
+        flights.add(flight);
+            System.out.println("se añadió un vuelo a este pasajero");
+        return true;
+    }
+    return false;
     }
     
     public long getId() {

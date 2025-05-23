@@ -52,7 +52,7 @@ public class PassengerController {
     }
 
     //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
-    public Response getPassenger(String id) {
+    public static Response getPassenger(String id) {
         try {
             long nid = Long.parseLong(id);
             Passenger passenger = StoragePassengers.getInstance().get(nid);
@@ -120,19 +120,15 @@ public class PassengerController {
         }
     }
 
-    public static Response addToFlight(long passengerId, String flightId) {
+    public static Response addToFlight(Passenger passenger, Flight flight) {
         try {
-            Passenger passenger = StoragePassengers.getInstance().get(passengerId);
-
-            if (passenger == null /*|| flight == null*/) {
-                return new Response("Passenger or flight not found", Status.NOT_FOUND);
+            boolean added = passenger.addFlight(flight);
+            if (!added) {
+                return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-
-            // Lógica pendiente: agregar a vuelo
-            return new Response("Added to flight successfully", Status.OK, passenger);
-
+            return new Response("Flight added to passenger successfully", Status.OK);
         } catch (Exception e) {
-            return new Response("Error adding to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+            return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 

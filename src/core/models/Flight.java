@@ -65,8 +65,13 @@ public class Flight implements Cloneable{
         throw new RuntimeException("No se pudo clonar el vuelo", e);
     }
 }
-    public void addPassenger(Passenger passenger) {
-        this.passengers.add(passenger);
+    public boolean addPassenger(Passenger passenger) {
+         if (!passengers.contains(passenger)) {
+        passengers.add(passenger);
+             System.out.println("se añadió un pasajero a este vuelo");
+        return true;
+    }
+    return false;
     }
     
     public String getId() {

@@ -45,7 +45,7 @@ public class AirportFrame extends javax.swing.JFrame {
         //read jsons:
         controller = new MainController();
         controller.initializeData();
-
+        loadComboBoxes();
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
 
@@ -97,6 +97,18 @@ public class AirportFrame extends javax.swing.JFrame {
             DAY3.addItem("" + i);
             DAY4.addItem("" + i);
             SelectMinute.addItem("" + i);
+        }
+    }
+
+    private void loadComboBoxes() {
+        List<Passenger> passengers = (ArrayList) controller.getPassengerController().getAllPassengers().getObject();
+        for (Passenger p : passengers) {
+            userSelect.addItem(String.valueOf(p.getId())); 
+        }
+        userSelect.setEnabled(false);
+        List<Flight> flights = (ArrayList) controller.getFlightController().getAllFlights().getObject();
+        for (Flight p : flights) {
+            FlightSelector.addItem(String.valueOf(p.getId())); 
         }
     }
 
@@ -1417,6 +1429,7 @@ public class AirportFrame extends javax.swing.JFrame {
         if (userRadioButton.isSelected()) {
             userRadioButton.setSelected(false);
             userSelect.setSelectedIndex(0);
+            userSelect.setEnabled(false);
         }
         // Llamar al controlador para obtener los estados de las pestañas
         Response response = controller.getUserController().setUserRole(UserController.UserRole.ADMINISTRATOR, pestañas.getTabCount());
@@ -1430,8 +1443,9 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_adminRadioButtonActionPerformed
 
     private void userRadioButtonRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userRadioButtonRadioButtonActionPerformed
+        userSelect.setEnabled(true);
         if (adminRadioButton.isSelected()) {
-            adminRadioButton.setSelected(false);
+            adminRadioButton.setSelected(false);  
         }
         Response response = controller.getUserController().setUserRole(UserController.UserRole.USER, pestañas.getTabCount());
         if (response.getStatus() == Status.OK) {
@@ -1495,47 +1509,47 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
 
-    // Obtener datos del formulario
-    String id = IDFlight.getText();
-    String planeId = (String) PlaneSelector.getSelectedItem();
-    String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
-    String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
-    String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
+        // Obtener datos del formulario
+        String id = IDFlight.getText();
+        String planeId = (String) PlaneSelector.getSelectedItem();
+        String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
+        String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
+        String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
 
-    String year = BDayUpdate.getText();
-    String month = (String) MONTH1.getSelectedItem();
-    String day = (String) DAY1.getSelectedItem();
-    String hour = (String) MONTH2.getSelectedItem();
-    String minutes = (String) DAY2.getSelectedItem();
+        String year = BDayUpdate.getText();
+        String month = (String) MONTH1.getSelectedItem();
+        String day = (String) DAY1.getSelectedItem();
+        String hour = (String) MONTH2.getSelectedItem();
+        String minutes = (String) DAY2.getSelectedItem();
 
-    String hoursDurationArrival = (String) MONTH3.getSelectedItem();
-    String minutesDurationArrival = (String) DAY3.getSelectedItem();
-    String hoursDurationScale = (String) MONTH4.getSelectedItem();
-    String minutesDurationScale = (String) DAY4.getSelectedItem();
+        String hoursDurationArrival = (String) MONTH3.getSelectedItem();
+        String minutesDurationArrival = (String) DAY3.getSelectedItem();
+        String hoursDurationScale = (String) MONTH4.getSelectedItem();
+        String minutesDurationScale = (String) DAY4.getSelectedItem();
 
-    // Llama al controlador para registrar el vuelo
-    Response response = controller.getFlightController().registerFlight(
-        id,
-        planeId,
-        departureLocationId,
-        arrivalLocationId,
-        scaleLocationId,
-        year,
-        month,
-        day,
-        hour,
-        minutes,
-        hoursDurationArrival,
-        minutesDurationArrival,
-        hoursDurationScale,
-        minutesDurationScale
-    );
+        // Llama al controlador para registrar el vuelo
+        Response response = controller.getFlightController().registerFlight(
+                id,
+                planeId,
+                departureLocationId,
+                arrivalLocationId,
+                scaleLocationId,
+                year,
+                month,
+                day,
+                hour,
+                minutes,
+                hoursDurationArrival,
+                minutesDurationArrival,
+                hoursDurationScale,
+                minutesDurationScale
+        );
 
-    JOptionPane.showMessageDialog(this, response.getMessage(), "Flight Register", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Flight Register", JOptionPane.INFORMATION_MESSAGE);
 
-    if (response.getStatus() == Status.CREATED) {
-        this.FlightSelector.addItem(id);
-    }
+        if (response.getStatus() == Status.CREATED) {
+            this.FlightSelector.addItem(id);
+        }
 
 
     }//GEN-LAST:event_createFlightButtonActionPerformed
@@ -1555,27 +1569,11 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
     private void AddPassengerToFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPassengerToFlightButtonActionPerformed
-        // TODO add your handling code here:
-        long passengerId = Long.parseLong(PassengerID.getText());
+        
+        String passengerId = PassengerID.getText();
         String flightId = FlightSelector.getItemAt(FlightSelector.getSelectedIndex());
-
-        Passenger passenger = null;
-        Flight flight = null;
-
-        for (Passenger p : this.passengers) {
-            if (p.getId() == passengerId) {
-                passenger = p;
-            }
-        }
-
-        for (Flight f : this.flights) {
-            if (flightId.equals(f.getId())) {
-                flight = f;
-            }
-        }
-
-        passenger.addFlight(flight);
-        flight.addPassenger(passenger);
+        
+        controller.getFlightController().addPassengertoFlight(flightId, passengerId);
     }//GEN-LAST:event_AddPassengerToFlightButtonActionPerformed
 
     private void DelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayButtonActionPerformed
