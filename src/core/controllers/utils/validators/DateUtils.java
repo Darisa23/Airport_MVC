@@ -113,7 +113,7 @@ public class DateUtils {
         }
         try {
             int val = Integer.parseInt(s);
-            return val >= 0 && val <= 23;
+            return val > 0 && val <= 23;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -126,7 +126,7 @@ public class DateUtils {
         }
         try {
             int val = Integer.parseInt(s);
-            return val >= 0 && val <= 59;
+            return val > 0 && val <= 59;
         } catch (NumberFormatException e) {
             return false;
         }
