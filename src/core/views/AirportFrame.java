@@ -202,7 +202,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
-        DepartureDateDay = new javax.swing.JTextField();
+        DepartureDateYear = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
         MONTH1 = new javax.swing.JComboBox<>();
         jLabel31 = new javax.swing.JLabel();
@@ -443,38 +443,38 @@ public class AirportFrame extends javax.swing.JFrame {
 
         IdAirplane.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(IdAirplane);
-        IdAirplane.setBounds(180, 93, 130, 35);
+        IdAirplane.setBounds(180, 93, 130, 31);
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel12.setText("Brand:");
         jPanel3.add(jLabel12);
-        jLabel12.setBounds(53, 157, 50, 25);
+        jLabel12.setBounds(53, 157, 52, 25);
 
         Brand.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Brand);
-        Brand.setBounds(180, 154, 130, 35);
+        Brand.setBounds(180, 154, 130, 31);
 
         Model.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Model);
-        Model.setBounds(180, 213, 130, 35);
+        Model.setBounds(180, 213, 130, 31);
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel13.setText("Model:");
         jPanel3.add(jLabel13);
-        jLabel13.setBounds(53, 216, 55, 25);
+        jLabel13.setBounds(53, 216, 57, 25);
 
         MaxCapacity.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(MaxCapacity);
-        MaxCapacity.setBounds(180, 273, 130, 35);
+        MaxCapacity.setBounds(180, 273, 130, 31);
 
         jLabel14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel14.setText("Max Capacity:");
         jPanel3.add(jLabel14);
-        jLabel14.setBounds(53, 276, 109, 25);
+        jLabel14.setBounds(53, 276, 114, 25);
 
         Airline.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Airline);
-        Airline.setBounds(180, 333, 130, 35);
+        Airline.setBounds(180, 333, 130, 31);
 
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel15.setText("Airline:");
@@ -633,7 +633,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jLabel29.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel29.setText("Departure date:");
 
-        DepartureDateDay.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        DepartureDateYear.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
 
         jLabel30.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel30.setText("-");
@@ -720,7 +720,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(DepartureDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(DepartureDateYear, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -795,7 +795,7 @@ public class AirportFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel24)
                                 .addComponent(DepartureLocationSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel29))
-                            .addComponent(DepartureDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(DepartureDateYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(MONTH1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel30)
                             .addComponent(jLabel31)
@@ -1528,7 +1528,7 @@ public class AirportFrame extends javax.swing.JFrame {
         String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
         String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
 
-        String year = BDayUpdate.getText();
+        String year = DepartureDateYear.getText();
         String month = (String) MONTH1.getSelectedItem();
         String day = (String) DAY1.getSelectedItem();
         String hour = (String) DepartureHour.getSelectedItem();
@@ -1700,7 +1700,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> DAY5;
     private javax.swing.JButton DelayButton;
     private javax.swing.JComboBox<String> DepaetureMinutes;
-    private javax.swing.JTextField DepartureDateDay;
+    private javax.swing.JTextField DepartureDateYear;
     private javax.swing.JComboBox<String> DepartureHour;
     private javax.swing.JComboBox<String> DepartureLocationSelector;
     private javax.swing.JTextField FirstNameUpdate;
