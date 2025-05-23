@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -65,7 +66,14 @@ public class PassengerController {
             return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-
+//obtener todos los id de pasajeros:
+    public Response getAllPassengerIds() {
+    ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
+    List<String> ids = passengers.stream()
+                                 .map(p -> String.valueOf(p.getId()))
+                                 .toList(); 
+    return new Response("Passenger IDs retrieved", Status.OK, ids);
+}
     public Response getAllPassengers() {
         try {
             ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();

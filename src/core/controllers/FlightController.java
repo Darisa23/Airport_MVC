@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -102,7 +103,14 @@ public class FlightController {
             return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-
+    //obtener todos los id de vuelos:
+    public Response getAllFlightIds() {
+    ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
+    List<String> ids = flights.stream()
+                                 .map(p -> String.valueOf(p.getId()))
+                                 .toList(); 
+    return new Response("Flights IDs retrieved", Status.OK, ids);
+}
     //Agregar un vuelo:
     public static Response addFlight(Flight flight) {
         try {

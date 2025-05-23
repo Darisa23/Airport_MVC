@@ -12,6 +12,7 @@ import core.models.storage.StorageLocations;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -48,7 +49,14 @@ public class LocationController {
             return new Response("Error retrieving airports: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-
+//obtener todos los id de aeropuertos:
+    public Response getAllLocationIds() {
+    ArrayList<Location> planes = StorageLocations.getInstance().getAll();
+    List<String> ids = planes.stream()
+                                 .map(p -> String.valueOf(p.getAirportId()))
+                                 .toList(); 
+    return new Response("Plane IDs retrieved", Status.OK, ids);
+}
     public Response getAllAirports() {
         try {
             ArrayList<Location> locations = StorageLocations.getInstance().getAll();

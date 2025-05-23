@@ -102,23 +102,25 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void loadComboBoxes() {
         //CAMBIAR ESTOOO*************
-        List<Passenger> passengers = (ArrayList) controller.getPassengerController().getAllPassengers().getObject();
-        for (Passenger p : passengers) {
-            userSelect.addItem(String.valueOf(p.getId()));
+        List<String> passengerIds = (List<String>) controller.getPassengerController().getAllPassengerIds().getObject();
+        for (String id : passengerIds) {
+            userSelect.addItem(id);
         }
         userSelect.setEnabled(false);
-        List<Flight> flights = (ArrayList) controller.getFlightController().getAllFlights().getObject();
-        for (Flight f : flights) {
-            FlightSelector.addItem(String.valueOf(f.getId()));
-            SelectID.addItem(f.getId());
+        List<String> flightIds = (List<String>) controller.getFlightController().getAllFlightIds().getObject();
+        for (String id : flightIds) {
+            FlightSelector.addItem(id);
+            SelectID.addItem(id);
         }
-        List<Plane> planes = (ArrayList) controller.getPlaneController().getAllPlanes().getObject();
-        for (Plane p : planes) {
-            PlaneSelector.addItem(String.valueOf(p.getId()));
+        List<String> planeIds = (List<String>) controller.getPlaneController().getAllPlaneIds().getObject();
+        for (String id : planeIds) {
+            PlaneSelector.addItem(id);
         }
-        List<Location> locations = (ArrayList) controller.getLocationController().getAllAirports().getObject();
-        for (Location l : locations) {
-            PlaneSelector.addItem(l.getAirportId());
+        List<String> locationIds = (List<String>) controller.getLocationController().getAllLocationIds().getObject();
+        for (String id : locationIds) {
+            DepartureLocationSelector.addItem(id);
+            ArrivalLocationSelector.addItem(id);
+            ScaleLocationSelector.addItem(id);
         }
     }
 
@@ -1592,8 +1594,8 @@ public class AirportFrame extends javax.swing.JFrame {
         String flightId = SelectID.getItemAt(SelectID.getSelectedIndex());
         String hours = SelectHour.getItemAt(SelectHour.getSelectedIndex());
         String minutes = SelectMinute.getItemAt(SelectMinute.getSelectedIndex());
-        
-        Response response = controller.getFlightController().updateFlight(flightId,hours,minutes);
+
+        Response response = controller.getFlightController().updateFlight(flightId, hours, minutes);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Delay flight", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_DelayButtonActionPerformed
 

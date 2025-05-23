@@ -12,6 +12,7 @@ import core.models.storage.StoragePlanes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -48,7 +49,14 @@ public class PlaneController {
             return new Response("Error retrieving plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-    
+    //obtener todos los id de aviones:
+    public Response getAllPlaneIds() {
+    ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
+    List<String> ids = planes.stream()
+                                 .map(p -> String.valueOf(p.getId()))
+                                 .toList(); 
+    return new Response("Plane IDs retrieved", Status.OK, ids);
+}
     public Response getAllPlanes() {
         try {
             ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
