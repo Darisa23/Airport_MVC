@@ -160,20 +160,20 @@ public class FlightController {
     }
 
     //Actualiza un avión
-      public Response updateFlight(String id, String hours, String minutes  ) {
+      public Response delayFlight(String id, String hours, String minutes  ) {
         try {
+            //revisar si vuelo existe:
              Response oflight = getFlight(id);
             if (oflight.getStatus() == Status.NOT_FOUND) {
                 return new Response("flight does not exist", Status.NOT_FOUND);
             }
-           if (!DateUtils.isValidHour(hours)|| !DateUtils.isValidMinute(minutes)){
+           if (!DateUtils.isValidHour(hours)&& !DateUtils.isValidMinute(minutes)){
                return new Response("invalid hours or minutes", Status.BAD_REQUEST);
            }
      
             Flight flight = StorageFlights.getInstance().get(id);
-            int hoint = Integer.parseInt(hours);
-            int mint = Integer.parseInt(minutes);
-            flight.delay(hoint,mint);
+            
+            flight.delay(Integer.parseInt(hours),Integer.parseInt(minutes));
             return new Response("delayed succesfully", Status.OK);
             
            

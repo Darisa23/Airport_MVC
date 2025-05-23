@@ -81,35 +81,39 @@ public class DateUtils {
         }
     }
 
-    public static boolean isTimeGreaterThanZero(int hours, int minutes) {
-        return hours > 0 || minutes > 0;
-        
-    }
-    
-    // Adds a specified number of hours to a LocalDateTime
-    public static LocalDateTime addHours(LocalDateTime dateTime, int hoursToAdd) {
-        if (dateTime == null) {
-            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
-        }
-        return dateTime.plusHours(hoursToAdd);
-    }
+    public static boolean isValidDuration( String hoursDurationArrival, String minutesDurationArrival,  String hoursDurationScale, String minutesDurationScale) {
+         try {
+        int vueloHoras = Integer.parseInt(hoursDurationArrival);
+        int vueloMinutos = Integer.parseInt(minutesDurationArrival);
+        int escalaHoras = Integer.parseInt(hoursDurationScale);
+        int escalaMinutos = Integer.parseInt(minutesDurationScale);
 
-    // Adds a specified number of minutes to a LocalDateTime
-    public static LocalDateTime addMinutes(LocalDateTime dateTime, int minutesToAdd) {
-        if (dateTime == null) {
-            throw new IllegalArgumentException("Original LocalDateTime cannot be null.");
+        int duracionVuelo = vueloHoras * 60 + vueloMinutos;
+        int duracionEscala = escalaHoras * 60 + escalaMinutos;
+
+        // Si no hay escala (tiempos de escala en 0), validar solo el vuelo
+        if (duracionEscala == 0) {
+            return duracionVuelo > 0;
         }
-        return dateTime.plusMinutes(minutesToAdd);
+
+        // Si hay escala, el total debe ser mayor a 0
+        return (duracionVuelo + duracionEscala) > 0;
+
+    } catch (NumberFormatException e) {
+        return false; // Si hay error al convertir a número, no es válido
+    }
     }
     
+
     // Valida una cadena como hora (0-23)
     public static boolean isValidHour(String s) {
+        
         if (s == null || s.trim().isEmpty()) {
             return false;
         }
         try {
             int val = Integer.parseInt(s);
-            return val >= 0 && val <= 23;
+            return val > 0 && val <= 23;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -122,7 +126,7 @@ public class DateUtils {
         }
         try {
             int val = Integer.parseInt(s);
-            return val >= 0 && val <= 59;
+            return val > 0 && val <= 59;
         } catch (NumberFormatException e) {
             return false;
         }
