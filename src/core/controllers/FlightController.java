@@ -39,23 +39,23 @@ public class FlightController {
             Flight flight;
             if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
                 flight = new Flight(id,
-                        (Plane) planeRes.getObject(),
-                        (Location) deLocRes.getObject(),
-                        (Location) scaleLocRes.getObject(),
-                        (Location) arrLocRes.getObject(),
-                        departureDate,
-                        hoursDurArr,
-                        minutesDurArr,
-                        scaleHours,
-                        scaleMinutes);
+                        (Plane) PlaneController.getPlane(plane).getObject(),
+                        (Location) LocationController.getAirport(departureLocation).getObject(),
+                        (Location) LocationController.getAirport(scaleLocation).getObject(),
+                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
+                        DateUtils.buildDate(year, month, day, hour, minutes),
+                        Integer.parseInt(hoursDurationArrival),
+                        Integer.parseInt(minutesDurationArrival),
+                        Integer.parseInt(hoursDurationScale),
+                        Integer.parseInt(minutesDurationScale));
             } else {
                 flight = new Flight(id,
-                        (Plane) planeRes.getObject(),
-                        (Location) deLocRes.getObject(),
-                        (Location) arrLocRes.getObject(),
-                        departureDate,
-                        hoursDurArr,
-                        minutesDurArr);
+                        (Plane) PlaneController.getPlane(plane).getObject(),
+                        (Location) LocationController.getAirport(departureLocation).getObject(),
+                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
+                        DateUtils.buildDate(year, month, day, hour, minutes),
+                        Integer.parseInt(hoursDurationArrival),
+                        Integer.parseInt(minutesDurationArrival));
             }
             // 12. Add flight to storage
 

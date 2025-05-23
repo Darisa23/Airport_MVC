@@ -1514,7 +1514,7 @@ public class AirportFrame extends javax.swing.JFrame {
     String minutesDurationScale = (String) DAY4.getSelectedItem();
 
     // Llama al controlador para registrar el vuelo
-    Response response = controller.getFlightController().createFlight(
+    Response response = controller.getFlightController().registerFlight(
         id,
         planeId,
         departureLocationId,

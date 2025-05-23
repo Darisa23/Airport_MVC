@@ -106,7 +106,7 @@ public class FlightValidator implements Validator {
             if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)) {
                 return new Response("Invalid departure date", Status.BAD_REQUEST);
             }
-            LocalDateTime departureDate = DateUtils.buildDate(year, month, day, hour, minutes);
+            
      return new Response("Valid Flight",Status.OK);
 }
 }
