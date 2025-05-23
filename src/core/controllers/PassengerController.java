@@ -52,7 +52,7 @@ public class PassengerController {
     }
 
     //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
-    public static Response getPassenger(String id) {
+    public Response getPassenger(String id) {
         try {
             long nid = Long.parseLong(id);
             Passenger passenger = StoragePassengers.getInstance().get(nid);
@@ -120,9 +120,9 @@ public class PassengerController {
         }
     }
 
-    public static Response addToFlight(String passengerId, Flight flight) {
+    public Response addToFlight(String passengerId, Flight flight) {
         try {
-            Response opassenger = PassengerController.getPassenger(passengerId);
+            Response opassenger = getPassenger(passengerId);
             if (opassenger.getStatus() == Status.NOT_FOUND) {
                 return opassenger;
             }
@@ -137,5 +137,12 @@ public class PassengerController {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-
+    public Response getFlightsOfPassenger(String passengerId) {
+    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
+    if (passenger == null) {
+        return new Response("Passenger not found", Status.NOT_FOUND);
+    }
+    //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
+    return new Response("Flights retrieved", Status.OK, passenger.getFlights());
+}
 }

@@ -101,14 +101,24 @@ public class AirportFrame extends javax.swing.JFrame {
     }
 
     private void loadComboBoxes() {
+        //CAMBIAR ESTOOO*************
         List<Passenger> passengers = (ArrayList) controller.getPassengerController().getAllPassengers().getObject();
         for (Passenger p : passengers) {
-            userSelect.addItem(String.valueOf(p.getId())); 
+            userSelect.addItem(String.valueOf(p.getId()));
         }
         userSelect.setEnabled(false);
         List<Flight> flights = (ArrayList) controller.getFlightController().getAllFlights().getObject();
-        for (Flight p : flights) {
-            FlightSelector.addItem(String.valueOf(p.getId())); 
+        for (Flight f : flights) {
+            FlightSelector.addItem(String.valueOf(f.getId()));
+            SelectID.addItem(f.getId());
+        }
+        List<Plane> planes = (ArrayList) controller.getPlaneController().getAllPlanes().getObject();
+        for (Plane p : planes) {
+            PlaneSelector.addItem(String.valueOf(p.getId()));
+        }
+        List<Location> locations = (ArrayList) controller.getLocationController().getAllAirports().getObject();
+        for (Location l : locations) {
+            PlaneSelector.addItem(l.getAirportId());
         }
     }
 
@@ -230,7 +240,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jLabel44 = new javax.swing.JLabel();
         jLabel45 = new javax.swing.JLabel();
         FlightSelector = new javax.swing.JComboBox<>();
-        AddPassengerToFlightButton = new javax.swing.JButton();
+        AddFlightButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ownflightsTable = new javax.swing.JTable();
@@ -966,11 +976,11 @@ public class AirportFrame extends javax.swing.JFrame {
         FlightSelector.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         FlightSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Flight" }));
 
-        AddPassengerToFlightButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        AddPassengerToFlightButton.setText("Add");
-        AddPassengerToFlightButton.addActionListener(new java.awt.event.ActionListener() {
+        AddFlightButton.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        AddFlightButton.setText("Add");
+        AddFlightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddPassengerToFlightButtonActionPerformed(evt);
+                AddFlightButtonActionPerformed(evt);
             }
         });
 
@@ -990,7 +1000,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 .addContainerGap(829, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(AddPassengerToFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AddFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(509, 509, 509))
         );
         jPanel6Layout.setVerticalGroup(
@@ -1007,7 +1017,7 @@ public class AirportFrame extends javax.swing.JFrame {
                     .addComponent(jLabel45)
                     .addComponent(FlightSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
-                .addComponent(AddPassengerToFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AddFlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(85, 85, 85))
         );
 
@@ -1445,7 +1455,7 @@ public class AirportFrame extends javax.swing.JFrame {
     private void userRadioButtonRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userRadioButtonRadioButtonActionPerformed
         userSelect.setEnabled(true);
         if (adminRadioButton.isSelected()) {
-            adminRadioButton.setSelected(false);  
+            adminRadioButton.setSelected(false);
         }
         Response response = controller.getUserController().setUserRole(UserController.UserRole.USER, pestañas.getTabCount());
         if (response.getStatus() == Status.OK) {
@@ -1509,7 +1519,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
 
-        // Obtener datos del formulario
+        // Para crear un vuelo:
         String id = IDFlight.getText();
         String planeId = (String) PlaneSelector.getSelectedItem();
         String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
@@ -1527,7 +1537,7 @@ public class AirportFrame extends javax.swing.JFrame {
         String hoursDurationScale = (String) MONTH4.getSelectedItem();
         String minutesDurationScale = (String) DAY4.getSelectedItem();
 
-        // Llama al controlador para registrar el vuelo
+        // Llama al controlador para registrar el vuelo:
         Response response = controller.getFlightController().registerFlight(
                 id,
                 planeId,
@@ -1550,12 +1560,10 @@ public class AirportFrame extends javax.swing.JFrame {
         if (response.getStatus() == Status.CREATED) {
             this.FlightSelector.addItem(id);
         }
-
-
     }//GEN-LAST:event_createFlightButtonActionPerformed
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
-        // TODO add your handling code here:
+        // Para actualizar la información de un usuario:
         String id = IDPassengerUpdate.getText();
         String firstname = FirstNameUpdate.getText();
         String lastname = LastNameUpdate.getText();
@@ -1565,20 +1573,22 @@ public class AirportFrame extends javax.swing.JFrame {
         String phoneCode = CountryCodeUpdate.getText();
         String phone = PhoneNumberUpdate.getText();
         String country = CountryUserUpdate.getText();
+        // Llama al controlador para actualizar el usuario:
         controller.getPassengerController().updatePassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
-    private void AddPassengerToFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPassengerToFlightButtonActionPerformed
-        
+    private void AddFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddFlightButtonActionPerformed
+        //Para añadir un pasajero a un vuelo necesitamos el pasajero y el vuelo:
         String passengerId = PassengerID.getText();
         String flightId = FlightSelector.getItemAt(FlightSelector.getSelectedIndex());
-        
+
+        //Llamamos al controlador para añadir el pasajero al vuelo:
         Response response = controller.getFlightController().addPassengertoFlight(flightId, passengerId);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Agregar vuelo", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_AddPassengerToFlightButtonActionPerformed
+    }//GEN-LAST:event_AddFlightButtonActionPerformed
 
     private void DelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayButtonActionPerformed
-        // TODO add your handling code here:
+        // Para retrasar un vuelo:
         String flightId = SelectID.getItemAt(SelectID.getSelectedIndex());
         String hours = SelectHour.getItemAt(SelectHour.getSelectedIndex());
         String minutes = SelectMinute.getItemAt(SelectMinute.getSelectedIndex());
@@ -1588,21 +1598,21 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
-        // TODO add your handling code here:
-        long passengerId = Long.parseLong(userSelect.getItemAt(userSelect.getSelectedIndex()));
+        // Ver los vuelos propios de un Usuario:
+        //1. leer el id del usuario que quiere ver sus vuelos:
+        String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());
+        //2. Hacer que el controlador busque los vuelos de ese usuario:
+        Response response = controller.getPassengerController().getFlightsOfPassenger(passengerId);
 
-        Passenger passenger = null;
-        for (Passenger p : this.passengers) {
-            if (p.getId() == passengerId) {
-                passenger = p;
+        if (response.getStatus() == Status.OK) {//Si encuentra al usuario y sus vuelos:
+            ArrayList<Flight> flights = (ArrayList<Flight>) response.getObject();
+            DefaultTableModel model = (DefaultTableModel) ownflightsTable.getModel();
+            model.setRowCount(0);
+            for (Flight flight : flights) {
+                model.addRow(new Object[]{flight.getId(), flight.getDepartureDate(), flight.calculateArrivalDate()});
             }
-        }
-
-        ArrayList<Flight> flights = passenger.getFlights();
-        DefaultTableModel model = (DefaultTableModel) ownflightsTable.getModel();
-        model.setRowCount(0);
-        for (Flight flight : flights) {
-            model.addRow(new Object[]{flight.getId(), flight.getDepartureDate(), flight.calculateArrivalDate()});
+        } else {//si algo falla:
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshMyFlightsButtonButtonActionPerformed
 
@@ -1662,7 +1672,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddPassengerToFlightButton;
+    private javax.swing.JButton AddFlightButton;
     private javax.swing.JTextField AirPortID_LocationRegistration;
     private javax.swing.JTextField Airline;
     private javax.swing.JTextField AirportCity;
