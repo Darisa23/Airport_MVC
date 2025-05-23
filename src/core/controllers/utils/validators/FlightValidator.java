@@ -96,9 +96,7 @@ public class FlightValidator implements Validator {
                 }
             }
             // 9. Validate total flight duration > 00:00
-            int hoursDurArr = Integer.parseInt(hoursDurationArrival);
-            int minutesDurArr = Integer.parseInt(minutesDurationArrival);
-            if (!DateUtils.isTimeGreaterThanZero(hoursDurArr + scaleHours, minutesDurArr + scaleMinutes)) {
+            if (!DateUtils.isValidDuration(hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale)) {
                 return new Response("Flight duration must be greater than 00:00", Status.BAD_REQUEST);
             }
             // 10. Build departure date object

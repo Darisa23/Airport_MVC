@@ -152,13 +152,14 @@ public class FlightController {
     }
 
     //Actualiza un avión
-      public Response updateFlight(String id, String hours, String minutes  ) {
+      public Response delayFlight(String id, String hours, String minutes  ) {
         try {
+            //revisar si vuelo existe:
              Response oflight = getFlight(id);
             if (oflight.getStatus() == Status.NOT_FOUND) {
                 return new Response("flight does not exist", Status.NOT_FOUND);
             }
-           if (!DateUtils.isValidHour(hours)|| !DateUtils.isValidMinute(minutes) || !DateUtils.isTimeGreaterThanZero(hours,minutes)){
+           if (!DateUtils.isValidHour(hours)&& !DateUtils.isValidMinute(minutes)){
                return new Response("invalid hours or minutes", Status.BAD_REQUEST);
            }
      

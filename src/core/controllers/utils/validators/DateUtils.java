@@ -81,11 +81,27 @@ public class DateUtils {
         }
     }
 
-    public static boolean isTimeGreaterThanZero( String hours, String minutes) {
-        int hoint = Integer.parseInt(hours);
-        int mint = Integer.parseInt(minutes);
-        return hoint > 0 || mint > 0;
-        
+    public static boolean isValidDuration( String hoursDurationArrival, String minutesDurationArrival,  String hoursDurationScale, String minutesDurationScale) {
+         try {
+        int vueloHoras = Integer.parseInt(hoursDurationArrival);
+        int vueloMinutos = Integer.parseInt(minutesDurationArrival);
+        int escalaHoras = Integer.parseInt(hoursDurationScale);
+        int escalaMinutos = Integer.parseInt(minutesDurationScale);
+
+        int duracionVuelo = vueloHoras * 60 + vueloMinutos;
+        int duracionEscala = escalaHoras * 60 + escalaMinutos;
+
+        // Si no hay escala (tiempos de escala en 0), validar solo el vuelo
+        if (duracionEscala == 0) {
+            return duracionVuelo > 0;
+        }
+
+        // Si hay escala, el total debe ser mayor a 0
+        return (duracionVuelo + duracionEscala) > 0;
+
+    } catch (NumberFormatException e) {
+        return false; // Si hay error al convertir a número, no es válido
+    }
     }
     
 
