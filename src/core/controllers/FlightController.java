@@ -4,11 +4,13 @@
  */
 package core.controllers;
 
+import static core.controllers.PlaneController.getPlane;
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.validators.FlightValidator;
 import core.controllers.utils.validators.PassengerValidator;
+import core.controllers.utils.validators.PlaneValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
@@ -99,6 +101,43 @@ public class FlightController {
             return new Response("Flight added successfully", Status.OK);
         } catch (Exception e) {
             return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+        
+            public static Response updateFlight(String id, String newplane, String newdepartureLocation, String newarrivalLocation, String newscaleLocation,
+                                 String newyear, String newmonth, String newday, String newhour, String newminutes,
+                                 String newhoursDurationArrival, String newminutesDurationArrival,
+                                 String newhoursDurationScale, String newminutesDurationScale) {
+        try {
+           
+            Response flightRes = getFlight(id);
+            
+            if(flightRes.getStatus()== Status.NOT_FOUND){
+                return flightRes;
+            }
+            
+            Flight flight = (Flight) flightRes.getObject();
+            Response Invalid = PlaneValidator.INSTANCE.isValid(id, newplane, newdepartureLocation, newarrivalLocation, newscaleLocation, newyear, newmonth, newday, 
+                    newhour, newminutes, newhoursDurationArrival, newminutesDurationArrival, newhoursDurationScale, newminutesDurationScale
+            );
+            if(Invalid.getStatus() != Status.OK){
+                
+            }
+            
+            flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
+            flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
+            flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
+            flight.setScaleLocation((Location) LocationController.getAirport(newscaleLocation).getObject());
+            flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
+            flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationScale));
+            flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
+            flight.setHoursDurationScale(Integer.parseInt(newhoursDurationScale));
+            flight.setMinutesDurationScale(Integer.parseInt(newminutesDurationScale));
+
+            return new Response("Plane updated successfully", Status.OK);
+
+        } catch (Exception e) {
+            return new Response("Error updating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

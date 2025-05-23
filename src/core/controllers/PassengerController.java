@@ -89,7 +89,7 @@ public class PassengerController {
         }
     }
 
-//ESTOS REVISAR Y ADECUAR: *******************************************************************
+
     public Response updatePassenger(String id, String newFirstName, String newLastName,
             String newYear, String newMonth, String newDay, String newCountryCode, String newPhone, String newCountry) {
 

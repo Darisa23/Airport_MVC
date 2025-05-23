@@ -18,7 +18,7 @@ import java.util.Comparator;
  * @author maria
  */
 public class PlaneController {
-    
+    //creating plane
     public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
         try {
             Response Invalid = PlaneValidator.INSTANCE.isValid(id,brand,model,maxCapacity,airline);
@@ -35,9 +35,7 @@ public class PlaneController {
             return new Response("Error creating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-//LOS DEJAMOS Y LOS USAMOS O LOS QUITAMOS???*******************************************************************
-    //CREO QUE HAY QUE DEJARLOS, ENTONCES CAMBIA DONDE LLAMO ARRIBA DIRECTAMENTE AL STORAGE, LO MISMO CON LOS OTROS
-    //*************************************************************************************
+
     public static Response getPlane(String id) {
         try {
             Plane plane = StoragePlanes.getInstance().get(id);
@@ -76,17 +74,16 @@ public class PlaneController {
     
     public static Response updatePlane(String id, String newBrand, String newModel, String newAirline) {
         try {
-            Plane plane = StoragePlanes.getInstance().get(id);
-
-            if (plane == null) {
-                return new Response("Plane not found", Status.NOT_FOUND);
+           
+            Response planeRes = getPlane(id);
+            if(planeRes.getStatus()== Status.NOT_FOUND){
+                return planeRes;
             }
-
-            /*if (!isNonEmpty(newBrand) || !isNonEmpty(newModel) || !isNonEmpty(newAirline)) {
-                return new Response("Fields must not be empty", Status.BAD_REQUEST);
-            }*/
-
-            // Actualizar propiedades
+            Plane plane = (Plane) planeRes.getObject();
+            Response Invalid = PlaneValidator.INSTANCE.isValid(id,newBrand,newModel,newAirline);
+            if(Invalid.getStatus() != Status.OK){
+            return Invalid;}
+                
             plane.setBrand(newBrand);
             plane.setModel(newModel);         
             plane.setAirline(newAirline);
@@ -113,4 +110,5 @@ public class PlaneController {
             return new Response("Error deleting plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+    
 }
