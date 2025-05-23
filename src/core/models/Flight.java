@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package airport;
+package core.models;
 
+import core.models.Plane;
+import core.models.Passenger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
-public class Flight {
+public class Flight implements Cloneable{
     
     private final String id;
     private ArrayList<Passenger> passengers;
@@ -34,8 +36,7 @@ public class Flight {
         this.arrivalLocation = arrivalLocation;
         this.departureDate = departureDate;
         this.hoursDurationArrival = hoursDurationArrival;
-        this.minutesDurationArrival = minutesDurationArrival;
-        
+        this.minutesDurationArrival = minutesDurationArrival;       
         this.plane.addFlight(this);
     }
 
@@ -55,8 +56,22 @@ public class Flight {
         this.plane.addFlight(this);
     }
     
-    public void addPassenger(Passenger passenger) {
-        this.passengers.add(passenger);
+    public Flight copy(){
+    try {
+        Flight cloned = (Flight) super.clone();
+        cloned.passengers = new ArrayList<>(this.passengers); 
+        return cloned;
+    } catch (CloneNotSupportedException e) {
+        throw new RuntimeException("No se pudo clonar el vuelo", e);
+    }
+}
+    public boolean addPassenger(Passenger passenger) {
+         if (!passengers.contains(passenger)) {
+        passengers.add(passenger);
+             System.out.println("se añadió un pasajero a este vuelo");
+        return true;
+    }
+    return false;
     }
     
     public String getId() {
@@ -108,11 +123,51 @@ public class Flight {
     }
     
     public void delay(int hours, int minutes) {
+        System.out.println("hora de salida ates: "+this.departureDate);
+        System.out.println("debe retrasarse: "+hours+" horas y "+minutes+" minutos");
         this.departureDate = this.departureDate.plusHours(hours).plusMinutes(minutes);
+        
+        System.out.println("se guardará la nueva departure date como: "+this.departureDate);
     }
     
     public int getNumPassengers() {
         return passengers.size();
+    }
+
+    public void setPassengers(ArrayList<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public void setPlane(Plane plane) {
+        this.plane = plane;
+    }
+
+    public void setDepartureLocation(Location departureLocation) {
+        this.departureLocation = departureLocation;
+    }
+
+    public void setScaleLocation(Location scaleLocation) {
+        this.scaleLocation = scaleLocation;
+    }
+
+    public void setArrivalLocation(Location arrivalLocation) {
+        this.arrivalLocation = arrivalLocation;
+    }
+
+    public void setHoursDurationArrival(int hoursDurationArrival) {
+        this.hoursDurationArrival = hoursDurationArrival;
+    }
+
+    public void setMinutesDurationArrival(int minutesDurationArrival) {
+        this.minutesDurationArrival = minutesDurationArrival;
+    }
+
+    public void setHoursDurationScale(int hoursDurationScale) {
+        this.hoursDurationScale = hoursDurationScale;
+    }
+
+    public void setMinutesDurationScale(int minutesDurationScale) {
+        this.minutesDurationScale = minutesDurationScale;
     }
     
 }
