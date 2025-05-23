@@ -1580,17 +1580,11 @@ public class AirportFrame extends javax.swing.JFrame {
     private void DelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayButtonActionPerformed
         // TODO add your handling code here:
         String flightId = SelectID.getItemAt(SelectID.getSelectedIndex());
-        int hours = Integer.parseInt(SelectHour.getItemAt(SelectHour.getSelectedIndex()));
-        int minutes = Integer.parseInt(SelectMinute.getItemAt(SelectMinute.getSelectedIndex()));
-
-        Flight flight = null;
-        for (Flight f : this.flights) {
-            if (flightId.equals(f.getId())) {
-                flight = f;
-            }
-        }
-
-        flight.delay(hours, minutes);
+        String hours = SelectHour.getItemAt(SelectHour.getSelectedIndex());
+        String minutes = SelectMinute.getItemAt(SelectMinute.getSelectedIndex());
+        
+        Response response = controller.getFlightController().updateFlight(flightId,hours,minutes);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Delay flight", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed

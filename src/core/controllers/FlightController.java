@@ -146,91 +146,24 @@ public class FlightController {
     }
 
     //Actualiza un avión
-    public static Response updateFlight(String id, String newplane, String newdepartureLocation, String newarrivalLocation, String newscaleLocation,
-            String newyear, String newmonth, String newday, String newhour, String newminutes,
-            String newhoursDurationArrival, String newminutesDurationArrival,
-            String newhoursDurationScale, String newminutesDurationScale) {
+      public Response updateFlight(String id, String hours, String minutes  ) {
         try {
-            // 1. ver si el vuelo existe:
-            Response flightRes = getFlight(id);
-
-            if (flightRes.getStatus() == Status.NOT_FOUND) {
-                return flightRes;
+             Response oflight = getFlight(id);
+            if (oflight.getStatus() == Status.NOT_FOUND) {
+                return new Response("flight does not exist", Status.NOT_FOUND);
             }
-            // como existe obtienes ese vuelo:
-            Flight flight = (Flight) flightRes.getObject();
-            // ver si los nuevos datos son válidos:
-            Response Invalid = FlightValidator.INSTANCE.isValid(id, newplane, newdepartureLocation, newarrivalLocation, newscaleLocation, newyear, newmonth, newday,
-                    newhour, newminutes, newhoursDurationArrival, newminutesDurationArrival, newhoursDurationScale, newminutesDurationScale
-            );
-            if (Invalid.getStatus() != Status.OK) {
-                return Invalid;
-            }
-            //como los datos son válidos creamos el vuelo
-
-            if (newscaleLocation != null && !newscaleLocation.trim().isEmpty()) {
-                flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
-                flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
-                flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
-                flight.setScaleLocation((Location) LocationController.getAirport(newscaleLocation).getObject());
-                flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
-                flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationArrival));
-                flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
-                flight.setHoursDurationScale(Integer.parseInt(newhoursDurationScale));
-                flight.setMinutesDurationScale(Integer.parseInt(newminutesDurationScale));
-            } else {
-                flight.setPlane((Plane) PlaneController.getPlane(newplane).getObject());
-                flight.setDepartureLocation((Location) LocationController.getAirport(newdepartureLocation).getObject());
-                flight.setArrivalLocation((Location) LocationController.getAirport(newarrivalLocation).getObject());
-                flight.setDepartureDate(DateUtils.buildDate(newyear, newmonth, newday, newhour, newminutes));
-                flight.setHoursDurationArrival(Integer.parseInt(newhoursDurationArrival));
-                flight.setMinutesDurationArrival(Integer.parseInt(newminutesDurationArrival));
-            }
-            return new Response("Plane updated successfully", Status.OK);
-
+           if (!DateUtils.isValidHour(hours)|| !DateUtils.isValidMinute(minutes)){
+               return new Response("invalid hours or minutes", Status.BAD_REQUEST);
+           }
+     
+            Flight flight = StorageFlights.getInstance().get(id);
+            int hoint = Integer.parseInt(hours);
+            int mint = Integer.parseInt(minutes);
+            flight.delay(hoint,mint);
+            return new Response("delayed succesfully", Status.OK);
+            
+           
         } catch (Exception e) {
-            return new Response("Error updating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-             public Response delayFlight(String flightId, String hoursToAdd, String minutesToAdd) {
-        try {
-            // 1. Retrieve the flight using the existing getFlight method
-            Response flightRes = getFlight(flightId); 
+            return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }}}
 
-            if (flightRes.getStatus() == Status.NOT_FOUND) {
-                return flightRes; // Flight not found
-            }
-            if (flightRes.getStatus() != Status.OK) {
-                return new Response("Error retrieving flight to delay: " + flightRes.getMessage(), flightRes.getStatus());
-            }
-
-            Flight flight = (Flight) flightRes.getObject();
-
-            // 2. Validate delay duration 
-            if (hoursToAdd < 0 || minutesToAdd < 0 || (hoursToAdd == 0 && minutesToAdd == 0)) {
-                return new Response("Delay duration must be positive.", Status.BAD_REQUEST);
-            }
-
-            // 3. Modify the Flight object 
-            LocalDateTime originalDepartureDate = flight.getDepartureDate();
-            LocalDateTime newDepartureDate = DateUtils.addHours(originalDepartureDate, hoursToAdd);
-            newDepartureDate = DateUtils.addMinutes(newDepartureDate, minutesToAdd);
-
-            flight.setDepartureDate(newDepartureDate); // Update the flight's departure date
-
-            // 4. Persist the updated Flight object using Storage 
-            boolean updated = StorageFlights.getInstance().update(flight); // Call the update method 
-            if (!updated) {
-                // This case might occur if update() method has specific logic (e.g., flight not found, though getFlight already checked)
-                return new Response("Failed to persist delayed flight. Flight might have been removed concurrently.", Status.INTERNAL_SERVER_ERROR);
-            }
-
-            return new Response("Flight " + flightId + " delayed successfully.", Status.OK, flight);
-
-        } catch (NumberFormatException e) {
-            return new Response("Invalid number format for delay hours/minutes.", Status.BAD_REQUEST);
-        } catch (Exception e) {
-            return new Response("Error delaying flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-}

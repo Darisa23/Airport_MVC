@@ -102,4 +102,31 @@ public class DateUtils {
         return dateTime.plusMinutes(minutesToAdd);
     }
     
+    // Valida una cadena como hora (0-23)
+    public static boolean isValidHour(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            int val = Integer.parseInt(s);
+            return val >= 0 && val <= 23;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    // Valida una cadena como minuto (0-59)
+    public static boolean isValidMinute(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            int val = Integer.parseInt(s);
+            return val >= 0 && val <= 59;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    
 }
