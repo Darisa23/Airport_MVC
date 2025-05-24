@@ -48,7 +48,7 @@ public class PassengerController {
             }
 
             // 3. Parseo de Strings a tipos numéricos (ID, teléfono, código de país).
-            // Esto es CRÍTICO y debe hacerse aquí con manejo de NumberFormatException.
+ 
             long parsedId;
             int parsedCountryPhoneCode;
             long parsedPhone;

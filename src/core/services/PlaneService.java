@@ -17,7 +17,6 @@ import core.models.storage.StoragePlanes;
 
 public class PlaneService {
 
-    // registerPlane ahora recibe los tipos de datos ya parseados y validados por el controlador.
     public Plane registerPlane(String id, String brand, String model, int maxCapacity, String airline) {
         Plane plane = new Plane(id, brand, model, maxCapacity, airline);
 
@@ -28,7 +27,6 @@ public class PlaneService {
         return plane;
     }
 
-    // getPlane simplemente recupera, sin validaciones de entrada.
     public Plane getPlane(String id) {
         return StoragePlanes.getInstance().get(id);
     }

@@ -23,18 +23,16 @@ import core.models.storage.StorageFlights;
 // FlightService.java
 public class FlightService {
 
-    // registerFlight recibe los Strings de los campos de fecha/hora/duración (DateUtils los maneja),
-    // Y los objetos Plane y Location ya resueltos por el controlador.
+   
     public Flight registerFlight(String id, Plane plane, Location departureLocation, Location arrivalLocation, Location scaleLocation,
                                   String year, String month, String day, String hour, String minutes,
                                   int hoursDurationArrival, int minutesDurationArrival,
                                   int hoursDurationScale, int minutesDurationScale) {
         Flight flight;
 
-        // Construcción del objeto Flight, usando los objetos Plane y Location directamente,
-        // y los int de duración.
+  
         if (scaleLocation == null) {
-            System.out.println("holiiii"); // Mensaje de log de tu original
+            System.out.println("holiiii"); 
             flight = new Flight(id,
                     plane,
                     departureLocation,
@@ -43,7 +41,7 @@ public class FlightService {
                     hoursDurationArrival,
                     minutesDurationArrival);
         } else {
-            System.out.println("HOLA MARIA"); // Mensaje de log de tu original
+            System.out.println("HOLA MARIA"); 
             flight = new Flight(id,
                     plane,
                     departureLocation,
