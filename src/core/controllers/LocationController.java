@@ -6,9 +6,9 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.validators.LocationValidator;
 import core.models.Location;
 import core.models.storage.StorageLocations;
+import core.services.LocationService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,23 +20,15 @@ import java.util.List;
  */
 public class LocationController {
  
-    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
-        try {
-            //Validations:
-            Response Invalid = LocationValidator.INSTANCE.isValid(id,name,city,country,latitude,longitude);
-            if (Invalid.getStatus()!=Status.OK){
-                return Invalid;
-            }
-            //Add to storage
-            Location location = new Location(id, name, city, country, Double.parseDouble(latitude), Double.parseDouble(longitude));
-            addLocation(location);
-            // All Good :D
-            return new Response("Airport created", Status.CREATED);
-        } catch (Exception e) {
-            return new Response("Internal Server Error", Status.INTERNAL_SERVER_ERROR);
-        }
+    private final LocationService locationService;
 
-    }   
+    public LocationController() {
+        this.locationService = new LocationService();
+    }
+
+    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
+        return locationService.createAirport(id, name, city, country, latitude, longitude);
+    }
     public static Response getAirport(String id) {
         try {
             Location passenger = StorageLocations.getInstance().get(id);

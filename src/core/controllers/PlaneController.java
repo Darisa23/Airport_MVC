@@ -9,6 +9,7 @@ import core.controllers.utils.Status;
 import core.controllers.utils.validators.PlaneValidator;
 import core.models.Plane;
 import core.models.storage.StoragePlanes;
+import core.services.PlaneService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,23 +20,17 @@ import java.util.List;
  * @author maria
  */
 public class PlaneController {
-    //creating plane
-    public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
-        try {
-            Response Invalid = PlaneValidator.INSTANCE.isValid(id,brand,model,maxCapacity,airline);
-            if (Invalid.getStatus()!=Status.OK){
-                return Invalid;
-            }
+    
+   private final PlaneService planeService;
 
-            Plane plane = new Plane(id, brand, model,  Integer.parseInt(maxCapacity), airline);
-            addPlane(plane);
-
-            return new Response("Plane created successfully", Status.CREATED);
-
-        } catch (Exception e) {
-            return new Response("Error creating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+    public PlaneController() {
+        this.planeService = new PlaneService();
     }
+
+    public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
+        return planeService.createPlane(id, brand, model, maxCapacity, airline);
+    }
+
 
     public static Response getPlane(String id) {
         try {
