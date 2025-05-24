@@ -4,17 +4,21 @@
  */
 package core.models.storage;
 
+import core.models.Observers.Observable;
+import core.models.Observers.Observer;
 import core.models.Plane;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Alexander Sanguino
  */
-public class StoragePlanes implements Storage<Plane,String> {
+public class StoragePlanes implements Storage<Plane, String>, Observable {
 
     private static StoragePlanes instance;
     private final ArrayList<Plane> airplanes;
+    private final List<Observer> observers = new ArrayList<>();
 
     private StoragePlanes() {
         this.airplanes = new ArrayList<>();
@@ -29,22 +33,26 @@ public class StoragePlanes implements Storage<Plane,String> {
 
     @Override
     public boolean add(Plane plane) {
-         Plane pl = this.get(plane.getId()); //revisamos si ya estaba:
-         if(pl != null){
-                return false;
-            }
-         //Lo agregamos si no está
+        Plane pl = this.get(plane.getId()); //revisamos si ya estaba:
+        if (pl != null) {
+            return false;
+        }
+        //Lo agregamos si no está
         airplanes.add(plane);
+        notifyObservers();
         return true;
     }
 
     @Override
-    public boolean delete(Plane plane) { // Implement delete(T type)
+    public boolean delete(Plane plane) {
         if (plane == null) {
             return false;
         }
-        // Remove the plane based on its ID
-        return airplanes.removeIf(p -> p.getId().equals(plane.getId()));
+        boolean removed = airplanes.removeIf(p -> p.getId().equals(plane.getId()));
+        if (removed) {
+            notifyObservers(); // ✅ Notificamos si se eliminó exitosamente
+        }
+        return removed;
     }
 
     @Override
@@ -56,25 +64,38 @@ public class StoragePlanes implements Storage<Plane,String> {
         for (int i = 0; i < airplanes.size(); i++) {
             if (airplanes.get(i).getId().equals(updatedPlane.getId())) {
                 airplanes.set(i, updatedPlane); // Replace the old instance with the new one
+                notifyObservers();
                 return true;
             }
         }
         return false; // The plane to update was not found
     }
 
-
     @Override
-    public Plane get(String id) { 
-        for (Plane pl : airplanes){
-            if(pl.getId().equals(id)){
+    public Plane get(String id) {
+        for (Plane pl : airplanes) {
+            if (pl.getId().equals(id)) {
                 return pl;
             }
         }
-        return null;}
+        return null;
+    }
 
     @Override
     public ArrayList<Plane> getAll() {
         return new ArrayList<>(airplanes);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o : observers) {
+            o.update();
+        }
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
     }
 
 }

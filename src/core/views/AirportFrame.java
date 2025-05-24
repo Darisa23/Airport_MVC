@@ -12,7 +12,13 @@ import core.controllers.MainController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.models.Observers.FlightTableObserver;
+import core.models.Observers.LocationTableObserver;
 import core.models.Observers.PassengerTableObserver;
+import core.models.Observers.PlaneTableObserver;
+import core.models.storage.StorageFlights;
+import core.models.storage.StorageLocations;
+import core.models.storage.StoragePlanes;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -165,8 +171,22 @@ public class AirportFrame extends javax.swing.JFrame {
     Airline.setText("");
 }
   private void setupObservers() {
+       // Observador de pasajeros
       PassengerTableObserver passengerObserver = new PassengerTableObserver(AllPassengersTable);
       controller.getPassengerController().registerObserver(passengerObserver);
+     // Observador de vuelos
+    FlightTableObserver flightObserver = new FlightTableObserver(AllFlightsTable);
+    StorageFlights.getInstance().addObserver(flightObserver);
+
+    // Observador de ubicaciones
+    LocationTableObserver locationObserver = new LocationTableObserver(AllLocationTable);
+    StorageLocations.getInstance().addObserver(locationObserver);
+
+    // Observador de aviones
+    PlaneTableObserver planeObserver = new PlaneTableObserver(AllPlanesTable);
+    StoragePlanes.getInstance().addObserver(planeObserver);
+      
+      
   }  
     /**
      * This method is called from within the constructor to initialize the form.

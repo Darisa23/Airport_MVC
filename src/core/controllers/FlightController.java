@@ -174,6 +174,7 @@ public class FlightController {
             Flight flight = StorageFlights.getInstance().get(id);
             
             flight.delay(Integer.parseInt(hours),Integer.parseInt(minutes));
+            StorageFlights.getInstance().update(flight);
             return new Response("delayed succesfully", Status.OK);
             
            
