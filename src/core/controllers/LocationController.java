@@ -21,14 +21,14 @@ import java.util.List;
  * @author Alexander Sanguino
  */
 public class LocationController {
- 
+
     private final LocationService locationService;
 
     public LocationController() {
         this.locationService = new LocationService();
     }
 
-     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
+    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
         try {
             // 1. Validaciones de presencia (campos vacíos)
             if (ValidationUtils.anyEmpty(id, name, city, country, latitude, longitude)) {
@@ -57,7 +57,6 @@ public class LocationController {
             }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
-            // Le pasamos los valores ya parseados.
             Location newLocation = locationService.registerLocation(id, name, city, country, parsedLatitude, parsedLongitude);
 
             return new Response("Airport created", Status.CREATED, newLocation);
@@ -68,10 +67,11 @@ public class LocationController {
             return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+
     public static Response getAirport(String id) {
         try {
             Location passenger = StorageLocations.getInstance().get(id);
-            if (passenger== null) {
+            if (passenger == null) {
                 return new Response("Airport not found", Status.NOT_FOUND);
             }
             return new Response("Airport retrieved successfully", Status.OK, passenger);
@@ -81,13 +81,15 @@ public class LocationController {
         }
     }
 //obtener todos los id de aeropuertos:
+
     public Response getAllLocationIds() {
-    ArrayList<Location> planes = StorageLocations.getInstance().getAll();
-    List<String> ids = planes.stream()
-                                 .map(p -> String.valueOf(p.getAirportId()))
-                                 .toList(); 
-    return new Response("Plane IDs retrieved", Status.OK, ids);
-}
+        ArrayList<Location> planes = StorageLocations.getInstance().getAll();
+        List<String> ids = planes.stream()
+                .map(p -> String.valueOf(p.getAirportId()))
+                .toList();
+        return new Response("Plane IDs retrieved", Status.OK, ids);
+    }
+
     public Response getAllAirports() {
         try {
             ArrayList<Location> locations = StorageLocations.getInstance().getAll();
@@ -97,7 +99,8 @@ public class LocationController {
         } catch (Exception e) {
             return new Response("Error retrieving airports list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
-}
+    }
+
     public static Response addLocation(Location location) {
         try {
             boolean added = StorageLocations.getInstance().add(location);

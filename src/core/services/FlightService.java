@@ -61,7 +61,6 @@ public class FlightService {
         return flight;
     }
 
-    // getFlight simplemente recupera, sin validaciones de entrada.
     public Flight getFlight(String id) {
         return StorageFlights.getInstance().get(id);
     }

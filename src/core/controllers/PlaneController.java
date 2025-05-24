@@ -56,7 +56,6 @@ public class PlaneController {
 }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
-            // Le pasamos los valores ya parseados.
             Plane newPlane = planeService.registerPlane(id, brand, model, parsedMaxCapacity, airline);
 
             return new Response("Plane created successfully", Status.CREATED, newPlane);
@@ -134,20 +133,5 @@ public class PlaneController {
         }
     }
 
-    public static Response deletePlane(String id) {
-        try {
-            Plane plane = StoragePlanes.getInstance().get(id);
-
-            if (plane == null) {
-                return new Response("Plane not found", Status.NOT_FOUND);
-            }
-
-            //StoragePlanes.getInstance().delete();
-            return new Response("Plane deleted successfully", Status.OK);
-
-        } catch (Exception e) {
-            return new Response("Error deleting plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
     
 }

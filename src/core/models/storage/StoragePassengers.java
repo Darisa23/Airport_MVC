@@ -49,8 +49,6 @@ public boolean delete(Passenger passenger) {
     if (passenger == null) {
         return false;
     }
-    // Corrected line: p.getId() (primitive long) will be autoboxed to Long
-    // to call the equals() method on passenger.getId() (which is also likely a Long or autoboxed)
     return passengers.removeIf(p -> p.getId() == passenger.getId() || Long.valueOf(p.getId()).equals(passenger.getId()));
 }
       @Override
@@ -60,16 +58,14 @@ public boolean update(Passenger updatedPassenger) {
     }
 
     for (int i = 0; i < passengers.size(); i++) {
-        // Corrected line: Explicitly box the primitive long to a Long object to use .equals()
-        // Or, for direct value comparison, use == if both are primitive long
         if (Long.valueOf(passengers.get(i).getId()).equals(updatedPassenger.getId())) {
-            passengers.set(i, updatedPassenger); // Reemplaza la instancia antigua con la nueva           
+            passengers.set(i, updatedPassenger);          
             notifyObservers(); 
             System.out.println("se notificó en update");
             return true;
         }
     }
-    return false; // El pasajero a actualizar no fue encontrado
+    return false; 
 }
 
     @Override

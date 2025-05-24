@@ -100,8 +100,6 @@ public class FlightController {
             }
 
             // 6. Si todas las validaciones pasaron, llamar al servicio.
-            // Le pasamos los Strings de campos de fecha/hora (DateUtils los maneja dentro del servicio),
-            // y los objetos de dependencia resueltos (Plane, Location), y los ints de duración.
             Flight newFlight = flightService.registerFlight(
                     id, plane, departureLocation, arrivalLocation, scaleLocation,
                     year, month, day, hour, minutes,
@@ -142,7 +140,6 @@ public class FlightController {
         try {
             ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
             Collections.sort(flights, Comparator.comparing(Flight::getDepartureDate));
-            //acá que devuelva copia:
             return new Response("Flights retrieved successfully", Status.OK, flights);
         } catch (Exception e) {
             return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);

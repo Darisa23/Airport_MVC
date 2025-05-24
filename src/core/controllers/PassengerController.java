@@ -60,29 +60,22 @@ public class PassengerController {
                 return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
             }
 
-            // 4. Validación de negocio: Verificar si ya existe el pasajero (usando el servicio para consultar).
-            // El servicio espera un 'long' para getPassenger, así que pasamos 'parsedId'.
+            // 4. Verificar si ya existe el pasajero (
             if (passengerService.getPassenger(parsedId) != null) {
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
-            // Le pasamos los valores ya parseados.
             Passenger newPassenger = passengerService.registerPassenger(
                     parsedId, firstName, lastName, year, month, day, parsedCountryPhoneCode, parsedPhone, country);
 
             return new Response("Passenger created successfully", Status.CREATED, newPassenger);
 
         } catch (IllegalArgumentException e) {
-            // Esto captura excepciones lanzadas por DateUtils.buildDate si no se manejan internamente allí
-            // o por cualquier otro parseo que el servicio intente hacer si no le pasamos todo parseado.
             return new Response("Invalid data provided: " + e.getMessage(), Status.BAD_REQUEST);
         } catch (IllegalStateException e) {
-            // Captura errores de lógica de negocio o persistencia lanzados por el servicio
-            // (ej. si Storage.add() devuelve false a pesar de la verificación previa del controlador).
             return new Response("Internal server error during passenger registration: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            // Captura cualquier otra excepción inesperada
             return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
@@ -200,7 +193,6 @@ public class PassengerController {
         if (passenger.getFlights().isEmpty()) {
             return new Response("El usuario " + passengerId + " no tiene ningún vuelo registrado", Status.NOT_FOUND);
         }
-        //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
         return new Response("Flights retrieved", Status.OK, passenger.getFlights());
     }
 

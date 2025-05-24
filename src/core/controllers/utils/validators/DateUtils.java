@@ -29,7 +29,7 @@ public class DateUtils {
                 return date.isAfter(today) && date.isBefore(today.plusYears(2));
             }
         } catch (NumberFormatException | DateTimeParseException | NullPointerException e) {
-            return false; // One of the values is not numeric or the date is invalid (like 31/02)
+            return false;
         }
     }
 
@@ -50,7 +50,7 @@ public class DateUtils {
                 return date.isAfter(today) && date.isBefore(today.plusYears(2));
             }
         } catch (NumberFormatException | DateTimeParseException | NullPointerException e) {
-            return false; // One of the values is not numeric or the date is invalid (like 31/02)
+            return false; 
         }
     }
 

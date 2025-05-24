@@ -24,7 +24,7 @@ public class ValidationUtils {
                 return true; // At least one empty field was found
             }
         }
-        return false; // No fields were empty
+        return false; 
     }
 
     public static boolean isNumericWithDigitRange(String input, int minDigits, int maxDigits) {
@@ -34,7 +34,6 @@ public class ValidationUtils {
 
         String clean = input.trim();
 
-        // builds the regular expression dynamicaally: ^\d{min,max}$
         String regex = "^\\d{" + minDigits + "," + maxDigits + "}$";
 
         return clean.matches(regex);
