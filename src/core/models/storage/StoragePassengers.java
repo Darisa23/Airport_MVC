@@ -4,18 +4,22 @@
  */
 package core.models.storage;
 
+import core.models.Observers.Observable;
+import core.models.Observers.Observer;
 import core.models.Passenger;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Alexander Sanguino
  */
-public class StoragePassengers implements Storage<Passenger,Long> {
+public class StoragePassengers implements Storage<Passenger,Long>, Observable {
 
      private static StoragePassengers instance;
     private ArrayList<Passenger> passengers;
 
+    private final List<Observer> observers = new ArrayList<>();
     private StoragePassengers() {
         this.passengers = new ArrayList<>();
     }
@@ -35,6 +39,7 @@ public class StoragePassengers implements Storage<Passenger,Long> {
             }
          //Lo agregamos si no está
         this.passengers.add(passenger);
+        notifyObservers();
         return true;
     }
 
@@ -58,7 +63,9 @@ public boolean update(Passenger updatedPassenger) {
         // Corrected line: Explicitly box the primitive long to a Long object to use .equals()
         // Or, for direct value comparison, use == if both are primitive long
         if (Long.valueOf(passengers.get(i).getId()).equals(updatedPassenger.getId())) {
-            passengers.set(i, updatedPassenger); // Reemplaza la instancia antigua con la nueva
+            passengers.set(i, updatedPassenger); // Reemplaza la instancia antigua con la nueva           
+            notifyObservers(); 
+            System.out.println("se notificó en update");
             return true;
         }
     }
@@ -78,6 +85,16 @@ public boolean update(Passenger updatedPassenger) {
     public ArrayList<Passenger> getAll() {
         return new ArrayList<>(passengers);
     }
+     @Override
+    public void notifyObservers() {
+        for (Observer o : observers) {
+            o.update();
+        }
+    }
 
+     @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
     
 }

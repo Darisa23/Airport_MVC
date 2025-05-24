@@ -4,7 +4,10 @@
  */
 package core.models.storage;
 import core.models.Flight;
+import core.models.Observers.Observable;
+import core.models.Observers.Observer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,11 +15,11 @@ import java.util.ArrayList;
  */
 
 //owo
-public class StorageFlights implements Storage<Flight,String>{
+public class StorageFlights implements Storage<Flight,String>, Observable{
     
     private static StorageFlights instance;
     private ArrayList<Flight> flights;
-
+    private final List<Observer> observers = new ArrayList<>();
     private StorageFlights() {
         this.flights = new ArrayList<>();
     }
@@ -36,6 +39,7 @@ public class StorageFlights implements Storage<Flight,String>{
             }
          //Lo agregamos si no está
         flights.add(flight);
+        notifyObservers(); 
         return true;
     }
 
@@ -74,6 +78,18 @@ public class StorageFlights implements Storage<Flight,String>{
     @Override
     public ArrayList<Flight> getAll() {
         return new ArrayList<>(flights);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o : observers) {
+            o.update();
+        }
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
     }
 
 }

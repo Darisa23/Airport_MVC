@@ -127,10 +127,10 @@ public class FlightController {
     //Añadirle un pasajero a un vuelo:
     public Response addPassengertoFlight(String flightId, String passengerId) {
         try {
-            //revisar si el vuelo existe:
-            System.out.println("el flight id: "+flightId);
-                       System.out.println("el passenger id: "+passengerId);
-
+            //revisar que si seleccionó un Id de usuario:
+            if(passengerId.isEmpty()){
+            return new Response("Debe seleccionar un Id de usuario para agregar un vuelo", Status.NO_CONTENT);
+        }
             System.out.println("reviso si el vuelo existe");
             Response oflight = getFlight(flightId);
             if (oflight.getStatus() == Status.NOT_FOUND) {

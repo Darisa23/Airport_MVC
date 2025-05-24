@@ -8,24 +8,15 @@ import core.models.Location;
 import core.models.Flight;
 import core.models.Plane;
 import core.models.Passenger;
-import com.formdev.flatlaf.FlatDarkLaf;
 import core.controllers.MainController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.validators.ValidationUtils;
-import core.models.persistency.*;
-import core.models.storage.StorageFlights;
-import core.models.storage.StorageLocations;
-import core.models.storage.StoragePassengers;
-import core.models.storage.StoragePlanes;
+import core.models.Observers.PassengerTableObserver;
 import java.awt.Color;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -54,7 +45,7 @@ public class AirportFrame extends javax.swing.JFrame {
         this.generateHours();
         this.generateMinutes();
         this.blockPanels();
-
+         setupObservers();
     }
 
     private void blockPanels() {
@@ -101,7 +92,6 @@ public class AirportFrame extends javax.swing.JFrame {
     }
 
     private void loadComboBoxes() {
-        //CAMBIAR ESTOOO*************
         List<String> passengerIds = (List<String>) controller.getPassengerController().getAllPassengerIds().getObject();
         for (String id : passengerIds) {
             userSelect.addItem(id);
@@ -123,7 +113,61 @@ public class AirportFrame extends javax.swing.JFrame {
             ScaleLocationSelector.addItem(id);
         }
     }
-
+    private void clearPassengerRegister() {
+    IDpassenger.setText("");
+    IDPassengerUpdate.setText("");
+    firstName.setText("");
+    FirstNameUpdate.setText("");
+    LastName.setText("");
+    LastNameUpdate.setText("");
+    yearBirthdate.setText("");
+    BDayUpdate.setText("");
+    phoneCodeCountry.setText("");
+    CountryCodeUpdate.setText("");
+    phoneNumber.setText("");
+    PhoneNumberUpdate.setText("");
+    Country.setText("");
+    CountryUserUpdate.setText("");
+    MONTH.setSelectedIndex(0);
+    MONTH5.setSelectedIndex(0);
+    DAY.setSelectedIndex(0);
+    DAY5.setSelectedIndex(0);
+}
+    private void clearFlightRegister() {
+    IDFlight.setText("");    
+    PlaneSelector.setSelectedIndex(0);
+    DepartureLocationSelector.setSelectedIndex(0);
+    ArrivalLocationSelector.setSelectedIndex(0);
+    ScaleLocationSelector.setSelectedIndex(0);
+    DepartureDateYear.setText("");
+    MONTH1.setSelectedIndex(0);
+    DAY1.setSelectedIndex(0);
+    DepartureHour.setSelectedIndex(0);
+    DepaetureMinutes.setSelectedIndex(0);
+    HourDurationArrival.setSelectedIndex(0);
+    MinuteDurationArrival.setSelectedIndex(0);
+    HourDurationScale.setSelectedIndex(0);
+    MinuteDurationScale.setSelectedIndex(0);
+}
+    private void clearLocationRegister() {
+    AirPortID_LocationRegistration.setText(""); 
+    AirportCity.setText("");
+    AirportCity.setText("");
+    AirportCountry.setText("");
+    AirportLatitude.setText("");
+    AirportLongitude.setText("");
+} 
+    private void clearAirplaneRegister() {
+    IdAirplane.setText(""); 
+    Brand.setText("");
+    Model.setText("");
+    MaxCapacity.setText("");
+    Airline.setText("");
+}
+  private void setupObservers() {
+      PassengerTableObserver passengerObserver = new PassengerTableObserver(AllPassengersTable);
+      controller.getPassengerController().registerObserver(passengerObserver);
+  }  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1428,6 +1472,8 @@ public class AirportFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
+       
+
     private void panelSuperiorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelSuperiorMousePressed
         x = evt.getX();
         y = evt.getY();
@@ -1485,6 +1531,7 @@ public class AirportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
         if (response.getStatus() == Status.CREATED)
             this.userSelect.addItem("" + id);
+        clearPassengerRegister();
     }//GEN-LAST:event_RegisterPassengerButtonActionPerformed
 
     private void CreateAirplaneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAirplaneButtonActionPerformed
@@ -1499,6 +1546,7 @@ public class AirportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
         if (response.getStatus() == Status.CREATED)
             this.PlaneSelector.addItem(id);
+        clearAirplaneRegister();
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
     private void CreateLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateLocationButtonActionPerformed
@@ -1516,6 +1564,7 @@ public class AirportFrame extends javax.swing.JFrame {
             this.DepartureLocationSelector.addItem(id);
             this.ArrivalLocationSelector.addItem(id);
             this.ScaleLocationSelector.addItem(id);
+            clearLocationRegister();
         }
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
 
@@ -1561,6 +1610,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
         if (response.getStatus() == Status.CREATED) {
             this.FlightSelector.addItem(id);
+            clearFlightRegister();
         }
     }//GEN-LAST:event_createFlightButtonActionPerformed
 
@@ -1576,7 +1626,11 @@ public class AirportFrame extends javax.swing.JFrame {
         String phone = PhoneNumberUpdate.getText();
         String country = CountryUserUpdate.getText();
         // Llama al controlador para actualizar el usuario:
-        controller.getPassengerController().updatePassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
+        Response response = controller.getPassengerController().updatePassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
+        JOptionPane.showMessageDialog(this, response.getMessage(), "Actualizar datos", JOptionPane.INFORMATION_MESSAGE);
+        if (response.getStatus() == Status.OK) {
+            clearPassengerRegister();
+        }
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
     private void AddFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddFlightButtonActionPerformed
@@ -1601,9 +1655,10 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
-        // Ver los vuelos propios de un Usuario:
+        //LA TABLA ES EL OBSERVADOR --> EL ÉXITO DE LA EJECUCIÓN DEL BOTÓN ES LO OBSERVADO
+// Ver los vuelos propios de un Usuario:
         //1. leer el id del usuario que quiere ver sus vuelos:
-        String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());
+        String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());     
         //2. Hacer que el controlador busque los vuelos de ese usuario:
         Response response = controller.getPassengerController().getFlightsOfPassenger(passengerId);
 

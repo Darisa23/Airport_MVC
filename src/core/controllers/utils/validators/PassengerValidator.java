@@ -23,25 +23,17 @@ public class PassengerValidator implements Validator {
     public Response isValid(String... fields) {
         
         String id = fields[0];
-        String firstName = fields[1];
-        String lastName = fields[2];
         String year = fields[3];
         String month = fields[4];
         String day = fields[5];
         String countryPhoneCode = fields[6];
         String phone = fields[7];
-        String country = fields[8];
-        if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
-            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-        }
+        
         // 2. ID Validation
         if (!ValidationUtils.isNumericWithDigitRange(id, 1, 15)) {
             return new Response("Invalid passenger ID. It must be numeric, not empty and have at least 15 digits.", Status.BAD_REQUEST);
         }
         
-        if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
-            return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
-        }
         // 3. CountryPhoneCode Validation
         if (!ValidationUtils.isNumericWithDigitRange(countryPhoneCode, 1, 3)) {
             return new Response("Invalid passenger CountryPhoneCode. It must be numeric, not empty and have at least 3 digits.", Status.BAD_REQUEST);

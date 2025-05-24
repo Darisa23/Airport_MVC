@@ -10,6 +10,7 @@ import core.controllers.utils.Status;
 import core.controllers.utils.validators.PassengerValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
+import core.models.Observers.Observer;
 import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
@@ -31,6 +32,12 @@ public class PassengerController {
             String countryPhoneCode, String phone, String country) {
         try {
             //Validaciones:
+            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
+            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+        }
+        if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
+            return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
+        }
             Response Invalid = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
             if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
@@ -102,25 +109,33 @@ public class PassengerController {
             String newYear, String newMonth, String newDay, String newCountryCode, String newPhone, String newCountry) {
 
         try {
-
+            if(id.isEmpty()){
+            return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
+        }
             Response passengerRes = getPassenger(id);
 
             if (passengerRes.getStatus() == Status.NOT_FOUND) {
                 return passengerRes;
             }
             Passenger passenger = (Passenger) passengerRes.getObject();
+            if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
+            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+        }
             Response Invalid = PassengerValidator.INSTANCE.isValid(id, newFirstName, newLastName, newYear, newMonth,
                     newDay, newCountryCode, newPhone, newCountry);
             if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
-            passenger.setFirstname(newFirstName);
-            passenger.setLastname(newLastName);
-            passenger.setBirthDate(DateUtils.buildDate(newYear, newMonth, newDay));
-            passenger.setCountryPhoneCode(Integer.parseInt(newCountryCode));
-            passenger.setPhone(Long.parseLong(newPhone));
-            passenger.setCountry(newCountry);
-
+            Passenger updatedPassenger = new Passenger(
+                    Long.parseLong(id),
+                    newFirstName,
+                    newLastName,
+                    DateUtils.buildDate(newYear, newMonth, newDay),
+                    Integer.parseInt(newCountryCode),
+                    Long.parseLong(newPhone),
+                    newCountry
+            );
+            StoragePassengers.getInstance().update(updatedPassenger);
             return new Response("Passenger updated successfully", Status.OK);
 
         } catch (Exception e) {
@@ -146,11 +161,20 @@ public class PassengerController {
         }
     }
     public Response getFlightsOfPassenger(String passengerId) {
+        if(passengerId.equals("Select User")){
+            return new Response("Debe seleccionar un Id de usuario para ver sus vuelos", Status.NO_CONTENT);
+        }
     Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
     if (passenger == null) {
         return new Response("Passenger not found", Status.NOT_FOUND);
     }
+    if(passenger.getFlights().isEmpty()){
+        return new Response("El usuario "+passengerId+" no tiene ningún vuelo registrado", Status.NOT_FOUND);
+    }
     //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
     return new Response("Flights retrieved", Status.OK, passenger.getFlights());
+}
+    public void registerObserver(Observer observer) {
+    StoragePassengers.getInstance().addObserver(observer);
 }
 }
