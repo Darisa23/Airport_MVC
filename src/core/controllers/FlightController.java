@@ -4,20 +4,15 @@
  */
 package core.controllers;
 
-import static core.controllers.PlaneController.getPlane;
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.validators.FlightValidator;
-import core.controllers.utils.validators.PassengerValidator;
-import core.controllers.utils.validators.PlaneValidator;
-import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
 import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,13 +36,24 @@ public class FlightController {
             String hoursDurationScale, String minutesDurationScale) {
         try {
             //Validaciones:
-            Response Invalid = FlightValidator.INSTANCE.isValid(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes, hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
+            Response Invalid = FlightValidator.INSTANCE.isValid(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes, 
+                    hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
             if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
             // 11. Create flight object
             Flight flight;
-            if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
+            if (scaleLocation.equals("Location")) {
+                System.out.println("holiiii");
+                flight = new Flight(id,
+                        (Plane) PlaneController.getPlane(plane).getObject(),
+                        (Location) LocationController.getAirport(departureLocation).getObject(),
+                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
+                        DateUtils.buildDate(year, month, day, hour, minutes),
+                        Integer.parseInt(hoursDurationArrival),
+                        Integer.parseInt(minutesDurationArrival));
+            } else {
+                System.out.println("HOLA MARIA");
                 flight = new Flight(id,
                         (Plane) PlaneController.getPlane(plane).getObject(),
                         (Location) LocationController.getAirport(departureLocation).getObject(),
@@ -58,14 +64,6 @@ public class FlightController {
                         Integer.parseInt(minutesDurationArrival),
                         Integer.parseInt(hoursDurationScale),
                         Integer.parseInt(minutesDurationScale));
-            } else {
-                flight = new Flight(id,
-                        (Plane) PlaneController.getPlane(plane).getObject(),
-                        (Location) LocationController.getAirport(departureLocation).getObject(),
-                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
-                        DateUtils.buildDate(year, month, day, hour, minutes),
-                        Integer.parseInt(hoursDurationArrival),
-                        Integer.parseInt(minutesDurationArrival));
             }
             // 12. Add flight to storage
 
@@ -146,9 +144,7 @@ public class FlightController {
             Passenger passenger = (Passenger) opassenger.getObject();
 
             boolean added = flight.addPassenger(passenger);
-            System.out.println("el added tiró: "+added);
             if (!added) {
-                System.out.println("no mamita");
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
             System.out.println("no estaba agregado el pasajero: "+passenger.getFirstname()+ " se agregó");

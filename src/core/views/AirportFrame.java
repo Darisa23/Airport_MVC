@@ -1575,11 +1575,7 @@ public class AirportFrame extends javax.swing.JFrame {
         String planeId = (String) PlaneSelector.getSelectedItem();
         String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
         String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
-
-        // Limpieza del valor de escala
-        String rawScale = (String) ScaleLocationSelector.getSelectedItem();
-        String scaleLocationId = (rawScale == null || rawScale.equals("Location") || rawScale.isBlank()) ? "" : rawScale;
-
+        String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
         String year = DepartureDateYear.getText();
         String month = (String) MONTH1.getSelectedItem();
         String day = (String) DAY1.getSelectedItem();
@@ -1612,6 +1608,7 @@ public class AirportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, response.getMessage(), "Flight Register", JOptionPane.INFORMATION_MESSAGE);
 
         if (response.getStatus() == Status.CREATED) {
+            SelectID.addItem(id);
             this.FlightSelector.addItem(id);
             clearFlightRegister();
         }

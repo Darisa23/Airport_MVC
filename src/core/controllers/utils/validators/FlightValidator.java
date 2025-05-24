@@ -73,7 +73,11 @@ public class FlightValidator implements Validator {
         if (departureLocation.equals(arrivalLocation)) {
             return new Response("Departure and Arrival locations must be different", Status.BAD_REQUEST);
         }
-        if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
+        // 7. Departure date validation
+        if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)) {
+            return new Response("Invalid Departure_Date", Status.BAD_REQUEST);
+        }
+        if (!scaleLocation.equals("Location")) {
             if (departureLocation.equals(scaleLocation)) {
                 return new Response("Departure and Scale locations must be different", Status.BAD_REQUEST);
             }
@@ -81,36 +85,39 @@ public class FlightValidator implements Validator {
                 return new Response("Arrival and Scale locations must be different", Status.BAD_REQUEST);
             }
         }
-        // 7. Departure date validation
-        if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)) {
-            return new Response("Invalid Departure_Date", Status.BAD_REQUEST);
+         try {
+            Integer.parseInt(hoursDurationArrival);
+            Integer.parseInt(minutesDurationArrival);
+        } catch (NumberFormatException e) {
+            return new Response("Please select a valid arrival duration", Status.BAD_REQUEST);
         }
         // 8. Scale location and duration validation
-        Response scaleLocRes = null;
-        int scaleHours = 0;
-        int scaleMinutes = 0;
-        //when there's a scale:
-        if (scaleLocation != null && !scaleLocation.trim().isEmpty()) {
-            scaleLocRes = LocationController.getAirport(scaleLocation);
+        int scaleHours;
+        int scaleMinutes;
+        try {
+            scaleHours = Integer.parseInt(hoursDurationScale);
+            scaleMinutes = Integer.parseInt(minutesDurationScale);
+        } catch (NumberFormatException e) {
+            return new Response("Scale duration must be numeric", Status.BAD_REQUEST);
+        }
+
+        if (scaleLocation.equals("Location")) {//when there´s not a scale
+            if (scaleHours != 0 && scaleMinutes != 0) {
+                return new Response("Scale duration must be 00:00 if Scale_Location is not present", Status.BAD_REQUEST);
+            }
+        } else { //when there's a scale:
+            Response scaleLocRes = LocationController.getAirport(scaleLocation);
             if (scaleLocRes.getStatus() == Status.NOT_FOUND) {
                 return new Response("The Selected Scale_Location does not exist", Status.BAD_REQUEST);
             }
 
-            scaleHours = Integer.parseInt(hoursDurationScale);
-            scaleMinutes = Integer.parseInt(minutesDurationScale);
             if (scaleHours == 0 && scaleMinutes == 0) {
                 return new Response("Scale duration must be greater than 00:00 if Scale_Location is present", Status.BAD_REQUEST);
             }
-        } else {//when there´s not a scale
-            scaleHours = Integer.parseInt(hoursDurationScale);
-            scaleMinutes = Integer.parseInt(minutesDurationScale);
-            if (scaleHours != 0 || scaleMinutes != 0) {
-                return new Response("Scale duration must be 00:00 if Scale_Location is not present", Status.BAD_REQUEST);
+            // 9. Validate total flight duration > 00:00
+            if (!DateUtils.isValidDuration(hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale)) {
+                return new Response("Flight duration must be greater than 00:00", Status.BAD_REQUEST);
             }
-        }
-        // 9. Validate total flight duration > 00:00
-        if (!DateUtils.isValidDuration(hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale)) {
-            return new Response("Flight duration must be greater than 00:00", Status.BAD_REQUEST);
         }
         // 10. Build departure date object
 
