@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package core.models.storage;
+
 import core.models.Flight;
 import core.models.Observers.Observable;
 import core.models.Observers.Observer;
@@ -13,13 +14,13 @@ import java.util.List;
  *
  * @author Alexander Sanguino
  */
-
 //owo
-public class StorageFlights implements Storage<Flight,String>, Observable{
-    
+public class StorageFlights implements Storage<Flight, String>, Observable {
+
     private static StorageFlights instance;
     private ArrayList<Flight> flights;
     private final List<Observer> observers = new ArrayList<>();
+
     private StorageFlights() {
         this.flights = new ArrayList<>();
     }
@@ -33,24 +34,29 @@ public class StorageFlights implements Storage<Flight,String>, Observable{
 
     @Override
     public boolean add(Flight flight) {
-         Flight fl = this.get(flight.getId()); //check if it existed already
-         if(fl != null){
-                return false;
-            }
-         //Lo agregamos si no está
+        Flight fl = this.get(flight.getId()); //check if it existed already
+        if (fl != null) {
+            return false;
+        }
+        //Lo agregamos si no está
         flights.add(flight);
-        notifyObservers(); 
+        notifyObservers();
         return true;
     }
 
     @Override
-    public boolean delete(Flight flight) {
-            Flight fl = this.get(flight.getId()); //
-        if (fl != null) {
-            return flights.remove(fl);
+  public boolean delete(Flight flight) {
+    Flight fl = this.get(flight.getId());
+    if (fl != null) {
+        boolean removed = flights.remove(fl);
+        if (removed) {
+            notifyObservers(); // ✅ Notificamos si efectivamente se eliminó
         }
-        return false;
+        return removed;
     }
+    return false;
+}
+
 
     @Override
     public boolean update(Flight flight) {
@@ -61,19 +67,21 @@ public class StorageFlights implements Storage<Flight,String>, Observable{
             // This effectively "updates" the flight by replacing it
             flights.remove(existingFlight);
             flights.add(flight);
+            notifyObservers(); // Notificamos después de actualizar
             return true;
         }
         return false; // Flight not found, so it cannot be updated
     }
 
     @Override
-    public Flight get(String id) { 
-        for (Flight fl : flights){
-            if(fl.getId().equals(id)){
+    public Flight get(String id) {
+        for (Flight fl : flights) {
+            if (fl.getId().equals(id)) {
                 return fl;
             }
         }
-        return null;}
+        return null;
+    }
 
     @Override
     public ArrayList<Flight> getAll() {
