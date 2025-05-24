@@ -12,11 +12,7 @@ import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Observers.Observer;
 import core.models.Passenger;
-import core.models.Plane;
-import core.models.storage.StorageFlights;
 import core.models.storage.StoragePassengers;
-import core.models.storage.StoragePlanes;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -119,7 +115,6 @@ public class PassengerController {
             if (passengerRes.getStatus() == Status.NOT_FOUND) {
                 return passengerRes;
             }
-            Passenger passenger = (Passenger) passengerRes.getObject();
             if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
             return new Response("Fields cannot be empty", Status.BAD_REQUEST);
         }
@@ -173,13 +168,12 @@ public class PassengerController {
     if(passenger.getFlights().isEmpty()){
         return new Response("El usuario "+passengerId+" no tiene ningún vuelo registrado", Status.NOT_FOUND);
     }
-    //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
     return new Response("Flights retrieved", Status.OK, passenger.getFlights());
 }
     public void registerObserver(Observer observer) {
     StoragePassengers.getInstance().addObserver(observer);
 }
-    public Response getPassengerDataForForm(String id) {
+    public Response getPassengerData(String id) {
     Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
     if (passenger == null) {
         return new Response("Passenger not found", Status.NOT_FOUND);
@@ -195,5 +189,47 @@ public class PassengerController {
     data.put("country", passenger.getCountry());
 
     return new Response("Data ready", Status.OK, data);
+}
+    public Response getFlightRowsOfPassenger(String id) {
+        //acá por ejemplo en vez de acceder al storage le pide al service que revise si existe
+        //**********************************************************************
+    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
+    if (passenger == null) {
+        return new Response("Passenger not found", Status.NOT_FOUND);
+    }
+    //ESTA TAMBIEN IRÍA AL SERVICE
+    ArrayList<Flight> flights = passenger.getFlights();
+    List<Object[]> rows = new ArrayList<>();
+
+    for (Flight f : flights) {
+        Object[] row = new Object[] {
+            f.getId(),
+            f.getDepartureDate(),
+            f.calculateArrivalDate()
+        };
+        rows.add(row);
+    }
+
+    return new Response("Flights refreshed", Status.OK, rows);
+}
+    
+public Response getPassengers() {
+    
+    List<Object[]> rows = new ArrayList<>();
+
+    for (Passenger p : StoragePassengers.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            p.getId(), 
+            p.getFullname(), 
+            p.getBirthDate(), 
+            p.calculateAge(), 
+            p.generateFullPhone(), 
+            p.getCountry(), 
+            p.getNumFlights()
+        };
+        rows.add(row);
+    }
+
+    return new Response("Passengers refreshed", Status.OK, rows);
 }
 }

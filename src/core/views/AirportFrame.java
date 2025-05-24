@@ -4,10 +4,6 @@
  */
 package core.views;
 
-import core.models.Location;
-import core.models.Flight;
-import core.models.Plane;
-import core.models.Passenger;
 import core.controllers.MainController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
@@ -20,7 +16,6 @@ import core.models.storage.StorageFlights;
 import core.models.storage.StorageLocations;
 import core.models.storage.StoragePlanes;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -52,7 +47,7 @@ public class AirportFrame extends javax.swing.JFrame {
         this.generateHours();
         this.generateMinutes();
         this.blockPanels();
-         setupObservers();
+        setupObservers();
     }
 
     private void blockPanels() {
@@ -120,75 +115,80 @@ public class AirportFrame extends javax.swing.JFrame {
             ScaleLocationSelector.addItem(id);
         }
     }
+
     private void clearPassengerRegister() {
-    IDpassenger.setText("");
-    IDPassengerUpdate.setText("");
-    firstName.setText("");
-    FirstNameUpdate.setText("");
-    LastName.setText("");
-    LastNameUpdate.setText("");
-    yearBirthdate.setText("");
-    BDayUpdate.setText("");
-    phoneCodeCountry.setText("");
-    CountryCodeUpdate.setText("");
-    phoneNumber.setText("");
-    PhoneNumberUpdate.setText("");
-    Country.setText("");
-    CountryUserUpdate.setText("");
-    MONTH.setSelectedIndex(0);
-    MONTH5.setSelectedIndex(0);
-    DAY.setSelectedIndex(0);
-    DAY5.setSelectedIndex(0);
-}
+        IDpassenger.setText("");
+        IDPassengerUpdate.setText("");
+        firstName.setText("");
+        FirstNameUpdate.setText("");
+        LastName.setText("");
+        LastNameUpdate.setText("");
+        yearBirthdate.setText("");
+        BDayUpdate.setText("");
+        phoneCodeCountry.setText("");
+        CountryCodeUpdate.setText("");
+        phoneNumber.setText("");
+        PhoneNumberUpdate.setText("");
+        Country.setText("");
+        CountryUserUpdate.setText("");
+        MONTH.setSelectedIndex(0);
+        MONTH5.setSelectedIndex(0);
+        DAY.setSelectedIndex(0);
+        DAY5.setSelectedIndex(0);
+    }
+
     private void clearFlightRegister() {
-    IDFlight.setText("");    
-    PlaneSelector.setSelectedIndex(0);
-    DepartureLocationSelector.setSelectedIndex(0);
-    ArrivalLocationSelector.setSelectedIndex(0);
-    ScaleLocationSelector.setSelectedIndex(0);
-    DepartureDateYear.setText("");
-    MONTH1.setSelectedIndex(0);
-    DAY1.setSelectedIndex(0);
-    DepartureHour.setSelectedIndex(0);
-    DepaetureMinutes.setSelectedIndex(0);
-    HourDurationArrival.setSelectedIndex(0);
-    MinuteDurationArrival.setSelectedIndex(0);
-    HourDurationScale.setSelectedIndex(0);
-    MinuteDurationScale.setSelectedIndex(0);
-}
+        IDFlight.setText("");
+        PlaneSelector.setSelectedIndex(0);
+        DepartureLocationSelector.setSelectedIndex(0);
+        ArrivalLocationSelector.setSelectedIndex(0);
+        ScaleLocationSelector.setSelectedIndex(0);
+        DepartureDateYear.setText("");
+        MONTH1.setSelectedIndex(0);
+        DAY1.setSelectedIndex(0);
+        DepartureHour.setSelectedIndex(0);
+        DepaetureMinutes.setSelectedIndex(0);
+        HourDurationArrival.setSelectedIndex(0);
+        MinuteDurationArrival.setSelectedIndex(0);
+        HourDurationScale.setSelectedIndex(0);
+        MinuteDurationScale.setSelectedIndex(0);
+    }
+
     private void clearLocationRegister() {
-    AirPortID_LocationRegistration.setText(""); 
-    AirportCity.setText("");
-    AirportCity.setText("");
-    AirportCountry.setText("");
-    AirportLatitude.setText("");
-    AirportLongitude.setText("");
-} 
+        AirPortID_LocationRegistration.setText("");
+        AirportCity.setText("");
+        AirportCity.setText("");
+        AirportCountry.setText("");
+        AirportLatitude.setText("");
+        AirportLongitude.setText("");
+    }
+
     private void clearAirplaneRegister() {
-    IdAirplane.setText(""); 
-    Brand.setText("");
-    Model.setText("");
-    MaxCapacity.setText("");
-    Airline.setText("");
-}
-  private void setupObservers() {
-       // Observador de pasajeros
-      PassengerTableObserver passengerObserver = new PassengerTableObserver(AllPassengersTable);
-      controller.getPassengerController().registerObserver(passengerObserver);
-     // Observador de vuelos
-    FlightTableObserver flightObserver = new FlightTableObserver(AllFlightsTable);
-    StorageFlights.getInstance().addObserver(flightObserver);
+        IdAirplane.setText("");
+        Brand.setText("");
+        Model.setText("");
+        MaxCapacity.setText("");
+        Airline.setText("");
+    }
 
-    // Observador de ubicaciones
-    LocationTableObserver locationObserver = new LocationTableObserver(AllLocationTable);
-    StorageLocations.getInstance().addObserver(locationObserver);
+    private void setupObservers() {
+        // Observador de pasajeros
+        PassengerTableObserver passengerObserver = new PassengerTableObserver(AllPassengersTable);
+        controller.getPassengerController().registerObserver(passengerObserver);
+        // Observador de vuelos
+        FlightTableObserver flightObserver = new FlightTableObserver(AllFlightsTable);
+        StorageFlights.getInstance().addObserver(flightObserver);
 
-    // Observador de aviones
-    PlaneTableObserver planeObserver = new PlaneTableObserver(AllPlanesTable);
-    StoragePlanes.getInstance().addObserver(planeObserver);
-      
-      
-  }  
+        // Observador de ubicaciones
+        LocationTableObserver locationObserver = new LocationTableObserver(AllLocationTable);
+        StorageLocations.getInstance().addObserver(locationObserver);
+
+        // Observador de aviones
+        PlaneTableObserver planeObserver = new PlaneTableObserver(AllPlanesTable);
+        StoragePlanes.getInstance().addObserver(planeObserver);
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -508,38 +508,38 @@ public class AirportFrame extends javax.swing.JFrame {
 
         IdAirplane.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(IdAirplane);
-        IdAirplane.setBounds(180, 93, 130, 35);
+        IdAirplane.setBounds(180, 93, 130, 31);
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel12.setText("Brand:");
         jPanel3.add(jLabel12);
-        jLabel12.setBounds(53, 157, 50, 25);
+        jLabel12.setBounds(53, 157, 70, 25);
 
         Brand.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Brand);
-        Brand.setBounds(180, 154, 130, 35);
+        Brand.setBounds(180, 154, 130, 31);
 
         Model.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Model);
-        Model.setBounds(180, 213, 130, 35);
+        Model.setBounds(180, 213, 130, 31);
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel13.setText("Model:");
         jPanel3.add(jLabel13);
-        jLabel13.setBounds(53, 216, 55, 25);
+        jLabel13.setBounds(53, 216, 70, 25);
 
         MaxCapacity.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(MaxCapacity);
-        MaxCapacity.setBounds(180, 273, 130, 35);
+        MaxCapacity.setBounds(180, 273, 130, 31);
 
         jLabel14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel14.setText("Max Capacity:");
         jPanel3.add(jLabel14);
-        jLabel14.setBounds(53, 276, 109, 25);
+        jLabel14.setBounds(53, 276, 130, 25);
 
         Airline.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Airline);
-        Airline.setBounds(180, 333, 130, 35);
+        Airline.setBounds(180, 333, 130, 31);
 
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel15.setText("Airline:");
@@ -1493,8 +1493,6 @@ public class AirportFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
-       
-
     private void panelSuperiorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelSuperiorMousePressed
         x = evt.getX();
         y = evt.getY();
@@ -1550,8 +1548,9 @@ public class AirportFrame extends javax.swing.JFrame {
         // Llama al controlador para registrar el pasajero
         Response response = controller.getPassengerController().registerPassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
-        if (response.getStatus() == Status.CREATED)
+        if (response.getStatus() == Status.CREATED) {
             this.userSelect.addItem("" + id);
+        }
         clearPassengerRegister();
     }//GEN-LAST:event_RegisterPassengerButtonActionPerformed
 
@@ -1565,8 +1564,9 @@ public class AirportFrame extends javax.swing.JFrame {
         // Llama al controlador para registrar el avión
         Response response = controller.getPlaneController().createPlane(id, brand, model, maxCapacity, airline);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
-        if (response.getStatus() == Status.CREATED)
+        if (response.getStatus() == Status.CREATED) {
             this.PlaneSelector.addItem(id);
+        }
         clearAirplaneRegister();
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
@@ -1637,7 +1637,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
         // Para actualizar la información de un usuario:
-        
+
         String id = IDPassengerUpdate.getText();
         String firstname = FirstNameUpdate.getText();
         String lastname = LastNameUpdate.getText();
@@ -1678,57 +1678,86 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
         //LA TABLA ES EL OBSERVADOR --> EL CREAR Y ACTUALIZAR ES LO OBSERVADO.
-// Ver los vuelos propios de un Usuario:
+        // Ver los vuelos propios de un Usuario:
         //1. leer el id del usuario que quiere ver sus vuelos:
-        String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());     
+        String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());
         //2. Hacer que el controlador busque los vuelos de ese usuario:
-        Response response = controller.getPassengerController().getFlightsOfPassenger(passengerId);
+        Response response = controller.getPassengerController().getFlightRowsOfPassenger(passengerId);
 
-        if (response.getStatus() == Status.OK) {//Si encuentra al usuario y sus vuelos:
-            ArrayList<Flight> flights = (ArrayList<Flight>) response.getObject();
+        if (response.getStatus() == Status.OK) {
+            List<Object[]> rows = (List<Object[]>) response.getObject();
             DefaultTableModel model = (DefaultTableModel) ownflightsTable.getModel();
             model.setRowCount(0);
-            for (Flight flight : flights) {
-                model.addRow(new Object[]{flight.getId(), flight.getDepartureDate(), flight.calculateArrivalDate()});
-            }
-        } else {//si algo falla:
+            for (Object[] row : rows) {
+                model.addRow(row);
+            }        
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
+        } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshMyFlightsButtonButtonActionPerformed
 
     private void RefreshPasengersTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshPasengersTableActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) AllPassengersTable.getModel();
-        model.setRowCount(0);
-        for (Passenger passenger : (ArrayList<Passenger>) controller.getPassengerController().getAllPassengers().getObject()) {
-            model.addRow(new Object[]{passenger.getId(), passenger.getFullname(), passenger.getBirthDate(), passenger.calculateAge(), passenger.generateFullPhone(), passenger.getCountry(), passenger.getNumFlights()});
+        Response response = controller.getPassengerController().getPassengers();
+        if (response.getStatus() == Status.OK) {
+            List<Object[]> rows = (List<Object[]>) response.getObject();
+            DefaultTableModel model = (DefaultTableModel) AllPassengersTable.getModel();
+            model.setRowCount(0);
+            for (Object[] row : rows) {
+                model.addRow(row);
+            }            
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshPasengersTableActionPerformed
 
     private void RefreshAllFlightsTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshAllFlightsTableActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) AllFlightsTable.getModel();
-        model.setRowCount(0);
-        for (Flight flight : (ArrayList<Flight>) controller.getFlightController().getAllFlights().getObject()) {
-            model.addRow(new Object[]{flight.getId(), flight.getDepartureLocation().getAirportId(), flight.getArrivalLocation().getAirportId(), (flight.getScaleLocation() == null ? "-" : flight.getScaleLocation().getAirportId()), flight.getDepartureDate(), flight.calculateArrivalDate(), flight.getPlane().getId(), flight.getNumPassengers()});
+        Response response = controller.getFlightController().getFlights();
+        if (response.getStatus() == Status.OK) {
+            List<Object[]> rows = (List<Object[]>) response.getObject();
+            DefaultTableModel model = (DefaultTableModel) AllFlightsTable.getModel();
+            model.setRowCount(0);
+            for (Object[] row : rows) {
+                model.addRow(row);
+            }            
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshAllFlightsTableActionPerformed
 
     private void RefreshPlanesTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshPlanesTableActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) AllPlanesTable.getModel();
-        model.setRowCount(0);
-        for (Plane plane : (ArrayList<Plane>) controller.getPlaneController().getAllPlanes().getObject()) {
-            model.addRow(new Object[]{plane.getId(), plane.getBrand(), plane.getModel(), plane.getMaxCapacity(), plane.getAirline(), plane.getNumFlights()});
+         Response response = controller.getPlaneController().getPlanes();
+        if (response.getStatus() == Status.OK) {
+            List<Object[]> rows = (List<Object[]>) response.getObject();
+            DefaultTableModel model = (DefaultTableModel) AllPlanesTable.getModel();
+            model.setRowCount(0);
+            for (Object[] row : rows) {
+                model.addRow(row);
+            }            
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshPlanesTableActionPerformed
 
     private void RefreshLocationsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshLocationsButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) AllLocationTable.getModel();
-        model.setRowCount(0);
-        for (Location location : (ArrayList<Location>) controller.getLocationController().getAllAirports().getObject()) {
-            model.addRow(new Object[]{location.getAirportId(), location.getAirportName(), location.getAirportCity(), location.getAirportCountry()});
+           Response response = controller.getLocationController().getLocations();
+        if (response.getStatus() == Status.OK) {
+            List<Object[]> rows = (List<Object[]>) response.getObject();
+            DefaultTableModel model = (DefaultTableModel) AllLocationTable.getModel();
+            model.setRowCount(0);
+            for (Object[] row : rows) {
+                model.addRow(row);
+            }            
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_RefreshLocationsButtonActionPerformed
 
@@ -1743,18 +1772,18 @@ public class AirportFrame extends javax.swing.JFrame {
                 IDPassengerUpdate.setText(id);
                 PassengerID.setText(id);
                 Response data = controller.getPassengerController().getPassengerData(id);
-        if (data.getStatus() == Status.OK) {
-        Map<String, String> pdata = (Map<String, String>) data.getObject();
+                if (data.getStatus() == Status.OK) {
+                    Map<String, String> pdata = (Map<String, String>) data.getObject();
 
-        FirstNameUpdate.setText(pdata.get("firstName"));
-        LastNameUpdate.setText(pdata.get("lastName"));
-        BDayUpdate.setText(pdata.get("birthYear"));
-        CountryCodeUpdate.setText(pdata.get("phoneCode"));
-        PhoneNumberUpdate.setText(pdata.get("phone"));
-        CountryUserUpdate.setText(pdata.get("country"));
-    } else {
-        JOptionPane.showMessageDialog(this, data.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
+                    FirstNameUpdate.setText(pdata.get("firstName"));
+                    LastNameUpdate.setText(pdata.get("lastName"));
+                    BDayUpdate.setText(pdata.get("birthYear"));
+                    CountryCodeUpdate.setText(pdata.get("phoneCode"));
+                    PhoneNumberUpdate.setText(pdata.get("phone"));
+                    CountryUserUpdate.setText(pdata.get("country"));
+                } else {
+                    JOptionPane.showMessageDialog(this, data.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 IDPassengerUpdate.setText("");
                 PassengerID.setText("");

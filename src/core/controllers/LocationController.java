@@ -79,4 +79,20 @@ public class LocationController {
             return new Response("Error retrieving location: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+    public Response getLocations() {
+    
+    List<Object[]> rows = new ArrayList<>();
+
+    for (Location l : StorageLocations.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            l.getAirportId(), 
+            l.getAirportName(), 
+            l.getAirportCity(), 
+            l.getAirportCountry()
+        };
+        rows.add(row);
+    }
+
+    return new Response("Passengers refreshed", Status.OK, rows);
+}
 }

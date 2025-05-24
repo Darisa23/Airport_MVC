@@ -118,5 +118,23 @@ public class PlaneController {
             return new Response("Error deleting plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+    public Response getPlanes() {
+    
+    List<Object[]> rows = new ArrayList<>();
+
+    for (Plane p : StoragePlanes.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            p.getId(), 
+            p.getBrand(), 
+            p.getModel(), 
+            p.getMaxCapacity(), 
+            p.getAirline(), 
+            p.getNumFlights()
+        };
+        rows.add(row);
+    }
+
+    return new Response("Planes refreshed", Status.OK, rows);
+}
     
 }

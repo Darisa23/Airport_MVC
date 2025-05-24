@@ -178,5 +178,26 @@ public class FlightController {
             return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }}
 
+public Response getFlights() {
+    
+    List<Object[]> rows = new ArrayList<>();
+
+    for (Flight f : StorageFlights.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            f.getId(), 
+            f.getDepartureLocation().getAirportId(),
+            f.getArrivalLocation().getAirportId(), 
+            (f.getScaleLocation() == null ? "-" : f.getScaleLocation().getAirportId()), 
+            f.getDepartureDate(), 
+            f.calculateArrivalDate(), 
+            f.getPlane().getId(), 
+            f.getNumPassengers()
+        };
+        rows.add(row);
+    }
+
+    return new Response("Flights refreshed", Status.OK, rows);
 }
+}
+
 
