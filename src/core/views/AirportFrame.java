@@ -443,38 +443,38 @@ public class AirportFrame extends javax.swing.JFrame {
 
         IdAirplane.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(IdAirplane);
-        IdAirplane.setBounds(180, 93, 130, 31);
+        IdAirplane.setBounds(180, 93, 130, 35);
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel12.setText("Brand:");
         jPanel3.add(jLabel12);
-        jLabel12.setBounds(53, 157, 52, 25);
+        jLabel12.setBounds(53, 157, 50, 25);
 
         Brand.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Brand);
-        Brand.setBounds(180, 154, 130, 31);
+        Brand.setBounds(180, 154, 130, 35);
 
         Model.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Model);
-        Model.setBounds(180, 213, 130, 31);
+        Model.setBounds(180, 213, 130, 35);
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel13.setText("Model:");
         jPanel3.add(jLabel13);
-        jLabel13.setBounds(53, 216, 57, 25);
+        jLabel13.setBounds(53, 216, 55, 25);
 
         MaxCapacity.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(MaxCapacity);
-        MaxCapacity.setBounds(180, 273, 130, 31);
+        MaxCapacity.setBounds(180, 273, 130, 35);
 
         jLabel14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel14.setText("Max Capacity:");
         jPanel3.add(jLabel14);
-        jLabel14.setBounds(53, 276, 114, 25);
+        jLabel14.setBounds(53, 276, 109, 25);
 
         Airline.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jPanel3.add(Airline);
-        Airline.setBounds(180, 333, 130, 31);
+        Airline.setBounds(180, 333, 130, 35);
 
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         jLabel15.setText("Airline:");
@@ -1520,7 +1520,7 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
 
     private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
-
+/*
         // Para crear un vuelo:
         String id = IDFlight.getText();
         String planeId = (String) PlaneSelector.getSelectedItem();
@@ -1537,7 +1537,27 @@ public class AirportFrame extends javax.swing.JFrame {
         String hoursDurationArrival = (String) HourDurationArrival.getSelectedItem();
         String minutesDurationArrival = (String) MinuteDurationArrival.getSelectedItem();
         String hoursDurationScale = (String) HourDurationScale.getSelectedItem();
-        String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();
+        String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();*/
+
+String id = IDFlight.getText();
+    String planeId = (String) PlaneSelector.getSelectedItem();
+    String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
+    String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
+
+    // Limpieza del valor de escala
+    String rawScale = (String) ScaleLocationSelector.getSelectedItem();
+    String scaleLocationId = (rawScale == null || rawScale.equals("Location") || rawScale.isBlank()) ? "" : rawScale;
+
+    String year = DepartureDateYear.getText();
+    String month = (String) MONTH1.getSelectedItem();
+    String day = (String) DAY1.getSelectedItem();
+    String hour = (String) DepartureHour.getSelectedItem();
+    String minutes = (String) DepaetureMinutes.getSelectedItem();
+
+    String hoursDurationArrival = (String) HourDurationArrival.getSelectedItem();
+    String minutesDurationArrival = (String) MinuteDurationArrival.getSelectedItem();
+    String hoursDurationScale = (String) HourDurationScale.getSelectedItem();
+    String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();
 
         // Llama al controlador para registrar el vuelo:
         Response response = controller.getFlightController().registerFlight(
