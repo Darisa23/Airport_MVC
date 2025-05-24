@@ -6,6 +6,8 @@ package core.controllers;
 
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.controllers.utils.validators.LocationValidator;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
 import core.models.storage.StorageLocations;
 import core.services.LocationService;
@@ -26,8 +28,45 @@ public class LocationController {
         this.locationService = new LocationService();
     }
 
-    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
-        return locationService.createAirport(id, name, city, country, latitude, longitude);
+     public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
+        try {
+            // 1. Validaciones de presencia (campos vacíos)
+            if (ValidationUtils.anyEmpty(id, name, city, country, latitude, longitude)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+            }
+
+            // 2. Validaciones de formato y otras reglas específicas (con LocationValidator)
+            Response validationResponse = LocationValidator.INSTANCE.isValid(id, name, city, country, latitude, longitude);
+            if (validationResponse.getStatus() != Status.OK) {
+                return validationResponse;
+            }
+
+            // 3. Parseo de Strings a Double (latitud, longitud).
+            double parsedLatitude;
+            double parsedLongitude;
+            try {
+                parsedLatitude = Double.parseDouble(latitude);
+                parsedLongitude = Double.parseDouble(longitude);
+            } catch (NumberFormatException e) {
+                return new Response("Invalid number format for latitude or longitude.", Status.BAD_REQUEST);
+            }
+
+            // 4. Validación de negocio: Verificar si ya existe la ubicación (usando el servicio para consultar).
+            if (locationService.getLocation(id) != null) {
+                return new Response("There is already a location with that ID.", Status.BAD_REQUEST);
+            }
+
+            // 5. Si todas las validaciones pasaron, llamar al servicio.
+            // Le pasamos los valores ya parseados.
+            Location newLocation = locationService.registerLocation(id, name, city, country, parsedLatitude, parsedLongitude);
+
+            return new Response("Airport created", Status.CREATED, newLocation);
+
+        } catch (IllegalStateException e) {
+            return new Response("Internal Server Error during location creation: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
     }
     public static Response getAirport(String id) {
         try {

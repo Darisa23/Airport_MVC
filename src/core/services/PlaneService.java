@@ -4,30 +4,32 @@
  */
 package core.services;
 
-import core.controllers.PlaneController;
-import core.controllers.utils.Response;
-import core.controllers.utils.Status;
-import core.controllers.utils.validators.PlaneValidator;
 import core.models.Plane;
+import core.models.storage.StoragePlanes;
 
 /**
  *
  * @author maria
  */
+
+
+  
+
 public class PlaneService {
 
-    public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
-        try {
-            Response invalid = PlaneValidator.INSTANCE.isValid(id, brand, model, maxCapacity, airline);
-            if (invalid.getStatus() != Status.OK) {
-                return invalid;
-            }
+    // registerPlane ahora recibe los tipos de datos ya parseados y validados por el controlador.
+    public Plane registerPlane(String id, String brand, String model, int maxCapacity, String airline) {
+        Plane plane = new Plane(id, brand, model, maxCapacity, airline);
 
-            Plane plane = new Plane(id, brand, model, Integer.parseInt(maxCapacity), airline);
-            return PlaneController.addPlane(plane);
-
-        } catch (Exception e) {
-            return new Response("Error creating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        boolean added = StoragePlanes.getInstance().add(plane);
+        if (!added) {
+            throw new IllegalStateException("Failed to add plane to storage. Controller should have checked for existence.");
         }
+        return plane;
+    }
+
+    // getPlane simplemente recupera, sin validaciones de entrada.
+    public Plane getPlane(String id) {
+        return StoragePlanes.getInstance().get(id);
     }
 }

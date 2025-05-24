@@ -26,16 +26,67 @@ import java.util.Map;
  * @author maria
  */
 public class PassengerController {
-       private final PassengerService passengerService;
-        public PassengerController() {
+
+    private final PassengerService passengerService;
+
+    public PassengerController() {
         this.passengerService = new PassengerService();
     }
-       public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
-                                      String countryPhoneCode, String phone, String country) {
-        return passengerService.registerPassenger(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
+
+    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
+            String countryPhoneCode, String phone, String country) {
+        try {
+            // 1. Validaciones de presencia (campos vacíos)
+            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+            }
+
+            // 2. Validaciones de formato y otras reglas específicas (con PassengerValidator)
+            Response validationResponse = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
+            if (validationResponse.getStatus() != Status.OK) {
+                return validationResponse;
+            }
+
+            // 3. Parseo de Strings a tipos numéricos (ID, teléfono, código de país).
+            // Esto es CRÍTICO y debe hacerse aquí con manejo de NumberFormatException.
+            long parsedId;
+            int parsedCountryPhoneCode;
+            long parsedPhone;
+            try {
+                parsedId = Long.parseLong(id);
+                parsedCountryPhoneCode = Integer.parseInt(countryPhoneCode);
+                parsedPhone = Long.parseLong(phone);
+            } catch (NumberFormatException e) {
+                return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
+            }
+
+            // 4. Validación de negocio: Verificar si ya existe el pasajero (usando el servicio para consultar).
+            // El servicio espera un 'long' para getPassenger, así que pasamos 'parsedId'.
+            if (passengerService.getPassenger(parsedId) != null) {
+                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
+            }
+
+            // 5. Si todas las validaciones pasaron, llamar al servicio.
+            // Le pasamos los valores ya parseados.
+            Passenger newPassenger = passengerService.registerPassenger(
+                    parsedId, firstName, lastName, year, month, day, parsedCountryPhoneCode, parsedPhone, country);
+
+            return new Response("Passenger created successfully", Status.CREATED, newPassenger);
+
+        } catch (IllegalArgumentException e) {
+            // Esto captura excepciones lanzadas por DateUtils.buildDate si no se manejan internamente allí
+            // o por cualquier otro parseo que el servicio intente hacer si no le pasamos todo parseado.
+            return new Response("Invalid data provided: " + e.getMessage(), Status.BAD_REQUEST);
+        } catch (IllegalStateException e) {
+            // Captura errores de lógica de negocio o persistencia lanzados por el servicio
+            // (ej. si Storage.add() devuelve false a pesar de la verificación previa del controlador).
+            return new Response("Internal server error during passenger registration: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            // Captura cualquier otra excepción inesperada
+            return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
     public Response getPassenger(String id) {
         try {
             long nid = Long.parseLong(id);
@@ -50,13 +101,15 @@ public class PassengerController {
         }
     }
 //obtener todos los id de pasajeros:
+
     public Response getAllPassengerIds() {
-    ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
-    List<String> ids = passengers.stream()
-                                 .map(p -> String.valueOf(p.getId()))
-                                 .toList(); 
-    return new Response("Passenger IDs retrieved", Status.OK, ids);
-}
+        ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
+        List<String> ids = passengers.stream()
+                .map(p -> String.valueOf(p.getId()))
+                .toList();
+        return new Response("Passenger IDs retrieved", Status.OK, ids);
+    }
+
     public Response getAllPassengers() {
         try {
             ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
@@ -80,23 +133,22 @@ public class PassengerController {
         }
     }
 
-
     public Response updatePassenger(String id, String newFirstName, String newLastName,
             String newYear, String newMonth, String newDay, String newCountryCode, String newPhone, String newCountry) {
 
         try {
-            if(id.isEmpty()){
-            return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
-        }
+            if (id.isEmpty()) {
+                return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
+            }
             Response passengerRes = getPassenger(id);
 
             if (passengerRes.getStatus() == Status.NOT_FOUND) {
                 return passengerRes;
             }
             Passenger passenger = (Passenger) passengerRes.getObject();
-            if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
-            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-        }
+            if (ValidationUtils.anyEmpty(id, newFirstName, newLastName, newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+            }
             Response Invalid = PassengerValidator.INSTANCE.isValid(id, newFirstName, newLastName, newYear, newMonth,
                     newDay, newCountryCode, newPhone, newCountry);
             if (Invalid.getStatus() != Status.OK) {
@@ -131,43 +183,46 @@ public class PassengerController {
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            return new Response("Flight added to passenger successfully", Status.OK,passenger);
+            return new Response("Flight added to passenger successfully", Status.OK, passenger);
         } catch (Exception e) {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+
     public Response getFlightsOfPassenger(String passengerId) {
-        if(passengerId.equals("Select User")){
+        if (passengerId.equals("Select User")) {
             return new Response("Debe seleccionar un Id de usuario para ver sus vuelos", Status.NO_CONTENT);
         }
-    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
-    if (passenger == null) {
-        return new Response("Passenger not found", Status.NOT_FOUND);
+        Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
+        if (passenger == null) {
+            return new Response("Passenger not found", Status.NOT_FOUND);
+        }
+        if (passenger.getFlights().isEmpty()) {
+            return new Response("El usuario " + passengerId + " no tiene ningún vuelo registrado", Status.NOT_FOUND);
+        }
+        //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
+        return new Response("Flights retrieved", Status.OK, passenger.getFlights());
     }
-    if(passenger.getFlights().isEmpty()){
-        return new Response("El usuario "+passengerId+" no tiene ningún vuelo registrado", Status.NOT_FOUND);
-    }
-    //ESTO DEBE RETORNAR UNA COPIAAAAAA*********************************
-    return new Response("Flights retrieved", Status.OK, passenger.getFlights());
-}
+
     public void registerObserver(Observer observer) {
-    StoragePassengers.getInstance().addObserver(observer);
-}
-    public Response getPassengerData(String id) {
-    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
-    if (passenger == null) {
-        return new Response("Passenger not found", Status.NOT_FOUND);
+        StoragePassengers.getInstance().addObserver(observer);
     }
 
-    Map<String, String> data = new HashMap<>();
-    data.put("id", String.valueOf(passenger.getId()));
-    data.put("firstName", passenger.getFirstname());
-    data.put("lastName", passenger.getLastname());
-    data.put("birthYear", String.valueOf(passenger.getBirthDate().getYear()));
-    data.put("phoneCode", String.valueOf(passenger.getCountryPhoneCode()));
-    data.put("phone", String.valueOf(passenger.getPhone()));
-    data.put("country", passenger.getCountry());
+    public Response getPassengerData(String id) {
+        Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
+        if (passenger == null) {
+            return new Response("Passenger not found", Status.NOT_FOUND);
+        }
 
-    return new Response("Data ready", Status.OK, data);
-}
+        Map<String, String> data = new HashMap<>();
+        data.put("id", String.valueOf(passenger.getId()));
+        data.put("firstName", passenger.getFirstname());
+        data.put("lastName", passenger.getLastname());
+        data.put("birthYear", String.valueOf(passenger.getBirthDate().getYear()));
+        data.put("phoneCode", String.valueOf(passenger.getCountryPhoneCode()));
+        data.put("phone", String.valueOf(passenger.getPhone()));
+        data.put("country", passenger.getCountry());
+
+        return new Response("Data ready", Status.OK, data);
+    }
 }

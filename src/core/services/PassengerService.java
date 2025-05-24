@@ -4,7 +4,6 @@
  */
 package core.services;
 
-import static core.controllers.PassengerController.addPassenger;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.validators.DateUtils;
@@ -17,46 +16,41 @@ import core.models.storage.StoragePassengers;
  *
  * @author maria
  */
+
+
+ 
 public class PassengerService {
-    
-    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
-                                      String countryPhoneCode, String phone, String country) {
 
-        try {
-            // 1. Validación de campos vacíos
-            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
-                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-            }
+    // Ahora, el servicio simplemente crea y almacena, asumiendo que los parámetros ya son válidos y únicos.
+    // Recibe los números ya parseados para evitar NumberFormatException aquí.
+    public Passenger registerPassenger(long id, String firstName, String lastName, String year, String month, String day,
+                                       int countryPhoneCode, long phone, String country) {
 
-            // 2. Verificar si ya existe el pasajero
-            if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
-                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
-            }
+        Passenger passenger = new Passenger(
+                id, // Recibe el ID ya como long
+                firstName,
+                lastName,
+                DateUtils.buildDate(year, month, day),
+                countryPhoneCode, // Recibe el código de país ya como int
+                phone, // Recibe el teléfono ya como long
+                country
+        );
 
-            // 3. Validación del validador
-            Response invalid = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
-            if (invalid.getStatus() != Status.OK) {
-                return invalid;
-            }
-
-            // 4. Crear el objeto Passenger
-            Passenger passenger = new Passenger(
-                    Long.parseLong(id),
-                    firstName,
-                    lastName,
-                    DateUtils.buildDate(year, month, day),
-                    Integer.parseInt(countryPhoneCode),
-                    Long.parseLong(phone),
-                    country
-            );
-
-            // 5. añadir
-            addPassenger(passenger);
-
-            return new Response("Passenger created successfully", Status.CREATED, passenger);
-
-        } catch (Exception e) {
-            return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        // La validación de "ya existe" se ha movido al controlador.
+        // Si add() falla, aquí asumimos un error interno del almacenamiento, no de validación.
+        boolean added = StoragePassengers.getInstance().add(passenger);
+        if (!added) {
+            // Este caso debería ser extremadamente raro si el controlador hizo bien su trabajo
+            // al verificar la existencia antes de llamar a este servicio.
+            throw new IllegalStateException("Failed to add passenger to storage despite prior checks by controller.");
         }
+
+        return passenger;
+    }
+
+    // getPassenger sigue siendo una operación de recuperación, no de validación de entrada.
+    // La responsabilidad de validar si el ID es numérico ANTES de llamar a esto es del controlador.
+    public Passenger getPassenger(long id) {
+        return StoragePassengers.getInstance().get(id);
     }
 }

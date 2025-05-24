@@ -23,75 +23,48 @@ import core.models.storage.StorageFlights;
 // FlightService.java
 public class FlightService {
 
-    public Response registerFlight(String id, String planeId, String departureLocationId, String arrivalLocationId, String scaleLocationId,
+    // registerFlight recibe los Strings de los campos de fecha/hora/duración (DateUtils los maneja),
+    // Y los objetos Plane y Location ya resueltos por el controlador.
+    public Flight registerFlight(String id, Plane plane, Location departureLocation, Location arrivalLocation, Location scaleLocation,
                                   String year, String month, String day, String hour, String minutes,
-                                  String hoursDurationArrival, String minutesDurationArrival,
-                                  String hoursDurationScale, String minutesDurationScale) {
-        try {
-            // Validaciones iniciales
-            Response invalid = FlightValidator.INSTANCE.isValid(id, planeId, departureLocationId, arrivalLocationId, scaleLocationId, year, month, day, hour, minutes,
-                    hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
-            if (invalid.getStatus() != Status.OK) {
-                return invalid;
-            }
+                                  int hoursDurationArrival, int minutesDurationArrival,
+                                  int hoursDurationScale, int minutesDurationScale) {
+        Flight flight;
 
-             // 2. ¡Validación de existencia del vuelo reincorporada!
-            // Es bueno verificar si ya existe antes de intentar construir el objeto y pasarlo a 'addFlight'.
-            if (StorageFlights.getInstance().get(id) != null) {
-                return new Response("Flight with this ID already exists", Status.BAD_REQUEST);
-            }
-            // Obtener objetos Plane y Location.
-            Plane plane = (Plane) PlaneController.getPlane(planeId).getObject();
-            Location departureLocation = (Location) LocationController.getAirport(departureLocationId).getObject();
-            Location arrivalLocation = (Location) LocationController.getAirport(arrivalLocationId).getObject();
-
-            if (plane == null || departureLocation == null || arrivalLocation == null) {
-                 return new Response("Plane or locations not found for provided IDs.", Status.BAD_REQUEST);
-            }
-
-            // Crear el objeto Flight
-            Flight flight;
-            // Asegúrate de que la lógica de la escala sea correcta según tu UI y datos.
-            // 'scaleLocation.equals("Location")' parece indicar que no hay escala.
-            if (scaleLocationId != null && !scaleLocationId.trim().isEmpty() && !scaleLocationId.equals("Location")) {
-                System.out.println("HOLA MARIA - Vuelo con escala");
-                Location scaleLocation = (Location) LocationController.getAirport(scaleLocationId).getObject();
-                if (scaleLocation == null) {
-                    return new Response("Scale location not found.", Status.BAD_REQUEST);
-                }
-                flight = new Flight(id,
-                        plane,
-                        departureLocation,
-                        scaleLocation,
-                        arrivalLocation,
-                        DateUtils.buildDate(year, month, day, hour, minutes),
-                        Integer.parseInt(hoursDurationArrival),
-                        Integer.parseInt(minutesDurationArrival),
-                        Integer.parseInt(hoursDurationScale),
-                        Integer.parseInt(minutesDurationScale));
-            } else {
-                System.out.println("holiiii - Vuelo directo");
-                flight = new Flight(id,
-                        plane,
-                        departureLocation,
-                        arrivalLocation,
-                        DateUtils.buildDate(year, month, day, hour, minutes),
-                        Integer.parseInt(hoursDurationArrival),
-                        Integer.parseInt(minutesDurationArrival));
-            }
-
-            // ¡Aquí está el cambio clave! Usa tu método addFlight del FlightController
-            Response addFlightResponse = FlightController.addFlight(flight);
-            
-            // Si el método addFlight reporta un error (por ejemplo, ya existe), lo reenviamos.
-            if (addFlightResponse.getStatus() != Status.OK) {
-                return addFlightResponse; // Devuelve el error de "This flight already exists"
-            }
-
-            return new Response("Flight created successfully", Status.CREATED, flight);
-
-        } catch (Exception e) {
-            return new Response("Error creating flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        // Construcción del objeto Flight, usando los objetos Plane y Location directamente,
+        // y los int de duración.
+        if (scaleLocation == null) {
+            System.out.println("holiiii"); // Mensaje de log de tu original
+            flight = new Flight(id,
+                    plane,
+                    departureLocation,
+                    arrivalLocation,
+                    DateUtils.buildDate(year, month, day, hour, minutes),
+                    hoursDurationArrival,
+                    minutesDurationArrival);
+        } else {
+            System.out.println("HOLA MARIA"); // Mensaje de log de tu original
+            flight = new Flight(id,
+                    plane,
+                    departureLocation,
+                    scaleLocation,
+                    arrivalLocation,
+                    DateUtils.buildDate(year, month, day, hour, minutes),
+                    hoursDurationArrival,
+                    minutesDurationArrival,
+                    hoursDurationScale,
+                    minutesDurationScale);
         }
+
+        boolean added = StorageFlights.getInstance().add(flight);
+        if (!added) {
+            throw new IllegalStateException("Failed to add flight to storage. Controller should have checked for existence.");
+        }
+        return flight;
+    }
+
+    // getFlight simplemente recupera, sin validaciones de entrada.
+    public Flight getFlight(String id) {
+        return StorageFlights.getInstance().get(id);
     }
 }
