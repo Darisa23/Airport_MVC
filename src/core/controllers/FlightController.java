@@ -175,5 +175,7 @@ public class FlightController {
            
         } catch (Exception e) {
             return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }}}
+        }}
+
+}
 

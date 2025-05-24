@@ -20,7 +20,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -176,5 +178,22 @@ public class PassengerController {
 }
     public void registerObserver(Observer observer) {
     StoragePassengers.getInstance().addObserver(observer);
+}
+    public Response getPassengerDataForForm(String id) {
+    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
+    if (passenger == null) {
+        return new Response("Passenger not found", Status.NOT_FOUND);
+    }
+
+    Map<String, String> data = new HashMap<>();
+    data.put("id", String.valueOf(passenger.getId()));
+    data.put("firstName", passenger.getFirstname());
+    data.put("lastName", passenger.getLastname());
+    data.put("birthYear", String.valueOf(passenger.getBirthDate().getYear()));
+    data.put("phoneCode", String.valueOf(passenger.getCountryPhoneCode()));
+    data.put("phone", String.valueOf(passenger.getPhone()));
+    data.put("country", passenger.getCountry());
+
+    return new Response("Data ready", Status.OK, data);
 }
 }

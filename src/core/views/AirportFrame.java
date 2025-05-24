@@ -16,6 +16,7 @@ import core.models.Observers.PassengerTableObserver;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -1616,6 +1617,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
         // Para actualizar la información de un usuario:
+        
         String id = IDPassengerUpdate.getText();
         String firstname = FirstNameUpdate.getText();
         String lastname = LastNameUpdate.getText();
@@ -1655,7 +1657,7 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
-        //LA TABLA ES EL OBSERVADOR --> EL ÉXITO DE LA EJECUCIÓN DEL BOTÓN ES LO OBSERVADO
+        //LA TABLA ES EL OBSERVADOR --> EL CREAR Y ACTUALIZAR ES LO OBSERVADO.
 // Ver los vuelos propios de un Usuario:
         //1. leer el id del usuario que quiere ver sus vuelos:
         String passengerId = userSelect.getItemAt(userSelect.getSelectedIndex());     
@@ -1720,6 +1722,19 @@ public class AirportFrame extends javax.swing.JFrame {
             if (!id.equals(userSelect.getItemAt(0))) {
                 IDPassengerUpdate.setText(id);
                 PassengerID.setText(id);
+                Response data = controller.getPassengerController().getPassengerData(id);
+        if (data.getStatus() == Status.OK) {
+        Map<String, String> pdata = (Map<String, String>) data.getObject();
+
+        FirstNameUpdate.setText(pdata.get("firstName"));
+        LastNameUpdate.setText(pdata.get("lastName"));
+        BDayUpdate.setText(pdata.get("birthYear"));
+        CountryCodeUpdate.setText(pdata.get("phoneCode"));
+        PhoneNumberUpdate.setText(pdata.get("phone"));
+        CountryUserUpdate.setText(pdata.get("country"));
+    } else {
+        JOptionPane.showMessageDialog(this, data.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
             } else {
                 IDPassengerUpdate.setText("");
                 PassengerID.setText("");
