@@ -12,11 +12,8 @@ import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Observers.Observer;
 import core.models.Passenger;
-import core.models.Plane;
-import core.models.storage.StorageFlights;
 import core.models.storage.StoragePassengers;
-import core.models.storage.StoragePlanes;
-import java.time.LocalDate;
+import core.services.PassengerService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,36 +26,13 @@ import java.util.Map;
  * @author maria
  */
 public class PassengerController {
-
-    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
-            String countryPhoneCode, String phone, String country) {
-        try {
-            //Validaciones:
-            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
-            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-        }
-        if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
-            return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
-        }
-            Response Invalid = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
-            if (Invalid.getStatus() != Status.OK) {
-                return Invalid;
-            }
-            Passenger passenger = new Passenger(
-                    Long.parseLong(id),
-                    firstName,
-                    lastName,
-                    DateUtils.buildDate(year, month, day),
-                    Integer.parseInt(countryPhoneCode),
-                    Long.parseLong(phone),
-                    country
-            );
-
-            addPassenger(passenger);
-            return new Response("Passenger created successfully", Status.CREATED, passenger);
-        } catch (Exception e) {
-            return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+       private final PassengerService passengerService;
+        public PassengerController() {
+        this.passengerService = new PassengerService();
+    }
+       public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
+                                      String countryPhoneCode, String phone, String country) {
+        return passengerService.registerPassenger(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
     }
 
     //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
@@ -179,7 +153,7 @@ public class PassengerController {
     public void registerObserver(Observer observer) {
     StoragePassengers.getInstance().addObserver(observer);
 }
-    public Response getPassengerDataForForm(String id) {
+    public Response getPassengerData(String id) {
     Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
     if (passenger == null) {
         return new Response("Passenger not found", Status.NOT_FOUND);

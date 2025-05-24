@@ -7,12 +7,10 @@ package core.controllers;
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
-import core.controllers.utils.validators.FlightValidator;
 import core.models.Flight;
-import core.models.Location;
 import core.models.Passenger;
-import core.models.Plane;
 import core.models.storage.StorageFlights;
+import core.services.FlightService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,56 +21,21 @@ import java.util.List;
  * @author Alexander Sanguino
  */
 public class FlightController {
-    private final PassengerController passContr;
+    private final PassengerController passContr; // ¡Aquí está de vuelta!
+    private final FlightService flightService; // Mantenemos el FlightService
 
     public FlightController() {
-        this.passContr = new PassengerController();
+        this.passContr = new PassengerController(); // ¡Y su inicialización!
+        this.flightService = new FlightService(); // Inicializamos el FlightService
     }
-    
 
     public Response registerFlight(String id, String plane, String departureLocation, String arrivalLocation, String scaleLocation,
-            String year, String month, String day, String hour, String minutes,
-            String hoursDurationArrival, String minutesDurationArrival,
-            String hoursDurationScale, String minutesDurationScale) {
-        try {
-            //Validaciones:
-            Response Invalid = FlightValidator.INSTANCE.isValid(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes, 
-                    hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
-            if (Invalid.getStatus() != Status.OK) {
-                return Invalid;
-            }
-            // 11. Create flight object
-            Flight flight;
-            if (scaleLocation.equals("Location")) {
-                System.out.println("holiiii");
-                flight = new Flight(id,
-                        (Plane) PlaneController.getPlane(plane).getObject(),
-                        (Location) LocationController.getAirport(departureLocation).getObject(),
-                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
-                        DateUtils.buildDate(year, month, day, hour, minutes),
-                        Integer.parseInt(hoursDurationArrival),
-                        Integer.parseInt(minutesDurationArrival));
-            } else {
-                System.out.println("HOLA MARIA");
-                flight = new Flight(id,
-                        (Plane) PlaneController.getPlane(plane).getObject(),
-                        (Location) LocationController.getAirport(departureLocation).getObject(),
-                        (Location) LocationController.getAirport(scaleLocation).getObject(),
-                        (Location) LocationController.getAirport(arrivalLocation).getObject(),
-                        DateUtils.buildDate(year, month, day, hour, minutes),
-                        Integer.parseInt(hoursDurationArrival),
-                        Integer.parseInt(minutesDurationArrival),
-                        Integer.parseInt(hoursDurationScale),
-                        Integer.parseInt(minutesDurationScale));
-            }
-            // 12. Add flight to storage
-
-            addFlight(flight);
-            return new Response("Flight created successfully", Status.CREATED, flight);
-
-        } catch (Exception e) {
-            return new Response("Error creating flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+                                  String year, String month, String day, String hour, String minutes,
+                                  String hoursDurationArrival, String minutesDurationArrival,
+                                  String hoursDurationScale, String minutesDurationScale) {
+        // Delega al FlightService, como habíamos acordado
+        return flightService.registerFlight(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes,
+                                            hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationArrival); // Ojo con 'minutesDurationArrival' al final si es 'minutesDurationScale'
     }
 
 //Obtener un vuelo:
