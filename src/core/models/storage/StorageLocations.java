@@ -6,6 +6,7 @@ package core.models.storage;
 
 import core.models.Flight;
 import core.models.Location;
+import core.models.Observers.Observable;
 import java.util.ArrayList;
 
 /**
