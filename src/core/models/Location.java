@@ -8,8 +8,8 @@ package core.models;
  *
  * @author edangulo
  */
-public class Location {
-    
+public class Location implements Cloneable {
+
     private final String airportId;
     private String airportName;
     private String airportCity;
@@ -24,6 +24,14 @@ public class Location {
         this.airportCountry = airportCountry;
         this.airportLatitude = airportLatitude;
         this.airportLongitude = airportLongitude;
+    }
+
+    public Location copy() {
+        try {
+            return (Location) this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("No se pudo clonar la ubicación", e);
+        }
     }
 
     public String getAirportId() {
@@ -49,5 +57,5 @@ public class Location {
     public double getAirportLongitude() {
         return airportLongitude;
     }
-    
+
 }
