@@ -1520,13 +1520,16 @@ public class AirportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
 
     private void createFlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createFlightButtonActionPerformed
-/*
+
         // Para crear un vuelo:
         String id = IDFlight.getText();
         String planeId = (String) PlaneSelector.getSelectedItem();
         String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
         String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
-        String scaleLocationId = (String) ScaleLocationSelector.getSelectedItem();
+
+        // Limpieza del valor de escala
+        String rawScale = (String) ScaleLocationSelector.getSelectedItem();
+        String scaleLocationId = (rawScale == null || rawScale.equals("Location") || rawScale.isBlank()) ? "" : rawScale;
 
         String year = DepartureDateYear.getText();
         String month = (String) MONTH1.getSelectedItem();
@@ -1537,27 +1540,7 @@ public class AirportFrame extends javax.swing.JFrame {
         String hoursDurationArrival = (String) HourDurationArrival.getSelectedItem();
         String minutesDurationArrival = (String) MinuteDurationArrival.getSelectedItem();
         String hoursDurationScale = (String) HourDurationScale.getSelectedItem();
-        String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();*/
-
-String id = IDFlight.getText();
-    String planeId = (String) PlaneSelector.getSelectedItem();
-    String departureLocationId = (String) DepartureLocationSelector.getSelectedItem();
-    String arrivalLocationId = (String) ArrivalLocationSelector.getSelectedItem();
-
-    // Limpieza del valor de escala
-    String rawScale = (String) ScaleLocationSelector.getSelectedItem();
-    String scaleLocationId = (rawScale == null || rawScale.equals("Location") || rawScale.isBlank()) ? "" : rawScale;
-
-    String year = DepartureDateYear.getText();
-    String month = (String) MONTH1.getSelectedItem();
-    String day = (String) DAY1.getSelectedItem();
-    String hour = (String) DepartureHour.getSelectedItem();
-    String minutes = (String) DepaetureMinutes.getSelectedItem();
-
-    String hoursDurationArrival = (String) HourDurationArrival.getSelectedItem();
-    String minutesDurationArrival = (String) MinuteDurationArrival.getSelectedItem();
-    String hoursDurationScale = (String) HourDurationScale.getSelectedItem();
-    String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();
+        String minutesDurationScale = (String) MinuteDurationScale.getSelectedItem();
 
         // Llama al controlador para registrar el vuelo:
         Response response = controller.getFlightController().registerFlight(
@@ -1615,7 +1598,7 @@ String id = IDFlight.getText();
         String hours = SelectHour.getItemAt(SelectHour.getSelectedIndex());
         String minutes = SelectMinute.getItemAt(SelectMinute.getSelectedIndex());
 
-        Response response = controller.getFlightController().delayFlight(flightId,hours,minutes);
+        Response response = controller.getFlightController().delayFlight(flightId, hours, minutes);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Delay flight", JOptionPane.INFORMATION_MESSAGE);
         System.out.println();
     }//GEN-LAST:event_DelayButtonActionPerformed

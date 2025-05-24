@@ -27,7 +27,18 @@ public class Plane implements Cloneable {
         this.airline = airline;
         this.flights = new ArrayList<>();
     }
+    
+    public Plane copy() {
+    try {
+        Plane cloned = (Plane) super.clone();
+        cloned.flights = new ArrayList<>(this.flights); 
+        return cloned;
+    } catch (CloneNotSupportedException e) {
+        throw new RuntimeException("No se pudo clonar el avión", e);
+    }
+}
 
+    
     public void addFlight(Flight flight) {
         this.flights.add(flight);
     }
