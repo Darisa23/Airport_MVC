@@ -11,6 +11,7 @@ import core.controllers.utils.validators.FlightValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
+import core.models.Observers.Observer;
 import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
@@ -72,7 +73,7 @@ public class FlightController {
             }
 
             // 4. Validación de negocio: Verificar si el vuelo ya existe
-            if (flightService.getFlight(id) != null) {
+            if (flightService.getFlight(id)!=null ) {
                 return new Response("Flight with this ID already exists", Status.BAD_REQUEST);
             }
 
@@ -120,39 +121,13 @@ public class FlightController {
         }
     }
 
-//Obtener un vuelo:
-    public static Response getFlight(String id) {
-        try {
-            Flight flight = StorageFlights.getInstance().get(id);
 
-            if (flight == null) {
-                return new Response("Flight not found", Status.NOT_FOUND);
-            }
-            Flight copyFlight = flight.copy();
-            return new Response("Flight retrieved successfully", Status.OK, flight);
-        } catch (Exception e) {
-            return new Response("Error retrieving flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    //obtener todos los vuelos:
-    public Response getAllFlights() {
-        try {
-            ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
-            Collections.sort(flights, Comparator.comparing(Flight::getDepartureDate));
-            return new Response("Flights retrieved successfully", Status.OK, flights);
-        } catch (Exception e) {
-            return new Response("Error retrieving flights list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
     //obtener todos los id de vuelos:
-    public Response getAllFlightIds() {
-    ArrayList<Flight> flights = StorageFlights.getInstance().getAll();
-    List<String> ids = flights.stream()
-                                 .map(p -> String.valueOf(p.getId()))
-                                 .toList(); 
-    return new Response("Flights IDs retrieved", Status.OK, ids);
-}
+    public Response getAllFlightsIds() {
+    return new Response("Flights IDs retrieved", Status.OK, flightService.allFlights());
+    }
+    
+
     //Agregar un vuelo:
     public static Response addFlight(Flight flight) {
         try {
@@ -171,17 +146,16 @@ public class FlightController {
         try {
             //revisar que si seleccionó un Id de usuario:
             if(passengerId.isEmpty()){
-            return new Response("Debe seleccionar un Id de usuario para agregar un vuelo", Status.NO_CONTENT);
+            return new Response("You must select an User id in order to add a flight", Status.NO_CONTENT);
         }
-            System.out.println("reviso si el vuelo existe");
-            Response oflight = getFlight(flightId);
-            if (oflight.getStatus() == Status.NOT_FOUND) {
-                return oflight;
+            Flight flight = flightService.getFlight(flightId);
+            if(flight== null) {
+                return new Response("Flight not found", Status.NOT_FOUND);
             }
-            System.out.println("como si existe lo tomo del storage");
-            Flight flight = StorageFlights.getInstance().get(flightId);
+       
+          
             Response opassenger = passContr.addToFlight(passengerId,flight);
-            System.out.println("la respuesta de ir al otro coso: "+opassenger.getMessage());
+        
             if (opassenger.getStatus() == Status.NOT_FOUND |opassenger.getStatus() == Status.BAD_REQUEST) {
                 return opassenger;
             }
@@ -191,7 +165,7 @@ public class FlightController {
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            System.out.println("no estaba agregado el pasajero: "+passenger.getFirstname()+ " se agregó");
+            flightService.addPassenger(flightId, passenger);
             return new Response("Passenger was successfully added to flight", Status.BAD_REQUEST);
 
         } catch (Exception e) {
@@ -203,18 +177,15 @@ public class FlightController {
       public Response delayFlight(String id, String hours, String minutes  ) {
         try {
             //revisar si vuelo existe:
-             Response oflight = getFlight(id);
-            if (oflight.getStatus() == Status.NOT_FOUND) {
+            
+            if (flightService.getFlight(id)==null) {
                 return new Response("flight does not exist", Status.NOT_FOUND);
             }
            if (!DateUtils.isValidHour(hours)&& !DateUtils.isValidMinute(minutes)){
                return new Response("invalid hours or minutes", Status.BAD_REQUEST);
            }
-     
-            Flight flight = StorageFlights.getInstance().get(id);
-            
-            flight.delay(Integer.parseInt(hours),Integer.parseInt(minutes));
-            StorageFlights.getInstance().update(flight);
+               flightService.delay(id, hours, minutes);
+         
             return new Response("delayed succesfully", Status.OK);
             
            
@@ -222,26 +193,15 @@ public class FlightController {
             return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }}
 
+
+
 public Response getFlights() {
-    
-    List<Object[]> rows = new ArrayList<>();
-
-    for (Flight f : StorageFlights.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            f.getId(), 
-            f.getDepartureLocation().getAirportId(),
-            f.getArrivalLocation().getAirportId(), 
-            (f.getScaleLocation() == null ? "-" : f.getScaleLocation().getAirportId()), 
-            f.getDepartureDate(), 
-            f.calculateArrivalDate(), 
-            f.getPlane().getId(), 
-            f.getNumPassengers()
-        };
-        rows.add(row);
-    }
-
-    return new Response("Flights refreshed", Status.OK, rows);
+    return new Response("flights refreshed", Status.OK, flightService.completeInfo());
 }
+
+       public void registerObserver(Observer observer) {
+        flightService.addObserver(observer);
+    }
 }
 
 

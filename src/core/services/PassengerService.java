@@ -63,7 +63,9 @@ public class PassengerService {
     }
     public void update(long id, String firstName, String lastName, LocalDate Birthday,
                                        int countryPhoneCode, long phone, String country){
-        registerPassenger(id,firstName,lastName, Birthday,countryPhoneCode, phone, country);
+        Passenger updatedPassenger = registerPassenger(id,firstName,lastName, Birthday,countryPhoneCode, phone, country);
+        
+        StoragePassengers.getInstance().update(updatedPassenger);
     }
     public HashMap<String,String> specificData(long id){
         HashMap<String, String> data = new HashMap<>();
@@ -109,4 +111,8 @@ ArrayList<Object[]> rows = new ArrayList<>();
     }
     return rows;
    }    
+
+
+
+
 }

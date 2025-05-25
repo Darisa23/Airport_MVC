@@ -9,6 +9,7 @@ import core.controllers.utils.Status;
 import core.controllers.utils.validators.LocationValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
+import core.models.Observers.Observer;
 import core.models.storage.StorageLocations;
 import core.services.LocationService;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class LocationController {
             }
 
             // 4. Validación de negocio: Verificar si ya existe la ubicación (usando el servicio para consultar).
-            if (locationService.getLocation(id) != null) {
+            if (locationService.getLocation(id)!=null ) {
                 return new Response("There is already a location with that ID.", Status.BAD_REQUEST);
             }
 
@@ -68,26 +69,16 @@ public class LocationController {
         }
     }
 
-    public static Response getAirport(String id) {
-        try {
-            Location passenger = StorageLocations.getInstance().get(id);
-            if (passenger == null) {
-                return new Response("Airport not found", Status.NOT_FOUND);
-            }
-            return new Response("Airport retrieved successfully", Status.OK, passenger);
-
-        } catch (Exception e) {
-            return new Response("Error retrieving airports: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+    public Response getAirport(String id) {
+        if (locationService.getLocation(id)!=null){
+        return new Response("Airport found",Status.OK,locationService.getLocation(id));
+        }else
+            return new Response("Airport does not exist",Status.NOT_FOUND);
     }
 //obtener todos los id de aeropuertos:
 
     public Response getAllLocationIds() {
-        ArrayList<Location> planes = StorageLocations.getInstance().getAll();
-        List<String> ids = planes.stream()
-                .map(p -> String.valueOf(p.getAirportId()))
-                .toList();
-        return new Response("Plane IDs retrieved", Status.OK, ids);
+        return new Response("Passenger IDs retrieved", Status.OK, locationService.allLocations());
     }
 
     public Response getAllAirports() {
@@ -114,20 +105,13 @@ public class LocationController {
         }
     }
     public Response getLocations() {
-    
-    List<Object[]> rows = new ArrayList<>();
-
-    for (Location l : StorageLocations.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            l.getAirportId(), 
-            l.getAirportName(), 
-            l.getAirportCity(), 
-            l.getAirportCountry()
-        };
-        rows.add(row);
-    }
-
-    return new Response("Passengers refreshed", Status.OK, rows);
+   return new Response("Locations refreshed", Status.OK, locationService.completeInfo());
 }
+    
+      public void registerObserver(Observer observer) {
+        locationService.addObserver(observer);
+    }
+      
+    
 }
 

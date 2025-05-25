@@ -19,8 +19,13 @@ import java.time.LocalDateTime;
 public class FlightValidator implements Validator {
 
     public static final FlightValidator INSTANCE = new FlightValidator();
+    private PlaneController pc;
+    private LocationController lc;
 
     private FlightValidator() {
+        pc = new PlaneController();
+        lc = new LocationController();
+
     }
 
     @Override
@@ -54,18 +59,18 @@ public class FlightValidator implements Validator {
             return new Response("There is already a flight with that ID.", Status.BAD_REQUEST);
         }
         // 4. Plane existence validation
-        Response planeRes = PlaneController.getPlane(plane);
+        Response planeRes = pc.getPlane(plane);
         if (planeRes.getStatus() == Status.NOT_FOUND) {
             return new Response("The Selected Airplane does not exist", Status.BAD_REQUEST);
         }
         // 5. Departure location validation
-        Response deLocRes = LocationController.getAirport(departureLocation);
-        if (deLocRes.getStatus() == Status.NOT_FOUND) {
+        
+        if (lc.getAirport(departureLocation).getStatus()!=Status.OK) {
             return new Response("The Selected Departure_Location does not exist", Status.BAD_REQUEST);
         }
         // 6. Arrival location validation
-        Response arrLocRes = LocationController.getAirport(arrivalLocation);
-        if (arrLocRes.getStatus() == Status.NOT_FOUND) {
+      
+        if (lc.getAirport(arrivalLocation).getStatus()!=Status.OK) {
             return new Response("The Selected Arrival_Location does not exist", Status.BAD_REQUEST);
         }
 
@@ -85,7 +90,7 @@ public class FlightValidator implements Validator {
                 return new Response("Arrival and Scale locations must be different", Status.BAD_REQUEST);
             }
         }
-         try {
+        try {
             Integer.parseInt(hoursDurationArrival);
             Integer.parseInt(minutesDurationArrival);
         } catch (NumberFormatException e) {
@@ -106,8 +111,8 @@ public class FlightValidator implements Validator {
                 return new Response("Scale duration must be 00:00 if Scale_Location is not present", Status.BAD_REQUEST);
             }
         } else { //when there's a scale:
-            Response scaleLocRes = LocationController.getAirport(scaleLocation);
-            if (scaleLocRes.getStatus() == Status.NOT_FOUND) {
+            
+            if (lc.getAirport(scaleLocation).getStatus()!=Status.OK) {
                 return new Response("The Selected Scale_Location does not exist", Status.BAD_REQUEST);
             }
 

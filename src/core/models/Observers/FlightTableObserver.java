@@ -30,13 +30,13 @@ public class FlightTableObserver implements Observer {
         model.setRowCount(0);
         for (Flight flight : flights) {
             model.addRow(new Object[]{
-                flight.getId(),
-                flight.getPlane().getId(),
-                flight.getDepartureLocation().getAirportCity(),
-                (flight.getScaleLocation() != null ? flight.getScaleLocation().getAirportCity() : "—"),
-                flight.getArrivalLocation().getAirportCity(),
+                flight.getId(),               
+                flight.getDepartureLocation().getAirportId(),       
+                flight.getArrivalLocation().getAirportId(),
+                 (flight.getScaleLocation() != null ? flight.getScaleLocation().getAirportId() : "—"),
                 flight.getDepartureDate(),
                 flight.calculateArrivalDate(),
+                flight.getPlane().getId(),
                 flight.getNumPassengers()
             });
         }

@@ -12,9 +12,6 @@ import core.models.Observers.FlightTableObserver;
 import core.models.Observers.LocationTableObserver;
 import core.models.Observers.PassengerTableObserver;
 import core.models.Observers.PlaneTableObserver;
-import core.models.storage.StorageFlights;
-import core.models.storage.StorageLocations;
-import core.models.storage.StoragePlanes;
 import java.awt.Color;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +29,14 @@ public class AirportFrame extends javax.swing.JFrame {
      */
     private int x, y;
     private final MainController controller;
+    private LoadComboBox loadComboBox;
 
     public AirportFrame() {
         initComponents();
         //read jsons:
         controller = new MainController();
         controller.initializeData();
+        loadComboBox = new LoadComboBox();
         loadComboBoxes();
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
@@ -98,7 +97,7 @@ public class AirportFrame extends javax.swing.JFrame {
             userSelect.addItem(id);
         }
         userSelect.setEnabled(false);
-        List<String> flightIds = (List<String>) controller.getFlightController().getAllFlightIds().getObject();
+        List<String> flightIds = (List<String>) controller.getFlightController().getAllFlightsIds().getObject();
         for (String id : flightIds) {
             FlightSelector.addItem(id);
             SelectID.addItem(id);
@@ -113,6 +112,7 @@ public class AirportFrame extends javax.swing.JFrame {
             ArrivalLocationSelector.addItem(id);
             ScaleLocationSelector.addItem(id);
         }
+
     }
 
     private void clearPassengerRegister() {
@@ -176,15 +176,16 @@ public class AirportFrame extends javax.swing.JFrame {
         controller.getPassengerController().registerObserver(passengerObserver);
         // Observador de vuelos
         FlightTableObserver flightObserver = new FlightTableObserver(AllFlightsTable);
-        StorageFlights.getInstance().addObserver(flightObserver);
+
+        controller.getFlightController().registerObserver(flightObserver);
 
         // Observador de ubicaciones
         LocationTableObserver locationObserver = new LocationTableObserver(AllLocationTable);
-        StorageLocations.getInstance().addObserver(locationObserver);
+        controller.getLocationController().registerObserver(locationObserver);
 
         // Observador de aviones
         PlaneTableObserver planeObserver = new PlaneTableObserver(AllPlanesTable);
-        StoragePlanes.getInstance().addObserver(planeObserver);
+        controller.getPlaneController().registerObserver(planeObserver);
 
     }
 
@@ -1547,8 +1548,9 @@ public class AirportFrame extends javax.swing.JFrame {
         // Llama al controlador para registrar el pasajero
         Response response = controller.getPassengerController().registerPassenger(id, firstname, lastname, year, month, day, phoneCode, phone, country);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
-        if (response.getStatus() == Status.CREATED) {
-            this.userSelect.addItem("" + id);
+        if (response.getStatus() == Status.CREATED) {    
+            List<String> passengerIds = (List<String>) controller.getPassengerController().getAllPassengerIds().getObject();
+            loadComboBox.load(userSelect, passengerIds);
             clearPassengerRegister();
         }
     }//GEN-LAST:event_RegisterPassengerButtonActionPerformed
@@ -1564,9 +1566,13 @@ public class AirportFrame extends javax.swing.JFrame {
         Response response = controller.getPlaneController().createPlane(id, brand, model, maxCapacity, airline);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
         if (response.getStatus() == Status.CREATED) {
-            this.PlaneSelector.addItem(id);
+            List<String> planeIds = (List<String>) controller.getPlaneController().getAllPlaneIds().getObject();
+            loadComboBox.load(PlaneSelector, planeIds);
+        
         }
+        
         clearAirplaneRegister();
+        
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
     private void CreateLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateLocationButtonActionPerformed
@@ -1581,9 +1587,10 @@ public class AirportFrame extends javax.swing.JFrame {
         Response response = controller.getLocationController().createAirport(id, name, city, country, latitude, longitude);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Airport Register", JOptionPane.INFORMATION_MESSAGE);
         if (response.getStatus() == Status.CREATED) {
-            this.DepartureLocationSelector.addItem(id);
-            this.ArrivalLocationSelector.addItem(id);
-            this.ScaleLocationSelector.addItem(id);
+            List<String> lcn = (List<String>) controller.getLocationController().getAllLocationIds().getObject();
+            loadComboBox.load(DepartureLocationSelector, lcn);       
+            loadComboBox.load(ArrivalLocationSelector, lcn);                   
+            loadComboBox.load(ScaleLocationSelector, lcn);             
             clearLocationRegister();
         }
     }//GEN-LAST:event_CreateLocationButtonActionPerformed
@@ -1628,8 +1635,9 @@ public class AirportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, response.getMessage(), "Flight Register", JOptionPane.INFORMATION_MESSAGE);
 
         if (response.getStatus() == Status.CREATED) {
-            SelectID.addItem(id);
-            this.FlightSelector.addItem(id);
+              List<String> fltId = (List<String>) controller.getFlightController().getAllFlightsIds().getObject();
+            loadComboBox.load(SelectID, fltId);       
+            loadComboBox.load(FlightSelector, fltId); 
             clearFlightRegister();
         }
     }//GEN-LAST:event_createFlightButtonActionPerformed

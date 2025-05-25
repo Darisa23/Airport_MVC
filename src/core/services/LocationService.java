@@ -4,8 +4,12 @@
  */
 package core.services;
 
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Location;
+import core.models.Observers.Observer;
 import core.models.storage.StorageLocations;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,6 +28,37 @@ public class LocationService {
     }
 
     public Location getLocation(String id) {
+       
         return StorageLocations.getInstance().get(id);
     }
+
+    public List<String> allLocations() {
+           List<String> ids = StorageLocations.getInstance()
+                .getAll().stream()
+                .map(Location::getAirportId)
+                .toList();
+
+        // Para formato "AAA" (3 letras)
+        return ValidationUtils.sortList(ids, 3, 0);
+    }
+
+    public void addObserver(Observer observer) {
+        StorageLocations.getInstance().addObserver(observer);
+    }
+
+    public ArrayList<Object[]> completeInfo() {
+        ArrayList<Object[]> rows = new ArrayList<>();
+        for (Location l : StorageLocations.getInstance().getAll()) {
+            Object[] row = new Object[]{
+                l.getAirportId(),
+                l.getAirportName(),
+                l.getAirportCity(),
+                l.getAirportCountry()
+            };
+            rows.add(row);
+        }
+
+        return rows;
+    }
+
 }

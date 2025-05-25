@@ -8,6 +8,7 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.controllers.utils.validators.PlaneValidator;
 import core.controllers.utils.validators.ValidationUtils;
+import core.models.Observers.Observer;
 import core.models.Plane;
 import core.models.storage.StoragePlanes;
 import core.services.PlaneService;
@@ -21,13 +22,12 @@ import java.util.List;
  * @author maria
  */
 public class PlaneController {
-    
-   private final PlaneService planeService;
+
+    private final PlaneService planeService;
 
     public PlaneController() {
         this.planeService = new PlaneService();
     }
-
 
     public Response createPlane(String id, String brand, String model, String maxCapacity, String airline) {
         try {
@@ -51,9 +51,9 @@ public class PlaneController {
             }
 
             // 4. Validación de negocio: Verificar si ya existe el avión (usando el servicio para consultar).
-            if (planeService.getPlane(id) != null) { // <-- Esta línea es la que verifica.
-    return new Response("There is already a plane with that ID.", Status.BAD_REQUEST);
-}
+            if (planeService.getPlane(id)!=null) { // <-- Esta línea es la que verifica.
+                return new Response("There is already a plane with that ID.", Status.BAD_REQUEST);
+            }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
             Plane newPlane = planeService.registerPlane(id, brand, model, parsedMaxCapacity, airline);
@@ -67,37 +67,20 @@ public class PlaneController {
         }
     }
 
-    public static Response getPlane(String id) {
-        try {
-            Plane plane = StoragePlanes.getInstance().get(id);
-            if (plane == null) {
-                return new Response("Plane not found", Status.NOT_FOUND);
-            }
-            return new Response("Plane retrieved successfully", Status.OK, plane);
-
-        } catch (Exception e) {
-            return new Response("Error retrieving plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
     //obtener todos los id de aviones:
     public Response getAllPlaneIds() {
-    ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
-    List<String> ids = planes.stream()
-                                 .map(p -> String.valueOf(p.getId()))
-                                 .toList(); 
-    return new Response("Plane IDs retrieved", Status.OK, ids);
-}
-    public Response getAllPlanes() {
-        try {
-            ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
-            Collections.sort(planes, Comparator.comparing(Plane::getId));
-            return new Response("Planes retrieved successfully", Status.OK, planes);
-
-        } catch (Exception e) {
-            return new Response("Error retrieving planes list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+        ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
+        List<String> ids = planes.stream()
+                .map(p -> String.valueOf(p.getId()))
+                .toList();
+        return new Response("Plane IDs retrieved", Status.OK, ids);
     }
-    public static Response addPlane(Plane plane) {
+
+    public Response getAllPlanes() {
+      return new Response("Passenger IDs retrieved", Status.OK, planeService.allPlanes());
+    }
+
+    public Response addPlane(Plane plane) {
         try {
             boolean added = StoragePlanes.getInstance().add(plane);
             if (!added) {
@@ -109,45 +92,40 @@ public class PlaneController {
             return new Response("Error retrieving plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    public static Response updatePlane(String id, String newBrand, String newModel, String newAirline) {
+
+    public Response updatePlane(String id, String newBrand, String newModel, String newMaxCapacity, String newAirline) {
         try {
-           
-            Response planeRes = getPlane(id);
-            if(planeRes.getStatus()== Status.NOT_FOUND){
-                return planeRes;
+
+            if (planeService.getPlane(id)==null) {
+                return new Response("Airplane not found", Status.NOT_FOUND);
             }
-            Plane plane = (Plane) planeRes.getObject();
-            Response Invalid = PlaneValidator.INSTANCE.isValid(id,newBrand,newModel,newAirline);
-            if(Invalid.getStatus() != Status.OK){
-            return Invalid;}
-                
-            plane.setBrand(newBrand);
-            plane.setModel(newModel);         
-            plane.setAirline(newAirline);
+
+            Response Invalid = PlaneValidator.INSTANCE.isValid(id, newBrand, newModel, newAirline);
+            if (Invalid.getStatus() != Status.OK) {
+                return Invalid;
+            }
+
+            planeService.update(id, newBrand, newModel, Integer.parseInt(newMaxCapacity), newAirline);
 
             return new Response("Plane updated successfully", Status.OK);
 
         } catch (Exception e) {
             return new Response("Error updating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
-    } 
-     public Response getPlanes() {
-    
-    List<Object[]> rows = new ArrayList<>();
-
-    for (Plane p : StoragePlanes.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            p.getId(), 
-            p.getBrand(), 
-            p.getModel(), 
-            p.getMaxCapacity(), 
-            p.getAirline(), 
-            p.getNumFlights()
-        };
-        rows.add(row);
     }
 
-    return new Response("Planes refreshed", Status.OK, rows);
-}
+    public Response getPlanes() {
+        return new Response("Planes refreshed", Status.OK, planeService.completeInfo());
+    }
+    
+    public Response getPlane(String id){
+         if (planeService.getPlane(id)!=null){
+        return new Response("plane found",Status.OK,planeService.getPlane(id));
+    }else{
+         return new Response("plane does not exist",Status.NOT_FOUND);
+         }}
+    
+        public void registerObserver(Observer observer) {
+        planeService.addObserver(observer);
+    }
 }

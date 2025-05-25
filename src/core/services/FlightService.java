@@ -4,17 +4,16 @@
  */
 package core.services;
 
-import core.controllers.FlightController;
-import core.controllers.LocationController;
-import core.controllers.PlaneController;
-import core.controllers.utils.Response;
-import core.controllers.utils.Status;
 import core.controllers.utils.validators.DateUtils;
-import core.controllers.utils.validators.FlightValidator;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
+import core.models.Observers.Observer;
+import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -30,7 +29,7 @@ public class FlightService {
 
   
         if (scaleLocation == null) {
-            System.out.println("holiiii"); 
+           
             flight = new Flight(id,
                     plane,
                     departureLocation,
@@ -39,7 +38,7 @@ public class FlightService {
                     hoursDurationArrival,
                     minutesDurationArrival);
         } else {
-            System.out.println("HOLA MARIA"); 
+    
             flight = new Flight(id,
                     plane,
                     departureLocation,
@@ -60,6 +59,54 @@ public class FlightService {
     }
 
     public Flight getFlight(String id) {
-        return StorageFlights.getInstance().get(id);
+     
+            return StorageFlights.getInstance().get(id) ;
+        
+        
+    }
+
+    public List<String> allFlights() {
+        List<String> ids = StorageFlights.getInstance()
+                .getAll().stream()
+                .map(Flight::getId)            
+                .toList();
+       return ValidationUtils.sortList(ids, 3, 3);
+}
+    
+    public void addPassenger(String id,Passenger passenger){
+                 StorageFlights.getInstance().get(id).addPassenger(passenger);
+
+    }
+    
+    public void delay(String id, String hours, String minutes){
+           Flight flight = StorageFlights.getInstance().get(id);
+            
+            flight.delay(Integer.parseInt(hours),Integer.parseInt(minutes));
+            StorageFlights.getInstance().update(flight);
+    }
+    
+    public ArrayList<Object[]> completeInfo(){
+          ArrayList<Object[]> rows = new ArrayList<>();
+   for (Flight f : StorageFlights.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            f.getId(), 
+            f.getDepartureLocation().getAirportId(),
+            f.getArrivalLocation().getAirportId(), 
+            (f.getScaleLocation() == null ? "-" : f.getScaleLocation().getAirportId()), 
+            f.getDepartureDate(), 
+            f.calculateArrivalDate(), 
+            f.getPlane().getId(), 
+            f.getNumPassengers()
+        };
+             rows.add(row);
+        }
+        return rows;
+                
+        }
+    
+         public void addObserver(Observer observer){
+        StorageFlights.getInstance().addObserver(observer);
     }
 }
+    
+
