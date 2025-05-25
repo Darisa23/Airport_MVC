@@ -51,7 +51,6 @@ public class AirportFrame extends javax.swing.JFrame {
     }
 
     private void blockPanels() {
-        //9, 11
         for (int i = 1; i < pestañas.getTabCount(); i++) {
             if (i != 9 && i != 11) {
                 pestañas.setEnabledAt(i, false);
@@ -1550,8 +1549,8 @@ public class AirportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, response.getMessage(), "Passenger Register", JOptionPane.INFORMATION_MESSAGE);
         if (response.getStatus() == Status.CREATED) {
             this.userSelect.addItem("" + id);
+            clearPassengerRegister();
         }
-        clearPassengerRegister();
     }//GEN-LAST:event_RegisterPassengerButtonActionPerformed
 
     private void CreateAirplaneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAirplaneButtonActionPerformed
@@ -1690,7 +1689,7 @@ public class AirportFrame extends javax.swing.JFrame {
             model.setRowCount(0);
             for (Object[] row : rows) {
                 model.addRow(row);
-            }        
+            }
             JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1706,7 +1705,7 @@ public class AirportFrame extends javax.swing.JFrame {
             model.setRowCount(0);
             for (Object[] row : rows) {
                 model.addRow(row);
-            }            
+            }
             JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1722,7 +1721,7 @@ public class AirportFrame extends javax.swing.JFrame {
             model.setRowCount(0);
             for (Object[] row : rows) {
                 model.addRow(row);
-            }            
+            }
             JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1731,14 +1730,14 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void RefreshPlanesTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshPlanesTableActionPerformed
         // TODO add your handling code here:
-         Response response = controller.getPlaneController().getPlanes();
+        Response response = controller.getPlaneController().getPlanes();
         if (response.getStatus() == Status.OK) {
             List<Object[]> rows = (List<Object[]>) response.getObject();
             DefaultTableModel model = (DefaultTableModel) AllPlanesTable.getModel();
             model.setRowCount(0);
             for (Object[] row : rows) {
                 model.addRow(row);
-            }            
+            }
             JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1747,14 +1746,14 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void RefreshLocationsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshLocationsButtonActionPerformed
         // TODO add your handling code here:
-           Response response = controller.getLocationController().getLocations();
+        Response response = controller.getLocationController().getLocations();
         if (response.getStatus() == Status.OK) {
             List<Object[]> rows = (List<Object[]>) response.getObject();
             DefaultTableModel model = (DefaultTableModel) AllLocationTable.getModel();
             model.setRowCount(0);
             for (Object[] row : rows) {
                 model.addRow(row);
-            }            
+            }
             JOptionPane.showMessageDialog(this, response.getMessage(), "Ok", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

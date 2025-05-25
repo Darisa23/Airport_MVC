@@ -4,29 +4,28 @@
  */
 package core.services;
 
-import core.controllers.LocationController;
-import core.controllers.utils.Response;
-import core.controllers.utils.Status;
-import core.controllers.utils.validators.LocationValidator;
 import core.models.Location;
+import core.models.storage.StorageLocations;
 
 /**
  *
  * @author maria
  */
 public class LocationService {
-    public Response createAirport(String id, String name, String city, String country, String latitude, String longitude) {
-        try {
-            Response invalid = LocationValidator.INSTANCE.isValid(id, name, city, country, latitude, longitude);
-            if (invalid.getStatus() != Status.OK) {
-                return invalid;
-            }
 
-            Location location = new Location(id, name, city, country, Double.parseDouble(latitude), Double.parseDouble(longitude));
-            return LocationController.addLocation(location);
+    // registerLocation ahora recibe los tipos de datos ya parseados y validados por el controlador.
+    public Location registerLocation(String id, String name, String city, String country, double latitude, double longitude) {
+        Location location = new Location(id, name, city, country, latitude, longitude);
 
-        } catch (Exception e) {
-            return new Response("Internal Server Error", Status.INTERNAL_SERVER_ERROR);
+        boolean added = StorageLocations.getInstance().add(location);
+        if (!added) {
+            throw new IllegalStateException("Failed to add location to storage. Controller should have checked for existence.");
         }
+        return location;
+    }
+
+    // getLocation simplemente recupera, sin validaciones de entrada.
+    public Location getLocation(String id) {
+        return StorageLocations.getInstance().get(id);
     }
 }

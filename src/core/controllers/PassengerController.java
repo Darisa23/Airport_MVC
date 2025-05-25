@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package core.controllers;
-
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
@@ -11,108 +10,113 @@ import core.controllers.utils.validators.PassengerValidator;
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Observers.Observer;
-import core.models.Passenger;
-import core.models.storage.StoragePassengers;
 import core.services.PassengerService;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author maria
  */
 public class PassengerController {
-       private final PassengerService passengerService;
-        public PassengerController() {
+
+    private final PassengerService passengerService;
+
+    public PassengerController() {
         this.passengerService = new PassengerService();
     }
-       public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
-                                      String countryPhoneCode, String phone, String country) {
-        return passengerService.registerPassenger(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
-    }
 
-    //CAMBIÉ ESTO A QUE RECIBE STRING QUIZÁ HAGA PROBLEMASSSS*******************************
-    public Response getPassenger(String id) {
+    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
+            String countryPhoneCode, String phone, String country) {
         try {
-            long nid = Long.parseLong(id);
-            Passenger passenger = StoragePassengers.getInstance().get(nid);
-            if (passenger == null) {
-                return new Response("Passenger not found", Status.NOT_FOUND);
+            // 1. Validaciones de presencia (campos vacíos)
+            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
-            return new Response("Passenger retrieved successfully", Status.OK, passenger);
 
+            // 2. Validaciones de formato y otras reglas específicas (con PassengerValidator)
+            Response validationResponse = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
+            if (validationResponse.getStatus() != Status.OK) {
+                return validationResponse;
+            }
+
+            // 3. Parseo de Strings a tipos numéricos (ID, teléfono, código de país).
+ 
+            long parsedId;
+            int parsedCountryPhoneCode;
+            long parsedPhone;
+            try {
+                parsedId = Long.parseLong(id);
+                parsedCountryPhoneCode = Integer.parseInt(countryPhoneCode);
+                parsedPhone = Long.parseLong(phone);
+            } catch (NumberFormatException e) {
+                return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
+            }
+
+            // 4. Validación de negocio: Verificar si ya existe el pasajero (usando el servicio para consultar).
+            // El servicio espera un 'long' para getPassenger, así que pasamos 'parsedId'.
+            if (passengerService.getPassenger(parsedId)) {
+                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
+            }
+
+            // 5. Si todas las validaciones pasaron, llamar al servicio.
+            // Le pasamos los valores ya parseados.
+            passengerService.registerPassenger(
+                    parsedId, firstName, lastName, DateUtils.buildDate(year, month, day), parsedCountryPhoneCode, parsedPhone, country);
+
+            return new Response("Passenger created successfully", Status.CREATED);
+
+        } catch (IllegalArgumentException e) {
+            // Esto captura excepciones lanzadas por DateUtils.buildDate si no se manejan internamente allí
+            // o por cualquier otro parseo que el servicio intente hacer si no le pasamos todo parseado.
+            return new Response("Invalid data provided: " + e.getMessage(), Status.BAD_REQUEST);
+        } catch (IllegalStateException e) {
+            // Captura errores de lógica de negocio o persistencia lanzados por el servicio
+            // (ej. si Storage.add() devuelve false a pesar de la verificación previa del controlador).
+            return new Response("Internal server error during passenger registration: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+            // Captura cualquier otra excepción inesperada
+            return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
+
 //obtener todos los id de pasajeros:
+
     public Response getAllPassengerIds() {
-    ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
-    List<String> ids = passengers.stream()
-                                 .map(p -> String.valueOf(p.getId()))
-                                 .toList(); 
-    return new Response("Passenger IDs retrieved", Status.OK, ids);
-}
-    public Response getAllPassengers() {
-        try {
-            ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
-            Collections.sort(passengers, Comparator.comparing(Passenger::getId));
-            return new Response("Planes retrieved successfully", Status.OK, passengers);
-
-        } catch (Exception e) {
-            return new Response("Error retrieving passengers list: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
+    return new Response("Passenger IDs retrieved", Status.OK, passengerService.allPassengers());
     }
-
-    public static Response addPassenger(Passenger passenger) {
-        try {
-            boolean added = StoragePassengers.getInstance().add(passenger);
-            if (!added) {
-                return new Response("This passenger already exists", Status.BAD_REQUEST);
-            }
-            return new Response("passenger added successfully", Status.OK);
-        } catch (Exception e) {
-            return new Response("Error retrieving passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 
     public Response updatePassenger(String id, String newFirstName, String newLastName,
             String newYear, String newMonth, String newDay, String newCountryCode, String newPhone, String newCountry) {
 
         try {
-            if(id.isEmpty()){
-            return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
-        }
-            Response passengerRes = getPassenger(id);
-
-            if (passengerRes.getStatus() == Status.NOT_FOUND) {
-                return passengerRes;
+            if (id.isEmpty()) {
+                return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
+            }
+            if (!passengerService.getPassenger(Long.parseLong(id))) {
+                return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
             }
             if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
             return new Response("Fields cannot be empty", Status.BAD_REQUEST);
         }
+            if (ValidationUtils.anyEmpty(id, newFirstName, newLastName, newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+            }
             Response Invalid = PassengerValidator.INSTANCE.isValid(id, newFirstName, newLastName, newYear, newMonth,
                     newDay, newCountryCode, newPhone, newCountry);
             if (Invalid.getStatus() != Status.OK) {
                 return Invalid;
             }
-            Passenger updatedPassenger = new Passenger(
-                    Long.parseLong(id),
+            passengerService.update(Long.parseLong(id),
                     newFirstName,
                     newLastName,
                     DateUtils.buildDate(newYear, newMonth, newDay),
                     Integer.parseInt(newCountryCode),
                     Long.parseLong(newPhone),
-                    newCountry
-            );
-            StoragePassengers.getInstance().update(updatedPassenger);
+                    newCountry);
             return new Response("Passenger updated successfully", Status.OK);
-
         } catch (Exception e) {
             return new Response("Error updating passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
@@ -120,94 +124,38 @@ public class PassengerController {
 
     public Response addToFlight(String passengerId, Flight flight) {
         try {
-            Response opassenger = getPassenger(passengerId);
-            if (opassenger.getStatus() == Status.NOT_FOUND) {
-                return opassenger;
+            if (!passengerService.getPassenger(Long.parseLong(passengerId))) {
+                return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
             }
-            Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
-            System.out.println("luego este");
-            boolean added = passenger.addFlight(flight);
+            boolean added = passengerService.addAflight(Long.parseLong(passengerId),flight);
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            return new Response("Flight added to passenger successfully", Status.OK,passenger);
+            return new Response("Flight added to passenger successfully", Status.OK);
         } catch (Exception e) {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-    public Response getFlightsOfPassenger(String passengerId) {
-        if(passengerId.equals("Select User")){
-            return new Response("Debe seleccionar un Id de usuario para ver sus vuelos", Status.NO_CONTENT);
-        }
-    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
-    if (passenger == null) {
-        return new Response("Passenger not found", Status.NOT_FOUND);
-    }
-    if(passenger.getFlights().isEmpty()){
-        return new Response("El usuario "+passengerId+" no tiene ningún vuelo registrado", Status.NOT_FOUND);
-    }
-    return new Response("Flights retrieved", Status.OK, passenger.getFlights());
-}
+
     public void registerObserver(Observer observer) {
-    StoragePassengers.getInstance().addObserver(observer);
-}
+        passengerService.addObserver(observer);
+    }
+
     public Response getPassengerData(String id) {
-    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
-    if (passenger == null) {
-        return new Response("Passenger not found", Status.NOT_FOUND);
-    }
-
-    Map<String, String> data = new HashMap<>();
-    data.put("id", String.valueOf(passenger.getId()));
-    data.put("firstName", passenger.getFirstname());
-    data.put("lastName", passenger.getLastname());
-    data.put("birthYear", String.valueOf(passenger.getBirthDate().getYear()));
-    data.put("phoneCode", String.valueOf(passenger.getCountryPhoneCode()));
-    data.put("phone", String.valueOf(passenger.getPhone()));
-    data.put("country", passenger.getCountry());
-
-    return new Response("Data ready", Status.OK, data);
+        if (!passengerService.getPassenger(Long.parseLong(id))) {
+            return new Response("Passenger not found", Status.NOT_FOUND);
+        }
+        return new Response("Data ready", Status.OK, passengerService.specificData(Long.parseLong(id)));
 }
+    
     public Response getFlightRowsOfPassenger(String id) {
-        //acá por ejemplo en vez de acceder al storage le pide al service que revise si existe
-        //**********************************************************************
-    Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(id));
-    if (passenger == null) {
-        return new Response("Passenger not found", Status.NOT_FOUND);
-    }
-    //ESTA TAMBIEN IRÍA AL SERVICE
-    ArrayList<Flight> flights = passenger.getFlights();
-    List<Object[]> rows = new ArrayList<>();
-
-    for (Flight f : flights) {
-        Object[] row = new Object[] {
-            f.getId(),
-            f.getDepartureDate(),
-            f.calculateArrivalDate()
-        };
-        rows.add(row);
-    }
-
-    return new Response("Flights refreshed", Status.OK, rows);
+     if (!passengerService.getPassenger(Long.parseLong(id))) {
+            return new Response("Passenger not found", Status.NOT_FOUND);
+        }
+    return new Response("Flights refreshed", Status.OK, passengerService.flightsOf(Long.parseLong(id)));
 }
     
 public Response getPassengers() {
-    
-    List<Object[]> rows = new ArrayList<>();
-
-    for (Passenger p : StoragePassengers.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            p.getId(), 
-            p.getFullname(), 
-            p.getBirthDate(), 
-            p.calculateAge(), 
-            p.generateFullPhone(), 
-            p.getCountry(), 
-            p.getNumFlights()
-        };
-        rows.add(row);
-    }
-
-    return new Response("Passengers refreshed", Status.OK, rows);
+    return new Response("Passengers refreshed", Status.OK, passengerService.completeInfo());
 }
 }

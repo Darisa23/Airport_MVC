@@ -3,60 +3,110 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package core.services;
-
-import static core.controllers.PassengerController.addPassenger;
-import core.controllers.utils.Response;
-import core.controllers.utils.Status;
-import core.controllers.utils.validators.DateUtils;
-import core.controllers.utils.validators.PassengerValidator;
-import core.controllers.utils.validators.ValidationUtils;
+import core.models.Flight;
+import core.models.Observers.Observer;
 import core.models.Passenger;
 import core.models.storage.StoragePassengers;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author maria
  */
+
+
+ 
 public class PassengerService {
-    
-    public Response registerPassenger(String id, String firstName, String lastName, String year, String month, String day,
-                                      String countryPhoneCode, String phone, String country) {
+    public Passenger registerPassenger(long id, String firstName, String lastName, LocalDate Birthday,
+                                       int countryPhoneCode, long phone, String country) {
 
-        try {
-            // 1. Validación de campos vacíos
-            if (ValidationUtils.anyEmpty(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country)) {
-                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-            }
-
-            // 2. Verificar si ya existe el pasajero
-            if (StoragePassengers.getInstance().get(Long.valueOf(id)) != null) {
-                return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
-            }
-
-            // 3. Validación del validador
-            Response invalid = PassengerValidator.INSTANCE.isValid(id, firstName, lastName, year, month, day, countryPhoneCode, phone, country);
-            if (invalid.getStatus() != Status.OK) {
-                return invalid;
-            }
-
-            // 4. Crear el objeto Passenger
-            Passenger passenger = new Passenger(
-                    Long.parseLong(id),
-                    firstName,
-                    lastName,
-                    DateUtils.buildDate(year, month, day),
-                    Integer.parseInt(countryPhoneCode),
-                    Long.parseLong(phone),
-                    country
-            );
-
-            // 5. añadir
-            addPassenger(passenger);
-
-            return new Response("Passenger created successfully", Status.CREATED, passenger);
-
-        } catch (Exception e) {
-            return new Response("Error Registering passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        Passenger passenger = new Passenger(
+                id,
+                firstName,
+                lastName,
+                Birthday,
+                countryPhoneCode, 
+                phone, 
+                country
+        );     
+        boolean added = StoragePassengers.getInstance().add(passenger);
+        if (!added) {         
+            throw new IllegalStateException("Failed to add passenger to storage despite prior checks by controller.");
         }
+
+        return passenger;
     }
+    public boolean getPassenger(long id) {
+        if(StoragePassengers.getInstance().get(id)==null){
+            return false;
+        }
+        return true;
+    }
+    public List<String> allPassengers(){
+       List<String> ids = StoragePassengers.getInstance()
+    .getAll().stream()
+    .map(Passenger::getId)
+    .sorted()
+    .map(String::valueOf)
+    .toList();
+        return ids;
+    }
+    public boolean addAflight(long id,Flight flight){
+        return StoragePassengers.getInstance().get(id).addFlight(flight);
+    }
+    public void addObserver(Observer observer){
+        StoragePassengers.getInstance().addObserver(observer);
+    }
+    public void update(long id, String firstName, String lastName, LocalDate Birthday,
+                                       int countryPhoneCode, long phone, String country){
+        registerPassenger(id,firstName,lastName, Birthday,countryPhoneCode, phone, country);
+    }
+    public HashMap<String,String> specificData(long id){
+        HashMap<String, String> data = new HashMap<>();
+        Passenger p = StoragePassengers.getInstance().get(id);
+        data.put("id", String.valueOf(p.getId()));
+        data.put("firstName", p.getFirstname());
+        data.put("lastName", p.getLastname());
+        data.put("birthYear", String.valueOf(p.getBirthDate().getYear()));
+        
+        data.put("phoneCode", String.valueOf(p.getCountryPhoneCode()));
+        data.put("phone", String.valueOf(p.getPhone()));
+        data.put("country", p.getCountry());
+        return data;
+    }
+   public ArrayList<Object[]> flightsOf(long idPassenger){
+       ArrayList<Flight> flights = StoragePassengers.getInstance().get(idPassenger).getFlights();
+       ArrayList<Object[]> rows = new ArrayList<>();
+
+    for (Flight f : flights) {
+        Object[] row = new Object[] {
+            f.getId(),
+            f.getDepartureDate(),
+            f.calculateArrivalDate()
+        };
+        rows.add(row);
+    }
+    return rows;
+   }  
+public ArrayList<Object[]> completeInfo(){
+ArrayList<Object[]> rows = new ArrayList<>();
+
+    for (Passenger p : StoragePassengers.getInstance().getAll()) {
+        Object[] row = new Object[] {
+            p.getId(), 
+            p.getFullname(), 
+            p.getBirthDate(), 
+            p.calculateAge(), 
+            p.generateFullPhone(), 
+            p.getCountry(), 
+            p.getNumFlights()
+        };
+        rows.add(row);
+    }
+    return rows;
+   }    
 }

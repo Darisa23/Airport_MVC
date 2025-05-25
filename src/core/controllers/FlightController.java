@@ -7,8 +7,12 @@ package core.controllers;
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.controllers.utils.validators.FlightValidator;
+import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
+import core.models.Location;
 import core.models.Passenger;
+import core.models.Plane;
 import core.models.storage.StorageFlights;
 import core.services.FlightService;
 import java.util.ArrayList;
@@ -21,21 +25,101 @@ import java.util.List;
  * @author Alexander Sanguino
  */
 public class FlightController {
-    private final PassengerController passContr; // ¡Aquí está de vuelta!
-    private final FlightService flightService; // Mantenemos el FlightService
+    private final PassengerController passContr;
+    private final FlightService flightService; // Declaración
+    private final PlaneController planeController;
+    private final LocationController locationController;
+
 
     public FlightController() {
-        this.passContr = new PassengerController(); // ¡Y su inicialización!
-        this.flightService = new FlightService(); // Inicializamos el FlightService
+        this.passContr = new PassengerController();
+        this.flightService = new FlightService(); // Inicialización aquí
+        this.planeController = new PlaneController();
+        this.locationController = new LocationController();
     }
-
-    public Response registerFlight(String id, String plane, String departureLocation, String arrivalLocation, String scaleLocation,
+    
+    public Response registerFlight(String id, String planeId, String departureLocationId, String arrivalLocationId, String scaleLocationId,
                                   String year, String month, String day, String hour, String minutes,
                                   String hoursDurationArrival, String minutesDurationArrival,
                                   String hoursDurationScale, String minutesDurationScale) {
-        // Delega al FlightService, como habíamos acordado
-        return flightService.registerFlight(id, plane, departureLocation, arrivalLocation, scaleLocation, year, month, day, hour, minutes,
-                                            hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationArrival); // Ojo con 'minutesDurationArrival' al final si es 'minutesDurationScale'
+        try {
+            // 1. Validaciones de presencia (campos vacíos)
+            if (ValidationUtils.anyEmpty(id, planeId, departureLocationId, arrivalLocationId, year, month, day, hour, minutes,
+                                          hoursDurationArrival, minutesDurationArrival)) {
+                return new Response("Required fields cannot be empty", Status.BAD_REQUEST);
+            }
+
+            // 2. Validaciones de formato y otras reglas específicas (con FlightValidator)
+            Response validationResponse = FlightValidator.INSTANCE.isValid(id, planeId, departureLocationId, arrivalLocationId, scaleLocationId, year, month, day, hour, minutes,
+                                                                          hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
+            if (validationResponse.getStatus() != Status.OK) {
+                return validationResponse;
+            }
+
+            // 3. Parseo de Strings a Integer para duraciones.
+            int parsedHoursDurationArrival, parsedMinutesDurationArrival;
+            int parsedHoursDurationScale = 0, parsedMinutesDurationScale = 0; // Inicializar para el caso sin escala
+            try {
+                parsedHoursDurationArrival = Integer.parseInt(hoursDurationArrival);
+                parsedMinutesDurationArrival = Integer.parseInt(minutesDurationArrival);
+                // Solo parsear duración de escala si scaleLocationId no es vacío/nulo y no es el valor por defecto
+                if (scaleLocationId != null && !scaleLocationId.trim().isEmpty() && !scaleLocationId.equals("Location")) {
+                    parsedHoursDurationScale = Integer.parseInt(hoursDurationScale);
+                    parsedMinutesDurationScale = Integer.parseInt(minutesDurationScale);
+                }
+            } catch (NumberFormatException e) {
+                return new Response("Invalid number format for duration times.", Status.BAD_REQUEST);
+            }
+
+            // 4. Validación de negocio: Verificar si el vuelo ya existe
+            if (flightService.getFlight(id) != null) {
+                return new Response("Flight with this ID already exists", Status.BAD_REQUEST);
+            }
+
+            // 5. Obtener y validar objetos relacionados (Plane, Location). Esto es responsabilidad del controlador.
+            Plane plane = (Plane) planeController.getPlane(planeId).getObject();
+            Location departureLocation = (Location) locationController.getAirport(departureLocationId).getObject();
+            Location arrivalLocation = (Location) locationController.getAirport(arrivalLocationId).getObject();
+
+            if (plane == null) {
+                 return new Response("Plane not found for ID: " + planeId, Status.BAD_REQUEST);
+            }
+            if (departureLocation == null) {
+                 return new Response("Departure location not found for ID: " + departureLocationId, Status.BAD_REQUEST);
+            }
+            if (arrivalLocation == null) {
+                 return new Response("Arrival location not found for ID: " + arrivalLocationId, Status.BAD_REQUEST);
+            }
+
+            Location scaleLocation = null;
+            if (scaleLocationId != null && !scaleLocationId.trim().isEmpty() && !scaleLocationId.equals("Location")) {
+                scaleLocation = (Location) locationController.getAirport(scaleLocationId).getObject();
+                if (scaleLocation == null) {
+                    return new Response("Scale location not found for ID: " + scaleLocationId, Status.BAD_REQUEST);
+                }
+            }
+
+            // 6. Si todas las validaciones pasaron, llamar al servicio.
+            // Le pasamos los Strings de campos de fecha/hora (DateUtils los maneja dentro del servicio),
+            // y los objetos de dependencia resueltos (Plane, Location), y los ints de duración.
+            Flight newFlight = flightService.registerFlight(
+                    id, plane, departureLocation, arrivalLocation, scaleLocation,
+                    year, month, day, hour, minutes,
+                    parsedHoursDurationArrival, parsedMinutesDurationArrival,
+                    parsedHoursDurationScale, parsedMinutesDurationScale);
+
+            return new Response("Flight created successfully", Status.CREATED, newFlight);
+
+        } catch (IllegalArgumentException e) {
+            // Captura errores de formato o validación lanzados por el servicio (como fallback).
+            return new Response("Invalid data provided: " + e.getMessage(), Status.BAD_REQUEST);
+        } catch (IllegalStateException e) {
+            // Captura errores de lógica de negocio o persistencia lanzados por el servicio.
+            return new Response("Internal server error during flight registration: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            // Captura cualquier otra excepción inesperada.
+            return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
 //Obtener un vuelo:
