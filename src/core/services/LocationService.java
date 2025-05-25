@@ -13,7 +13,6 @@ import core.models.storage.StorageLocations;
  */
 public class LocationService {
 
-    // registerLocation ahora recibe los tipos de datos ya parseados y validados por el controlador.
     public Location registerLocation(String id, String name, String city, String country, double latitude, double longitude) {
         Location location = new Location(id, name, city, country, latitude, longitude);
 
@@ -24,7 +23,6 @@ public class LocationService {
         return location;
     }
 
-    // getLocation simplemente recupera, sin validaciones de entrada.
     public Location getLocation(String id) {
         return StorageLocations.getInstance().get(id);
     }

@@ -27,7 +27,6 @@ public class MainController {
     public void initializeData() {
         readerController.loadAll();
     }
-    //controllers getters:
     
     public UserController getUserController() {
         return usContr;

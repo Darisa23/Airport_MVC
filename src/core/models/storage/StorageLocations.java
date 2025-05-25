@@ -49,7 +49,7 @@ public class StorageLocations implements Storage<Location, String>, Observable {
         if (l1 != null) {
             boolean removed = this.airports.remove(l1); // Eliminamos del ArrayList
             if (removed) {
-                notifyObservers(); // ✅ Notificamos solo si se eliminó correctamente
+                notifyObservers(); // Notificamos si se eliminó 
             }
             return removed;
         }
@@ -57,18 +57,16 @@ public class StorageLocations implements Storage<Location, String>, Observable {
     }
 
     @Override
-    public boolean update(Location location) { // Changed parameter to Location location
-        // First, check if the location exists in the storage
+    public boolean update(Location location) { 
+     
         Location existingLocation = this.get(location.getAirportId());
         if (existingLocation != null) {
-            // If it exists, remove the old one and add the new one
-            // This effectively "updates" the location by replacing it
             this.airports.remove(existingLocation);
             this.airports.add(location);
             notifyObservers();
             return true;
         }
-        return false; // Location not found, so it cannot be updated
+        return false; 
     }
 
     @Override
@@ -80,7 +78,6 @@ public class StorageLocations implements Storage<Location, String>, Observable {
         }
         return null;
     }
-//ESTO ACÁ DEBE DEVOLVER UNA COPIAAAAAAAAAA*****************************
 
     @Override
     public ArrayList<Location> getAll() {

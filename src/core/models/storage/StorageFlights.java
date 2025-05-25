@@ -50,7 +50,7 @@ public class StorageFlights implements Storage<Flight, String>, Observable {
     if (fl != null) {
         boolean removed = flights.remove(fl);
         if (removed) {
-            notifyObservers(); // ✅ Notificamos si efectivamente se eliminó
+            notifyObservers(); //  Notificamos si se eliminó
         }
         return removed;
     }
@@ -60,17 +60,14 @@ public class StorageFlights implements Storage<Flight, String>, Observable {
 
     @Override
     public boolean update(Flight flight) {
-        // First, check if the flight exists in the storage
         Flight existingFlight = this.get(flight.getId());
         if (existingFlight != null) {
-            // If it exists, remove the old one and add the new one
-            // This effectively "updates" the flight by replacing it
             flights.remove(existingFlight);
             flights.add(flight);
             notifyObservers(); // Notificamos después de actualizar
             return true;
         }
-        return false; // Flight not found, so it cannot be updated
+        return false; 
     }
 
     @Override

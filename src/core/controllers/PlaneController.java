@@ -56,7 +56,6 @@ public class PlaneController {
 }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
-            // Le pasamos los valores ya parseados.
             Plane newPlane = planeService.registerPlane(id, brand, model, parsedMaxCapacity, airline);
 
             return new Response("Plane created successfully", Status.CREATED, newPlane);
@@ -134,6 +133,7 @@ public class PlaneController {
         }
     }
 
+<<<<<<< HEAD
     public static Response deletePlane(String id) {
         try {
             Plane plane = StoragePlanes.getInstance().get(id);
@@ -167,5 +167,7 @@ public class PlaneController {
 
     return new Response("Planes refreshed", Status.OK, rows);
 }
+=======
+>>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
     
 }

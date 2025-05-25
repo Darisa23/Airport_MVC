@@ -50,25 +50,24 @@ public class StoragePlanes implements Storage<Plane, String>, Observable {
         }
         boolean removed = airplanes.removeIf(p -> p.getId().equals(plane.getId()));
         if (removed) {
-            notifyObservers(); // ✅ Notificamos si se eliminó exitosamente
+            notifyObservers(); //Notificamos si se eliminó 
         }
         return removed;
     }
 
     @Override
-    public boolean update(Plane updatedPlane) { // Implement update(T type)
+    public boolean update(Plane updatedPlane) {
         if (updatedPlane == null) {
             return false;
         }
-        // Find the index of the plane by its ID
         for (int i = 0; i < airplanes.size(); i++) {
             if (airplanes.get(i).getId().equals(updatedPlane.getId())) {
-                airplanes.set(i, updatedPlane); // Replace the old instance with the new one
+                airplanes.set(i, updatedPlane); 
                 notifyObservers();
                 return true;
             }
         }
-        return false; // The plane to update was not found
+        return false; 
     }
 
     @Override

@@ -55,29 +55,34 @@ public class PassengerController {
                 return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
             }
 
+<<<<<<< HEAD
             // 4. Validación de negocio: Verificar si ya existe el pasajero (usando el servicio para consultar).
             // El servicio espera un 'long' para getPassenger, así que pasamos 'parsedId'.
             if (passengerService.getPassenger(parsedId)) {
+=======
+            // 4. Verificar si ya existe el pasajero (
+            if (passengerService.getPassenger(parsedId) != null) {
+>>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
+<<<<<<< HEAD
             // Le pasamos los valores ya parseados.
             passengerService.registerPassenger(
                     parsedId, firstName, lastName, DateUtils.buildDate(year, month, day), parsedCountryPhoneCode, parsedPhone, country);
+=======
+            Passenger newPassenger = passengerService.registerPassenger(
+                    parsedId, firstName, lastName, year, month, day, parsedCountryPhoneCode, parsedPhone, country);
+>>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
 
             return new Response("Passenger created successfully", Status.CREATED);
 
         } catch (IllegalArgumentException e) {
-            // Esto captura excepciones lanzadas por DateUtils.buildDate si no se manejan internamente allí
-            // o por cualquier otro parseo que el servicio intente hacer si no le pasamos todo parseado.
             return new Response("Invalid data provided: " + e.getMessage(), Status.BAD_REQUEST);
         } catch (IllegalStateException e) {
-            // Captura errores de lógica de negocio o persistencia lanzados por el servicio
-            // (ej. si Storage.add() devuelve false a pesar de la verificación previa del controlador).
             return new Response("Internal server error during passenger registration: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            // Captura cualquier otra excepción inesperada
             return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
@@ -137,6 +142,23 @@ public class PassengerController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    public Response getFlightsOfPassenger(String passengerId) {
+        if (passengerId.equals("Select User")) {
+            return new Response("Debe seleccionar un Id de usuario para ver sus vuelos", Status.NO_CONTENT);
+        }
+        Passenger passenger = StoragePassengers.getInstance().get(Long.valueOf(passengerId));
+        if (passenger == null) {
+            return new Response("Passenger not found", Status.NOT_FOUND);
+        }
+        if (passenger.getFlights().isEmpty()) {
+            return new Response("El usuario " + passengerId + " no tiene ningún vuelo registrado", Status.NOT_FOUND);
+        }
+        return new Response("Flights retrieved", Status.OK, passenger.getFlights());
+    }
+
+>>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
     public void registerObserver(Observer observer) {
         passengerService.addObserver(observer);
     }
