@@ -10,6 +10,7 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Observers.FlightTableObserver;
 import core.models.Observers.LocationTableObserver;
+import core.models.Observers.MyFlightsObserver;
 import core.models.Observers.PassengerTableObserver;
 import core.models.Observers.PlaneTableObserver;
 import java.awt.Color;
@@ -30,7 +31,6 @@ public class AirportFrame extends javax.swing.JFrame {
     private int x, y;
     private final MainController controller;
     private final LoadComboBox loadComboBox;
-
     public AirportFrame() {
         initComponents();
         //read jsons:
@@ -40,7 +40,6 @@ public class AirportFrame extends javax.swing.JFrame {
         loadComboBoxes();
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
-
         this.generateMonths();
         this.generateDays();
         this.generateHours();
@@ -137,6 +136,7 @@ public class AirportFrame extends javax.swing.JFrame {
     }
 
     private void clearFlightRegister() {
+        System.out.println("se supone que se limpia");
         IDFlight.setText("");
         PlaneSelector.setSelectedIndex(0);
         DepartureLocationSelector.setSelectedIndex(0);
@@ -155,7 +155,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void clearLocationRegister() {
         AirPortID_LocationRegistration.setText("");
-        AirportCity.setText("");
+        AirportName.setText("");
         AirportCity.setText("");
         AirportCountry.setText("");
         AirportLatitude.setText("");
@@ -186,7 +186,15 @@ public class AirportFrame extends javax.swing.JFrame {
         // Observador de aviones
         PlaneTableObserver planeObserver = new PlaneTableObserver(AllPlanesTable);
         controller.getPlaneController().registerObserver(planeObserver);
-
+        
+        for(String id: (List<String>) controller.getPassengerController().getAllPassengerIds().getObject()){
+            passengerFlightsObserver(id);
+        }
+    }
+    private void passengerFlightsObserver(String passengerId){ 
+        
+        MyFlightsObserver passengerFlightsObserver = new MyFlightsObserver(ownflightsTable,passengerId);
+        controller.getPassengerController().registerObserver(passengerId, passengerFlightsObserver);
     }
 
     /**
@@ -1568,11 +1576,8 @@ public class AirportFrame extends javax.swing.JFrame {
         if (response.getStatus() == Status.CREATED) {
             List<String> planeIds = (List<String>) controller.getPlaneController().getAllPlaneIds().getObject();
             loadComboBox.load(PlaneSelector, planeIds);
-        
-        }
-        
         clearAirplaneRegister();
-        
+        } 
     }//GEN-LAST:event_CreateAirplaneButtonActionPerformed
 
     private void CreateLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateLocationButtonActionPerformed
@@ -1680,7 +1685,6 @@ public class AirportFrame extends javax.swing.JFrame {
 
         Response response = controller.getFlightController().delayFlight(flightId, hours, minutes);
         JOptionPane.showMessageDialog(this, response.getMessage(), "Delay flight", JOptionPane.INFORMATION_MESSAGE);
-        System.out.println();
     }//GEN-LAST:event_DelayButtonActionPerformed
 
     private void RefreshMyFlightsButtonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshMyFlightsButtonButtonActionPerformed
@@ -1777,7 +1781,8 @@ public class AirportFrame extends javax.swing.JFrame {
             String id = userSelect.getSelectedItem().toString();
             if (!id.equals(userSelect.getItemAt(0))) {
                 IDPassengerUpdate.setText(id);
-                PassengerID.setText(id);
+                PassengerID.setText(id);  
+                controller.getPassengerController().notify(id);
                 Response data = controller.getPassengerController().getPassengerData(id);
                 if (data.getStatus() == Status.OK) {
                     Map<String, String> pdata = (Map<String, String>) data.getObject();

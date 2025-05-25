@@ -4,7 +4,6 @@
  */
 package core.services;
 
-
 import core.models.Flight;
 import core.models.Observers.Observer;
 import core.models.Passenger;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -63,6 +63,10 @@ public class PassengerService {
         StoragePassengers.getInstance().addObserver(observer);
     }
 
+    public void addObserver(String id, Observer observer) {
+        StoragePassengers.getInstance().get(Long.valueOf(id)).addObserver(observer);
+    }
+
     public void update(long id, String firstName, String lastName, LocalDate Birthday,
             int countryPhoneCode, long phone, String country) {
         Passenger updatedPassenger = registerPassenger(id, firstName, lastName, Birthday, countryPhoneCode, phone, country);
@@ -105,7 +109,9 @@ public class PassengerService {
     public ArrayList<Object[]> completeInfo() {
         ArrayList<Object[]> rows = new ArrayList<>();
 
-        for (Passenger p : StoragePassengers.getInstance().getAll()) {
+        for (Passenger p : StoragePassengers.getInstance().getAll().stream()
+                .sorted(Comparator.comparing(Passenger::getId))
+                .collect(Collectors.toList())) {
             Object[] row = new Object[]{
                 p.getId(),
                 p.getFullname(),

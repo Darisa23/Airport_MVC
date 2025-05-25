@@ -6,13 +6,12 @@ package core.services;
 
 import core.controllers.utils.validators.ValidationUtils;
 import core.models.Observers.Observer;
-import core.models.Passenger;
 import core.models.Plane;
-import core.models.storage.StoragePassengers;
 import core.models.storage.StoragePlanes;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,7 +30,6 @@ public class PlaneService {
     }
 
     public Plane getPlane(String id) {
-  
         return StoragePlanes.getInstance().get(id);
     }
 
@@ -53,7 +51,9 @@ public class PlaneService {
     public ArrayList<Object[]> completeInfo(){
           ArrayList<Object[]> rows = new ArrayList<>();
 
-        for (Plane p : StoragePlanes.getInstance().getAll()) {
+        for (Plane p : StoragePlanes.getInstance().getAll().stream()
+            .sorted(Comparator.comparing(Plane::getId))
+            .collect(Collectors.toList())) {
             Object[] row = new Object[]{
                 p.getId(),
                 p.getBrand(),

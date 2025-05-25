@@ -41,16 +41,8 @@ public class LocationController {
             if (validationResponse.getStatus() != Status.OK) {
                 return validationResponse;
             }
-
-            // 3. Parseo de Strings a Double (latitud, longitud).
-            double parsedLatitude;
-            double parsedLongitude;
-            try {
-                parsedLatitude = Double.parseDouble(latitude);
-                parsedLongitude = Double.parseDouble(longitude);
-            } catch (NumberFormatException e) {
-                return new Response("Invalid number format for latitude or longitude.", Status.BAD_REQUEST);
-            }
+            
+            double[] location = (double[]) validationResponse.getObject();
 
             // 4. Validación de negocio: Verificar si ya existe la ubicación (usando el servicio para consultar).
             if (locationService.getLocation(id)!=null ) {
@@ -58,7 +50,7 @@ public class LocationController {
             }
 
             // 5. Si todas las validaciones pasaron, llamar al servicio.
-            Location newLocation = locationService.registerLocation(id, name, city, country, parsedLatitude, parsedLongitude);
+            Location newLocation = locationService.registerLocation(id, name, city, country, location[0], location[1]);
 
             return new Response("Airport created", Status.CREATED, newLocation);
 

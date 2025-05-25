@@ -43,12 +43,7 @@ public class PlaneController {
             }
 
             // 3. Parseo de String a Integer (maxCapacity).
-            int parsedMaxCapacity;
-            try {
-                parsedMaxCapacity = Integer.parseInt(maxCapacity);
-            } catch (NumberFormatException e) {
-                return new Response("Invalid max capacity format. Capacity must be a number.", Status.BAD_REQUEST);
-            }
+            int parsedMaxCapacity= (Integer) validationResponse.getObject();
 
             // 4. Validación de negocio: Verificar si ya existe el avión (usando el servicio para consultar).
             if (planeService.getPlane(id)!=null) { // <-- Esta línea es la que verifica.
@@ -63,7 +58,7 @@ public class PlaneController {
         } catch (IllegalStateException e) {
             return new Response("Internal server error during plane creation: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            return new Response("An unexpected error occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+            return new Response("An unexpected errorASASA occurred: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -80,7 +80,7 @@ public class FlightValidator implements Validator {
         }
         // 7. Departure date validation
         if (!DateUtils.isValidDate(year, month, day, hour, minutes, false)) {
-            return new Response("Invalid Departure_Date", Status.BAD_REQUEST);
+            return new Response("Invalid Departure_Date, the date is invalid or out of range (more than two year ahead).", Status.BAD_REQUEST);
         }
         if (!scaleLocation.equals("Location")) {
             if (departureLocation.equals(scaleLocation)) {

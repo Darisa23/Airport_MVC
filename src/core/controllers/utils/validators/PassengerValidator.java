@@ -44,7 +44,7 @@ public class PassengerValidator implements Validator {
         }
         // 5. BirthDate Validation
         if (!DateUtils.isValidDate(year, month, day, true)) {
-            return new Response("Invalid BirthDate.", Status.BAD_REQUEST);
+            return new Response("Invalid BirthDate, Make sure you don't have more than 120 years or you don't even exist", Status.BAD_REQUEST);
         }
         return new Response("Valid passenger",Status.OK);
 }

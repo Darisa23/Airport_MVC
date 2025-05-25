@@ -4,6 +4,8 @@
  */
 package core.models;
 
+import core.models.Observers.Observable;
+import core.models.Observers.Observer;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
-public class Passenger implements Cloneable {
+public class Passenger implements Cloneable, Observable {
 
     private final long id;
     private String firstname;
@@ -22,7 +24,8 @@ public class Passenger implements Cloneable {
     private long phone;
     private String country;
     private ArrayList<Flight> flights;
-
+    private final ArrayList<Observer> observers = new ArrayList<>();
+    
     public Passenger(long id, String firstname, String lastname, LocalDate birthDate, int countryPhoneCode, long phone, String country) {
         this.id = id;
         this.firstname = firstname;
@@ -47,7 +50,7 @@ public class Passenger implements Cloneable {
     public boolean addFlight(Flight flight) {
         if (!flights.contains(flight)) {
             flights.add(flight);
-            System.out.println("se añadió un vuelo a este pasajero");
+            notifyObservers();
             return true;
         }
         return false;
@@ -125,4 +128,17 @@ public class Passenger implements Cloneable {
         return flights.size();
     }
 
+    @Override
+    public void notifyObservers() {
+     for (Observer o : observers) {
+            o.update();
+        }
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+     if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
 }

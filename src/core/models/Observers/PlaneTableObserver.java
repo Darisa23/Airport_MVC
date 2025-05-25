@@ -11,6 +11,8 @@ package core.models.Observers;
 import core.models.Plane;
 import core.models.storage.StoragePlanes;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,7 +25,9 @@ public class PlaneTableObserver implements Observer {
 
     @Override
     public void update() {
-        ArrayList<Plane> planes = StoragePlanes.getInstance().getAll();
+        ArrayList<Plane> planes = (ArrayList<Plane>) StoragePlanes.getInstance().getAll().stream()
+            .sorted(Comparator.comparing(Plane::getId))
+            .collect(Collectors.toList());
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         for (Plane plane : planes) {

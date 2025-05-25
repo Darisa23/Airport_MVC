@@ -38,10 +38,16 @@ public class PlaneValidator implements Validator {
             if (StoragePlanes.getInstance().get(id) != null) {
                 return new Response("There is already an airplane with that ID", Status.BAD_REQUEST);
             }
-            int mxCap = Integer.parseInt(maxCapacity);
+             int mxCap = 0;
+            try{
+               
+            mxCap = Integer.parseInt(maxCapacity);
             if (mxCap<= 0) {
-                return new Response("Max capacity must be greater than 0", Status.BAD_REQUEST);
+                return new Response("Max capacity must be a whole number greater than zero.", Status.BAD_REQUEST);
+            } 
+            }catch(Exception e){
+                return new Response("Max capacity must be a number greater than 0", Status.BAD_REQUEST);
             }
 
-     return new Response("Valid plane",Status.OK);
+     return new Response("Valid plane",Status.OK,mxCap);
 }}

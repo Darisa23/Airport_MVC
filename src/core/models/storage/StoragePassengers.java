@@ -63,7 +63,6 @@ public class StoragePassengers implements Storage<Passenger, Long>, Observable {
             if (Long.valueOf(passengers.get(i).getId()).equals(updatedPassenger.getId())) {
                 passengers.set(i, updatedPassenger);
                 notifyObservers();
-                System.out.println("se notificó en update");
                 return true;
             }
         }

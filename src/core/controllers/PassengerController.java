@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package core.controllers;
+
 import core.controllers.utils.validators.DateUtils;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
@@ -39,7 +40,6 @@ public class PassengerController {
             }
 
             // 3. Parseo de Strings a tipos numéricos (ID, teléfono, código de país).
- 
             long parsedId;
             int parsedCountryPhoneCode;
             long parsedPhone;
@@ -51,7 +51,7 @@ public class PassengerController {
                 return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
             }
 
-            if (passengerService.getPassenger(parsedId)!=null) {
+            if (passengerService.getPassenger(parsedId) != null) {
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
 
@@ -59,7 +59,6 @@ public class PassengerController {
             // Le pasamos los valores ya parseados.
             passengerService.registerPassenger(
                     parsedId, firstName, lastName, DateUtils.buildDate(year, month, day), parsedCountryPhoneCode, parsedPhone, country);
-
 
             return new Response("Passenger created successfully", Status.CREATED);
 
@@ -73,9 +72,8 @@ public class PassengerController {
     }
 
 //obtener todos los id de pasajeros:
-
     public Response getAllPassengerIds() {
-    return new Response("Passenger IDs retrieved", Status.OK, passengerService.allPassengers());
+        return new Response("Passenger IDs retrieved", Status.OK, passengerService.allPassengers());
     }
 
     public Response updatePassenger(String id, String newFirstName, String newLastName,
@@ -85,12 +83,12 @@ public class PassengerController {
             if (id.isEmpty()) {
                 return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
             }
-            if (passengerService.getPassenger(Long.parseLong(id))==null) {
-                return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
+            if (passengerService.getPassenger(Long.parseLong(id)) == null) {
+                return new Response("No existe pasajero con el Id seleccionado", Status.NOT_FOUND);
             }
-            if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
-            return new Response("Fields cannot be empty", Status.BAD_REQUEST);
-        }
+            if (ValidationUtils.anyEmpty(id, newFirstName, newLastName, newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
+                return new Response("Fields cannot be empty", Status.BAD_REQUEST);
+            }
             if (ValidationUtils.anyEmpty(id, newFirstName, newLastName, newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
                 return new Response("Fields cannot be empty", Status.BAD_REQUEST);
             }
@@ -114,14 +112,14 @@ public class PassengerController {
 
     public Response addToFlight(String passengerId, Flight flight) {
         try {
-            if (passengerService.getPassenger(Long.parseLong(passengerId))==null) {
-                return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
+            if (passengerService.getPassenger(Long.parseLong(passengerId)) == null) {
+                return new Response("No existe pasajero con el Id seleccionado", Status.NOT_FOUND);
             }
-            boolean added = passengerService.addAflight(Long.parseLong(passengerId),flight);
+            boolean added = passengerService.addAflight(Long.parseLong(passengerId), flight);
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            return new Response("Flight added to passenger successfully", Status.OK,passengerService.getPassenger(Long.parseLong(passengerId)));
+            return new Response("Flight added to passenger successfully", Status.OK, passengerService.getPassenger(Long.parseLong(passengerId)));
         } catch (Exception e) {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
@@ -131,21 +129,27 @@ public class PassengerController {
         passengerService.addObserver(observer);
     }
 
+    public void registerObserver(String id, Observer observer) {
+        passengerService.addObserver(id, observer);
+    }
+    public void notify(String id){
+        passengerService.getPassenger(Long.parseLong(id)).notifyObservers();
+    }
     public Response getPassengerData(String id) {
-        if (passengerService.getPassenger(Long.parseLong(id))==null) {
+        if (passengerService.getPassenger(Long.parseLong(id)) == null) {
             return new Response("Passenger not found", Status.NOT_FOUND);
         }
         return new Response("Data ready", Status.OK, passengerService.specificData(Long.parseLong(id)));
-}
-    
+    }
+
     public Response getFlightRowsOfPassenger(String id) {
-     if (passengerService.getPassenger(Long.parseLong(id))==null) {
+        if (passengerService.getPassenger(Long.parseLong(id)) == null) {
             return new Response("Passenger not found", Status.NOT_FOUND);
         }
-    return new Response("Flights refreshed", Status.OK, passengerService.flightsOf(Long.parseLong(id)));
-}
-    
-public Response getPassengers() {
-    return new Response("Passengers refreshed", Status.OK, passengerService.completeInfo());
-}
+        return new Response("Flights refreshed", Status.OK, passengerService.flightsOf(Long.parseLong(id)));
+    }
+
+    public Response getPassengers() {
+        return new Response("Passengers refreshed", Status.OK, passengerService.completeInfo());
+    }
 }

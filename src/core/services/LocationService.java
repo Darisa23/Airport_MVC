@@ -9,7 +9,9 @@ import core.models.Location;
 import core.models.Observers.Observer;
 import core.models.storage.StorageLocations;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -48,7 +50,10 @@ public class LocationService {
 
     public ArrayList<Object[]> completeInfo() {
         ArrayList<Object[]> rows = new ArrayList<>();
-        for (Location l : StorageLocations.getInstance().getAll()) {
+        List<Location> locs = StorageLocations.getInstance().getAll().stream()
+            .sorted(Comparator.comparing(Location::getAirportId))
+            .collect(Collectors.toList());
+        for (Location l : locs) {
             Object[] row = new Object[]{
                 l.getAirportId(),
                 l.getAirportName(),

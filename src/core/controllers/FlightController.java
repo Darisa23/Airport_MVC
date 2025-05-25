@@ -16,21 +16,17 @@ import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
 import core.services.FlightService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  *
  * @author Alexander Sanguino
  */
 public class FlightController {
+
     private final PassengerController passContr;
     private final FlightService flightService; // Declaración
     private final PlaneController planeController;
     private final LocationController locationController;
-
 
     public FlightController() {
         this.passContr = new PassengerController();
@@ -38,21 +34,21 @@ public class FlightController {
         this.planeController = new PlaneController();
         this.locationController = new LocationController();
     }
-    
+
     public Response registerFlight(String id, String planeId, String departureLocationId, String arrivalLocationId, String scaleLocationId,
-                                  String year, String month, String day, String hour, String minutes,
-                                  String hoursDurationArrival, String minutesDurationArrival,
-                                  String hoursDurationScale, String minutesDurationScale) {
+            String year, String month, String day, String hour, String minutes,
+            String hoursDurationArrival, String minutesDurationArrival,
+            String hoursDurationScale, String minutesDurationScale) {
         try {
             // 1. Validaciones de presencia (campos vacíos)
             if (ValidationUtils.anyEmpty(id, planeId, departureLocationId, arrivalLocationId, year, month, day, hour, minutes,
-                                          hoursDurationArrival, minutesDurationArrival)) {
+                    hoursDurationArrival, minutesDurationArrival)) {
                 return new Response("Required fields cannot be empty", Status.BAD_REQUEST);
             }
 
             // 2. Validaciones de formato y otras reglas específicas (con FlightValidator)
             Response validationResponse = FlightValidator.INSTANCE.isValid(id, planeId, departureLocationId, arrivalLocationId, scaleLocationId, year, month, day, hour, minutes,
-                                                                          hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
+                    hoursDurationArrival, minutesDurationArrival, hoursDurationScale, minutesDurationScale);
             if (validationResponse.getStatus() != Status.OK) {
                 return validationResponse;
             }
@@ -73,7 +69,7 @@ public class FlightController {
             }
 
             // 4. Validación de negocio: Verificar si el vuelo ya existe
-            if (flightService.getFlight(id)!=null ) {
+            if (flightService.getFlight(id) != null) {
                 return new Response("Flight with this ID already exists", Status.BAD_REQUEST);
             }
 
@@ -83,13 +79,13 @@ public class FlightController {
             Location arrivalLocation = (Location) locationController.getAirport(arrivalLocationId).getObject();
 
             if (plane == null) {
-                 return new Response("Plane not found for ID: " + planeId, Status.BAD_REQUEST);
+                return new Response("Plane not found for ID: " + planeId, Status.BAD_REQUEST);
             }
             if (departureLocation == null) {
-                 return new Response("Departure location not found for ID: " + departureLocationId, Status.BAD_REQUEST);
+                return new Response("Departure location not found for ID: " + departureLocationId, Status.BAD_REQUEST);
             }
             if (arrivalLocation == null) {
-                 return new Response("Arrival location not found for ID: " + arrivalLocationId, Status.BAD_REQUEST);
+                return new Response("Arrival location not found for ID: " + arrivalLocationId, Status.BAD_REQUEST);
             }
 
             Location scaleLocation = null;
@@ -121,12 +117,10 @@ public class FlightController {
         }
     }
 
-
     //obtener todos los id de vuelos:
     public Response getAllFlightsIds() {
-    return new Response("Flights IDs retrieved", Status.OK, flightService.allFlights());
+        return new Response("Flights IDs retrieved", Status.OK, flightService.allFlights());
     }
-    
 
     //Agregar un vuelo:
     public static Response addFlight(Flight flight) {
@@ -144,30 +138,27 @@ public class FlightController {
     //Añadirle un pasajero a un vuelo:
     public Response addPassengertoFlight(String flightId, String passengerId) {
         try {
-            System.out.println("intentando con vuelo: "+flightId+" y pasajero: "+passengerId);
             //revisar que si seleccionó un Id de usuario:
-            if(passengerId.isEmpty()){
-            return new Response("You must select an User id in order to add a flight", Status.NO_CONTENT);
-        }
+            if (passengerId.isEmpty()) {
+                return new Response("You must select an User id in order to add a flight", Status.NO_CONTENT);
+            }
             Flight flight = flightService.getFlight(flightId);
-            if(flight== null) {
+            if (flight == null) {
                 return new Response("Flight not found", Status.NOT_FOUND);
             }
-            if(!flightService.hasAviableSeats(flightId)){
+            if (!flightService.hasAviableSeats(flightId)) {
                 return new Response("This Flight is fully booked", Status.NOT_FOUND);
             }
-          
-            Response opassenger = passContr.addToFlight(passengerId,flight);
-        
-            if (opassenger.getStatus() == Status.NOT_FOUND |opassenger.getStatus() == Status.BAD_REQUEST) {
-                System.out.println("hola");
+
+            Response opassenger = passContr.addToFlight(passengerId, flight);
+
+            if (opassenger.getStatus() == Status.NOT_FOUND | opassenger.getStatus() == Status.BAD_REQUEST) {
                 return opassenger;
             }
             Passenger passenger = (Passenger) opassenger.getObject();
 
             boolean added = flight.addPassenger(passenger);
             if (!added) {
-                System.out.println("el pasajero "+passengerId+"/"+passenger.getFirstname()+" no se agregó");
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
             flightService.addPassenger(flightId, passenger);
@@ -179,34 +170,30 @@ public class FlightController {
     }
 
     //Actualiza un avión
-      public Response delayFlight(String id, String hours, String minutes  ) {
+    public Response delayFlight(String id, String hours, String minutes) {
         try {
             //revisar si vuelo existe:
-            
-            if (flightService.getFlight(id)==null) {
+
+            if (flightService.getFlight(id) == null) {
                 return new Response("flight does not exist", Status.NOT_FOUND);
             }
-           if (!DateUtils.isValidHour(hours)&& !DateUtils.isValidMinute(minutes)){
-               return new Response("invalid hours or minutes", Status.BAD_REQUEST);
-           }
-               flightService.delay(id, hours, minutes);
-         
+            if (!DateUtils.isValidHour(hours) && !DateUtils.isValidMinute(minutes)) {
+                return new Response("invalid hours or minutes", Status.BAD_REQUEST);
+            }
+            flightService.delay(id, hours, minutes);
+
             return new Response("delayed succesfully", Status.OK);
-            
-           
+
         } catch (Exception e) {
             return new Response("Error adding passenger to flight: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }}
+        }
+    }
 
+    public Response getFlights() {
+        return new Response("flights refreshed", Status.OK, flightService.completeInfo());
+    }
 
-
-public Response getFlights() {
-    return new Response("flights refreshed", Status.OK, flightService.completeInfo());
-}
-
-       public void registerObserver(Observer observer) {
+    public void registerObserver(Observer observer) {
         flightService.addObserver(observer);
     }
 }
-
-

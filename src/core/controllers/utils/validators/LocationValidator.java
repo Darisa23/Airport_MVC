@@ -39,11 +39,12 @@ public class LocationValidator implements Validator {
             }
             //3. Check latitude and longitude
             if (!ValidationUtils.validNum(-90, 90, latitude, 4)){
-                return new Response("Airport latitude must be a number between -90 and 90.", Status.BAD_REQUEST);
+                return new Response("Airport latitude must be a number between -90 and 90, with up to 4 decimals separated by a point or comma (optional)", Status.BAD_REQUEST);
             }
             if (!ValidationUtils.validNum(-180, 180, longitude, 4)) {
-                return new Response("Airport longitude must be a number between -180 and 180.", Status.BAD_REQUEST);
+                return new Response("Airport longitude must be a number between -180 and 180, with up to 4 decimals separated by a point or comma (optional)", Status.BAD_REQUEST);
             }
-        return new Response("Valid location",Status.OK);
+            double[] location = new double[]{ValidationUtils.buildNum(latitude),ValidationUtils.buildNum(longitude)};
+        return new Response("Valid location",Status.OK,location);
 }
 }

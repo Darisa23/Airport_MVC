@@ -7,6 +7,8 @@ package core.models.Observers;
 import core.models.Passenger;
 import core.models.storage.StoragePassengers;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,7 +24,9 @@ public class PassengerTableObserver implements Observer {
     }
     @Override
     public void update() {
-       ArrayList<Passenger> passengers = StoragePassengers.getInstance().getAll();
+       ArrayList<Passenger> passengers = (ArrayList<Passenger>) StoragePassengers.getInstance().getAll().stream()
+            .sorted(Comparator.comparing(Passenger::getId))
+            .collect(Collectors.toList());
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         for (Passenger passenger : passengers) {

@@ -14,6 +14,7 @@ import core.models.storage.StorageFlights;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -84,7 +85,9 @@ public class FlightService {
 
     public ArrayList<Object[]> completeInfo() {
         ArrayList<Object[]> rows = new ArrayList<>();
-        for (Flight f : StorageFlights.getInstance().getAll()) {
+        for (Flight f : StorageFlights.getInstance().getAll().stream()
+            .sorted(Comparator.comparing(Flight::getDepartureDate))
+            .collect(Collectors.toList())) {
             Object[] row = new Object[]{
                 f.getId(),
                 f.getDepartureLocation().getAirportId(),
@@ -98,7 +101,6 @@ public class FlightService {
             rows.add(row);
         }
         return rows;
-
     }
     public void addObserver(Observer observer) {
         StorageFlights.getInstance().addObserver(observer);

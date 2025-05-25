@@ -4,45 +4,40 @@
  */
 package core.models.Observers;
 
-/**
- *
- * @author maria
- */
-
 
 import core.models.Flight;
-import core.models.storage.StorageFlights;
+import core.models.storage.StoragePassengers;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class FlightTableObserver implements Observer {
+/**
+ *
+ * @author Alexander Sanguino
+ */
+public class MyFlightsObserver implements Observer {
+   private final String passengerId;
     private final JTable table;
-
-    public FlightTableObserver(JTable table) {
-        this.table = table;
-    }
-
+ public MyFlightsObserver(JTable table,String id){
+     this.table = table;
+     this.passengerId = id;
+ }
     @Override
-    public void update() {
-        ArrayList<Flight> flights = (ArrayList<Flight>) StorageFlights.getInstance().getAll().stream()
+    public void update() {       
+        ArrayList<Flight> flights = (ArrayList<Flight>) StoragePassengers.getInstance().get(Long.valueOf(passengerId)).getFlights().stream()
             .sorted(Comparator.comparing(Flight::getDepartureDate))
             .collect(Collectors.toList());
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
-        for (Flight flight : flights) {
+            for (Flight flight : flights) {
             model.addRow(new Object[]{
                 flight.getId(),               
-                flight.getDepartureLocation().getAirportId(),       
-                flight.getArrivalLocation().getAirportId(),
-                (flight.getScaleLocation() != null ? flight.getScaleLocation().getAirportId() : "—"),
                 flight.getDepartureDate(),
                 flight.calculateArrivalDate(),
-                flight.getPlane().getId(),
-                flight.getNumPassengers()
             });
-        }
+        }     
     }
+    
 }

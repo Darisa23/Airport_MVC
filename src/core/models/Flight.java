@@ -64,9 +64,8 @@ public class Flight implements Cloneable{
     }
 }
     public boolean addPassenger(Passenger passenger) {
-         if (!passengers.contains(passenger)) {
+        if (!passengers.contains(passenger)) {
         passengers.add(passenger);
-             System.out.println("se añadió un pasajero a este vuelo");
         return true;
     }
     return false;
@@ -121,11 +120,7 @@ public class Flight implements Cloneable{
     }
     
     public void delay(int hours, int minutes) {
-        System.out.println("hora de salida ates: "+this.departureDate);
-        System.out.println("debe retrasarse: "+hours+" horas y "+minutes+" minutos");
         this.departureDate = this.departureDate.plusHours(hours).plusMinutes(minutes);
-        
-        System.out.println("se guardará la nueva departure date como: "+this.departureDate);
     }
     
     public int getNumPassengers() {
