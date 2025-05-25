@@ -29,7 +29,7 @@ public class AirportFrame extends javax.swing.JFrame {
      */
     private int x, y;
     private final MainController controller;
-    private LoadComboBox loadComboBox;
+    private final LoadComboBox loadComboBox;
 
     public AirportFrame() {
         initComponents();

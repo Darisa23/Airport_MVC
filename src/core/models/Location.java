@@ -11,11 +11,11 @@ package core.models;
 public class Location implements Cloneable {
 
     private final String airportId;
-    private String airportName;
-    private String airportCity;
-    private String airportCountry;
-    private double airportLatitude;
-    private double airportLongitude;
+    private final String airportName;
+    private final String airportCity;
+    private final String airportCountry;
+    private final double airportLatitude;
+    private final double airportLongitude;
 
     public Location(String airportId, String airportName, String airportCity, String airportCountry, double airportLatitude, double airportLongitude) {
         this.airportId = airportId;

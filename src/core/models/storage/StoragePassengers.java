@@ -14,12 +14,13 @@ import java.util.List;
  *
  * @author Alexander Sanguino
  */
-public class StoragePassengers implements Storage<Passenger,Long>, Observable {
+public class StoragePassengers implements Storage<Passenger, Long>, Observable {
 
-     private static StoragePassengers instance;
-    private ArrayList<Passenger> passengers;
+    private static StoragePassengers instance;
+    private final ArrayList<Passenger> passengers;
 
     private final List<Observer> observers = new ArrayList<>();
+
     private StoragePassengers() {
         this.passengers = new ArrayList<>();
     }
@@ -33,11 +34,11 @@ public class StoragePassengers implements Storage<Passenger,Long>, Observable {
 
     @Override
     public boolean add(Passenger passenger) {
-         Passenger ps=this.get(passenger.getId()); //revisamos si ya estaba:
-         if(ps != null){
-                return false;
-            }
-         //Lo agregamos si no está
+        Passenger ps = this.get(passenger.getId()); //revisamos si ya estaba:
+        if (ps != null) {
+            return false;
+        }
+        //Lo agregamos si no está
         this.passengers.add(passenger);
         notifyObservers();
         return true;
@@ -45,52 +46,55 @@ public class StoragePassengers implements Storage<Passenger,Long>, Observable {
 
     @Override
 
-public boolean delete(Passenger passenger) {
-    if (passenger == null) {
-        return false;
-    }
-    return passengers.removeIf(p -> p.getId() == passenger.getId() || Long.valueOf(p.getId()).equals(passenger.getId()));
-}
-      @Override
-public boolean update(Passenger updatedPassenger) {
-    if (updatedPassenger == null) {
-        return false;
-    }
-
-    for (int i = 0; i < passengers.size(); i++) {
-        if (Long.valueOf(passengers.get(i).getId()).equals(updatedPassenger.getId())) {
-            passengers.set(i, updatedPassenger);          
-            notifyObservers(); 
-            System.out.println("se notificó en update");
-            return true;
+    public boolean delete(Passenger passenger) {
+        if (passenger == null) {
+            return false;
         }
+        return passengers.removeIf(p -> p.getId() == passenger.getId() || Long.valueOf(p.getId()).equals(passenger.getId()));
     }
-    return false; 
-}
 
     @Override
-    public Passenger get(Long id) { 
-        for (Passenger ps : passengers){
-            if(ps.getId()==id){
+    public boolean update(Passenger updatedPassenger) {
+        if (updatedPassenger == null) {
+            return false;
+        }
+
+        for (int i = 0; i < passengers.size(); i++) {
+            if (Long.valueOf(passengers.get(i).getId()).equals(updatedPassenger.getId())) {
+                passengers.set(i, updatedPassenger);
+                notifyObservers();
+                System.out.println("se notificó en update");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Passenger get(Long id) {
+        for (Passenger ps : passengers) {
+            if (ps.getId() == id) {
                 return ps;
             }
         }
-        return null;}
+        return null;
+    }
 
     @Override
     public ArrayList<Passenger> getAll() {
         return new ArrayList<>(passengers);
     }
-     @Override
+
+    @Override
     public void notifyObservers() {
         for (Observer o : observers) {
             o.update();
         }
     }
 
-     @Override
+    @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
     }
-    
+
 }

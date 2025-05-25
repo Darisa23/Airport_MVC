@@ -18,7 +18,7 @@ import java.util.List;
 public class StorageFlights implements Storage<Flight, String>, Observable {
 
     private static StorageFlights instance;
-    private ArrayList<Flight> flights;
+    private final ArrayList<Flight> flights;
     private final List<Observer> observers = new ArrayList<>();
 
     private StorageFlights() {

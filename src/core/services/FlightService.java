@@ -21,15 +21,15 @@ import java.util.List;
  */
 // FlightService.java
 public class FlightService {
+
     public Flight registerFlight(String id, Plane plane, Location departureLocation, Location arrivalLocation, Location scaleLocation,
-                                  String year, String month, String day, String hour, String minutes,
-                                  int hoursDurationArrival, int minutesDurationArrival,
-                                  int hoursDurationScale, int minutesDurationScale) {
+            String year, String month, String day, String hour, String minutes,
+            int hoursDurationArrival, int minutesDurationArrival,
+            int hoursDurationScale, int minutesDurationScale) {
         Flight flight;
 
-  
         if (scaleLocation == null) {
-           
+
             flight = new Flight(id,
                     plane,
                     departureLocation,
@@ -38,7 +38,7 @@ public class FlightService {
                     hoursDurationArrival,
                     minutesDurationArrival);
         } else {
-    
+
             flight = new Flight(id,
                     plane,
                     departureLocation,
@@ -59,54 +59,50 @@ public class FlightService {
     }
 
     public Flight getFlight(String id) {
-     
-            return StorageFlights.getInstance().get(id) ;
-        
-        
+        return StorageFlights.getInstance().get(id);
     }
 
     public List<String> allFlights() {
         List<String> ids = StorageFlights.getInstance()
                 .getAll().stream()
-                .map(Flight::getId)            
+                .map(Flight::getId)
                 .toList();
-       return ValidationUtils.sortList(ids, 3, 3);
-}
-    
-    public void addPassenger(String id,Passenger passenger){
-                 StorageFlights.getInstance().get(id).addPassenger(passenger);
+        return ValidationUtils.sortList(ids, 3, 3);
+    }
 
+    public void addPassenger(String id, Passenger passenger) {
+        StorageFlights.getInstance().get(id).addPassenger(passenger);
     }
-    
-    public void delay(String id, String hours, String minutes){
-           Flight flight = StorageFlights.getInstance().get(id);
-            
-            flight.delay(Integer.parseInt(hours),Integer.parseInt(minutes));
-            StorageFlights.getInstance().update(flight);
+
+    public void delay(String id, String hours, String minutes) {
+        Flight flight = StorageFlights.getInstance().get(id);
+
+        flight.delay(Integer.parseInt(hours), Integer.parseInt(minutes));
+        StorageFlights.getInstance().update(flight);
     }
-    
-    public ArrayList<Object[]> completeInfo(){
-          ArrayList<Object[]> rows = new ArrayList<>();
-   for (Flight f : StorageFlights.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            f.getId(), 
-            f.getDepartureLocation().getAirportId(),
-            f.getArrivalLocation().getAirportId(), 
-            (f.getScaleLocation() == null ? "-" : f.getScaleLocation().getAirportId()), 
-            f.getDepartureDate(), 
-            f.calculateArrivalDate(), 
-            f.getPlane().getId(), 
-            f.getNumPassengers()
-        };
-             rows.add(row);
+
+    public ArrayList<Object[]> completeInfo() {
+        ArrayList<Object[]> rows = new ArrayList<>();
+        for (Flight f : StorageFlights.getInstance().getAll()) {
+            Object[] row = new Object[]{
+                f.getId(),
+                f.getDepartureLocation().getAirportId(),
+                f.getArrivalLocation().getAirportId(),
+                (f.getScaleLocation() == null ? "-" : f.getScaleLocation().getAirportId()),
+                f.getDepartureDate(),
+                f.calculateArrivalDate(),
+                f.getPlane().getId(),
+                f.getNumPassengers()
+            };
+            rows.add(row);
         }
         return rows;
-                
-        }
-    
-         public void addObserver(Observer observer){
+
+    }
+    public void addObserver(Observer observer) {
         StorageFlights.getInstance().addObserver(observer);
     }
+    public boolean hasAviableSeats(String id){
+        return getFlight(id).getNumPassengers()<getFlight(id).getPlane().getMaxCapacity();
+    }
 }
-    
-

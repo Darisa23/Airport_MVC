@@ -51,7 +51,7 @@ public class PassengerController {
                 return new Response("Invalid number format for ID, phone, or country code.", Status.BAD_REQUEST);
             }
 
-            if (passengerService.getPassenger(parsedId)) {
+            if (passengerService.getPassenger(parsedId)!=null) {
                 return new Response("There is already a passenger with that ID.", Status.BAD_REQUEST);
             }
 
@@ -85,7 +85,7 @@ public class PassengerController {
             if (id.isEmpty()) {
                 return new Response("Debe seleccionar un Id de usuario para actualizar su información", Status.NO_CONTENT);
             }
-            if (!passengerService.getPassenger(Long.parseLong(id))) {
+            if (passengerService.getPassenger(Long.parseLong(id))==null) {
                 return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
             }
             if (ValidationUtils.anyEmpty(id, newFirstName,newLastName,newYear, newMonth, newDay, newCountryCode, newPhone, newCountry)) {
@@ -114,14 +114,14 @@ public class PassengerController {
 
     public Response addToFlight(String passengerId, Flight flight) {
         try {
-            if (!passengerService.getPassenger(Long.parseLong(passengerId))) {
+            if (passengerService.getPassenger(Long.parseLong(passengerId))==null) {
                 return new Response("No existe pasajero con el Id seleccionado",Status.NOT_FOUND);
             }
             boolean added = passengerService.addAflight(Long.parseLong(passengerId),flight);
             if (!added) {
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
-            return new Response("Flight added to passenger successfully", Status.OK);
+            return new Response("Flight added to passenger successfully", Status.OK,passengerService.getPassenger(Long.parseLong(passengerId)));
         } catch (Exception e) {
             return new Response("Error adding flight to passenger: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
@@ -132,14 +132,14 @@ public class PassengerController {
     }
 
     public Response getPassengerData(String id) {
-        if (!passengerService.getPassenger(Long.parseLong(id))) {
+        if (passengerService.getPassenger(Long.parseLong(id))==null) {
             return new Response("Passenger not found", Status.NOT_FOUND);
         }
         return new Response("Data ready", Status.OK, passengerService.specificData(Long.parseLong(id)));
 }
     
     public Response getFlightRowsOfPassenger(String id) {
-     if (!passengerService.getPassenger(Long.parseLong(id))) {
+     if (passengerService.getPassenger(Long.parseLong(id))==null) {
             return new Response("Passenger not found", Status.NOT_FOUND);
         }
     return new Response("Flights refreshed", Status.OK, passengerService.flightsOf(Long.parseLong(id)));

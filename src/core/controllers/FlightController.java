@@ -144,6 +144,7 @@ public class FlightController {
     //Añadirle un pasajero a un vuelo:
     public Response addPassengertoFlight(String flightId, String passengerId) {
         try {
+            System.out.println("intentando con vuelo: "+flightId+" y pasajero: "+passengerId);
             //revisar que si seleccionó un Id de usuario:
             if(passengerId.isEmpty()){
             return new Response("You must select an User id in order to add a flight", Status.NO_CONTENT);
@@ -152,17 +153,21 @@ public class FlightController {
             if(flight== null) {
                 return new Response("Flight not found", Status.NOT_FOUND);
             }
-       
+            if(!flightService.hasAviableSeats(flightId)){
+                return new Response("This Flight is fully booked", Status.NOT_FOUND);
+            }
           
             Response opassenger = passContr.addToFlight(passengerId,flight);
         
             if (opassenger.getStatus() == Status.NOT_FOUND |opassenger.getStatus() == Status.BAD_REQUEST) {
+                System.out.println("hola");
                 return opassenger;
             }
             Passenger passenger = (Passenger) opassenger.getObject();
 
             boolean added = flight.addPassenger(passenger);
             if (!added) {
+                System.out.println("el pasajero "+passengerId+"/"+passenger.getFirstname()+" no se agregó");
                 return new Response("Passenger is already on this flight", Status.BAD_REQUEST);
             }
             flightService.addPassenger(flightId, passenger);

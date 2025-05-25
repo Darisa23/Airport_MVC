@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package core.services;
+
 import core.models.Flight;
 import core.models.Observers.Observer;
 import core.models.Passenger;
@@ -17,102 +18,102 @@ import java.util.Map;
  *
  * @author maria
  */
-
-
- 
 public class PassengerService {
+
     public Passenger registerPassenger(long id, String firstName, String lastName, LocalDate Birthday,
-                                       int countryPhoneCode, long phone, String country) {
+            int countryPhoneCode, long phone, String country) {
 
         Passenger passenger = new Passenger(
                 id,
                 firstName,
                 lastName,
                 Birthday,
-                countryPhoneCode, 
-                phone, 
+                countryPhoneCode,
+                phone,
                 country
-        );     
+        );
         boolean added = StoragePassengers.getInstance().add(passenger);
-        if (!added) {         
+        if (!added) {
             throw new IllegalStateException("Failed to add passenger to storage despite prior checks by controller.");
         }
 
         return passenger;
     }
-    public boolean getPassenger(long id) {
-        if(StoragePassengers.getInstance().get(id)==null){
-            return false;
-        }
-        return true;
+
+    public Passenger getPassenger(long id) {
+        return StoragePassengers.getInstance().get(id);
     }
-    public List<String> allPassengers(){
-       List<String> ids = StoragePassengers.getInstance()
-    .getAll().stream()
-    .map(Passenger::getId)
-    .sorted()
-    .map(String::valueOf)
-    .toList();
+
+    public List<String> allPassengers() {
+        List<String> ids = StoragePassengers.getInstance()
+                .getAll().stream()
+                .map(Passenger::getId)
+                .sorted()
+                .map(String::valueOf)
+                .toList();
         return ids;
     }
-    public boolean addAflight(long id,Flight flight){
+
+    public boolean addAflight(long id, Flight flight) {
         return StoragePassengers.getInstance().get(id).addFlight(flight);
     }
-    public void addObserver(Observer observer){
+
+    public void addObserver(Observer observer) {
         StoragePassengers.getInstance().addObserver(observer);
     }
+
     public void update(long id, String firstName, String lastName, LocalDate Birthday,
-                                       int countryPhoneCode, long phone, String country){
-        Passenger updatedPassenger = registerPassenger(id,firstName,lastName, Birthday,countryPhoneCode, phone, country);
-        
+            int countryPhoneCode, long phone, String country) {
+        Passenger updatedPassenger = registerPassenger(id, firstName, lastName, Birthday, countryPhoneCode, phone, country);
+
         StoragePassengers.getInstance().update(updatedPassenger);
     }
-    public HashMap<String,String> specificData(long id){
+
+    public HashMap<String, String> specificData(long id) {
         HashMap<String, String> data = new HashMap<>();
         Passenger p = StoragePassengers.getInstance().get(id);
         data.put("id", String.valueOf(p.getId()));
         data.put("firstName", p.getFirstname());
         data.put("lastName", p.getLastname());
         data.put("birthYear", String.valueOf(p.getBirthDate().getYear()));
-        
+
         data.put("phoneCode", String.valueOf(p.getCountryPhoneCode()));
         data.put("phone", String.valueOf(p.getPhone()));
         data.put("country", p.getCountry());
         return data;
     }
-   public ArrayList<Object[]> flightsOf(long idPassenger){
-       ArrayList<Flight> flights = StoragePassengers.getInstance().get(idPassenger).getFlights();
-       ArrayList<Object[]> rows = new ArrayList<>();
 
-    for (Flight f : flights) {
-        Object[] row = new Object[] {
-            f.getId(),
-            f.getDepartureDate(),
-            f.calculateArrivalDate()
-        };
-        rows.add(row);
+    public ArrayList<Object[]> flightsOf(long idPassenger) {
+        ArrayList<Flight> flights = StoragePassengers.getInstance().get(idPassenger).getFlights();
+        ArrayList<Object[]> rows = new ArrayList<>();
+
+        for (Flight f : flights) {
+            Object[] row = new Object[]{
+                f.getId(),
+                f.getDepartureDate(),
+                f.calculateArrivalDate()
+            };
+            rows.add(row);
+        }
+        return rows;
     }
-    return rows;
-   }  
-public ArrayList<Object[]> completeInfo(){
-ArrayList<Object[]> rows = new ArrayList<>();
 
-    for (Passenger p : StoragePassengers.getInstance().getAll()) {
-        Object[] row = new Object[] {
-            p.getId(), 
-            p.getFullname(), 
-            p.getBirthDate(), 
-            p.calculateAge(), 
-            p.generateFullPhone(), 
-            p.getCountry(), 
-            p.getNumFlights()
-        };
-        rows.add(row);
+    public ArrayList<Object[]> completeInfo() {
+        ArrayList<Object[]> rows = new ArrayList<>();
+
+        for (Passenger p : StoragePassengers.getInstance().getAll()) {
+            Object[] row = new Object[]{
+                p.getId(),
+                p.getFullname(),
+                p.getBirthDate(),
+                p.calculateAge(),
+                p.generateFullPhone(),
+                p.getCountry(),
+                p.getNumFlights()
+            };
+            rows.add(row);
+        }
+        return rows;
     }
-    return rows;
-   }    
-
-
-
 
 }
