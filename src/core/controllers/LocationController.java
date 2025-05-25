@@ -113,7 +113,6 @@ public class LocationController {
             return new Response("Error retrieving location: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
     }
-<<<<<<< HEAD
     public Response getLocations() {
     
     List<Object[]> rows = new ArrayList<>();
@@ -131,6 +130,4 @@ public class LocationController {
     return new Response("Passengers refreshed", Status.OK, rows);
 }
 }
-=======
-}
->>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
+

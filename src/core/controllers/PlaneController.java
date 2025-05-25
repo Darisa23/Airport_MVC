@@ -131,25 +131,8 @@ public class PlaneController {
         } catch (Exception e) {
             return new Response("Error updating plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
         }
-    }
-
-<<<<<<< HEAD
-    public static Response deletePlane(String id) {
-        try {
-            Plane plane = StoragePlanes.getInstance().get(id);
-
-            if (plane == null) {
-                return new Response("Plane not found", Status.NOT_FOUND);
-            }
-
-            //StoragePlanes.getInstance().delete();
-            return new Response("Plane deleted successfully", Status.OK);
-
-        } catch (Exception e) {
-            return new Response("Error deleting plane: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-    public Response getPlanes() {
+    } 
+     public Response getPlanes() {
     
     List<Object[]> rows = new ArrayList<>();
 
@@ -167,7 +150,4 @@ public class PlaneController {
 
     return new Response("Planes refreshed", Status.OK, rows);
 }
-=======
->>>>>>> a9c36443378836b0d13fe8e99115258c79d7d22f
-    
 }
