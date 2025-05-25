@@ -4,15 +4,16 @@
  */
 package core.services;
 
+
 import core.models.Flight;
 import core.models.Observers.Observer;
 import core.models.Passenger;
 import core.models.storage.StoragePassengers;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -84,9 +85,12 @@ public class PassengerService {
     }
 
     public ArrayList<Object[]> flightsOf(long idPassenger) {
-        ArrayList<Flight> flights = StoragePassengers.getInstance().get(idPassenger).getFlights();
-        ArrayList<Object[]> rows = new ArrayList<>();
+        List<Flight> flights = StoragePassengers.getInstance().get(idPassenger).getFlights();
 
+        // Ordenar directamente por fecha de salida
+        flights.sort(Comparator.comparing(Flight::getDepartureDate));
+
+        ArrayList<Object[]> rows = new ArrayList<>();
         for (Flight f : flights) {
             Object[] row = new Object[]{
                 f.getId(),

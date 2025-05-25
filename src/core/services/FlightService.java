@@ -5,7 +5,6 @@
 package core.services;
 
 import core.controllers.utils.validators.DateUtils;
-import core.controllers.utils.validators.ValidationUtils;
 import core.models.Flight;
 import core.models.Location;
 import core.models.Observers.Observer;
@@ -13,6 +12,7 @@ import core.models.Passenger;
 import core.models.Plane;
 import core.models.storage.StorageFlights;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -64,10 +64,11 @@ public class FlightService {
 
     public List<String> allFlights() {
         List<String> ids = StorageFlights.getInstance()
-                .getAll().stream()
-                .map(Flight::getId)
-                .toList();
-        return ValidationUtils.sortList(ids, 3, 3);
+            .getAll().stream()
+            .sorted(Comparator.comparing(Flight::getDepartureDate)) // Ordenar por fecha
+            .map(Flight::getId) // Después extraer el ID
+            .toList();
+    return ids;
     }
 
     public void addPassenger(String id, Passenger passenger) {
